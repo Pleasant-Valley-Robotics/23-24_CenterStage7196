@@ -23,7 +23,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 //import org.firstinspires.ftc.teamcode.util.Encoder;
 
 @TeleOp(name = "V1.1.2", group = "Iterative Opmode")
-public class RobotAlpha extends LinearOpMode {
+public class RobotAlpha extends LinearOpMode
+{
     @Override
     public void runOpMode() throws InterruptedException {
         ElapsedTime runtime = new ElapsedTime();
@@ -84,16 +85,14 @@ public class RobotAlpha extends LinearOpMode {
         imu.initialize(parameters);
         imu.resetYaw();
 
-
-
-
         waitForStart();
         double yHeading = 0;
         double xHeading = -90;
         double bHeading = 90;
         double aHeading = 180;
 
-        while (opModeIsActive()) {
+        while (opModeIsActive())
+        {
             double maxWheelPower;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
@@ -114,29 +113,13 @@ public class RobotAlpha extends LinearOpMode {
             maxWheelPower = Math.max(maxWheelPower, Math.abs(BLPower));
             maxWheelPower = Math.max(maxWheelPower, Math.abs(BRPower));
 
-            if (maxWheelPower > 1.0) {
+            if (maxWheelPower > 1.0)
+            {
                 FLPower /= maxWheelPower;
                 FRPower /= maxWheelPower;
                 BLPower /= maxWheelPower;
                 BRPower /= maxWheelPower;
             }
-
-            // This is test code:
-            //
-            // Uncomment the following code to test your motor directions.
-            // Each button should make the corresponding motor run FORWARD.
-            //   1) First get all the motors to take to correct positions on the robot
-            //      by adjusting your Robot Configuration if necessary.
-            //   2) Then make sure they run in the correct direction by modifying the
-            //      the setDirection() calls above.
-            // Once the correct motors move in the correct direction re-comment this code.
-
-            /*
-            FLPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
-            BLPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
-            FRPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
-            BRPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
-            */
 
             // Send calculated power to wheels
             FLDrive.setPower(FLPower);
@@ -150,48 +133,36 @@ public class RobotAlpha extends LinearOpMode {
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", BLPower, BRPower);
             telemetry.update();
 
-
-            //TODO: WRITE MORE CODE HERE TO MAKE MOTORS MOVE
-/* THIS CODE IS FOR USING THE LIFT WITH BUTTONS. TESTING PURPOSES ONLY!
-            if(gamepad2.x && (!gamepad2.y)){
-               liftDrive.setPower(0.7);
-            }else if(gamepad2.y && !(gamepad2.x)){
-                liftDrive.setPower(-0.7);
-            }else{
-                liftDrive.setPower(0);
-            }
-*/
-
-            //THIS CODE IS FOR USING THE LIFT WITH JOYSICKS LIKE A NORMAL PERSON
-            // For digital
-            //boolean liftJoysick = ((gamepad2.left_stick_y)>0.05) || ((gamepad2.left_stick_y)< -0.05);
-            /*
-            if (liftJoystick){
-                liftDrive.setPower(0.7);
-            }
-            */
-
             // For analog
             double liftJoystick = gamepad2.left_stick_y;
-            if (liftJoystick > 1) {
+            if (liftJoystick > 1)
+            {
                 liftJoystick = 1.0;
             }
-            if (liftJoystick > 0.05 || liftJoystick < -0.05) {
+            if (liftJoystick > 0.05 || liftJoystick < -0.05)
+            {
                 liftDrive.setPower(liftJoystick * 0.4);
-            } else {
+            }
+            else
+            {
                 liftDrive.setPower(0);
             }
 
             boolean actuatorMoveUp = gamepad2.dpad_up;
             boolean actuatorMoveDown = gamepad2.dpad_down;
 
-            if (actuatorMoveUp && !actuatorMoveDown) {
+            if (actuatorMoveUp && !actuatorMoveDown)
+            {
                 leftActuator.setPower(0.7);
                 rightActuator.setPower(0.7);
-            } else if (actuatorMoveDown && !actuatorMoveUp) {
+            }
+            else if (actuatorMoveDown && !actuatorMoveUp)
+            {
                 leftActuator.setPower(-0.7);
                 rightActuator.setPower(-0.7);
-            } else {
+            }
+            else
+            {
                 leftActuator.setPower(0);
                 rightActuator.setPower(0);
             }
@@ -199,25 +170,16 @@ public class RobotAlpha extends LinearOpMode {
             boolean clawOpen = gamepad2.a;
             boolean clawClosed = gamepad2.b;
             //While holding A, hold the pixel
-            if (gamepad2.a) {
+            if (gamepad2.a)
+            {
                 claw.setPower(0.9);
             }
             //When let go of A, let go of pixel
-            else if (gamepad2.b){
+            else if (gamepad2.b)
+            {
                 claw.setPower(1);
             }
 
-            /*
-            double launchDroneServo = gamepad2.right_trigger;
-            boolean stopLaunchDroneServo = gamepad2.left_bumper;
-            if (launchDroneServo > 0.2){
-                droneLaunch.setPower(0.7);
-            }
-            else if (stopLaunchDroneServo == true);
-            {
-                droneLaunch.setPower(0);
-            }
-             */
             if (gamepad2.right_trigger > 0.1) {
                 droneLaunch.setPower(0);
             }
@@ -226,27 +188,18 @@ public class RobotAlpha extends LinearOpMode {
                 droneLaunch.setPower(-1.3);
             }
 
-
-            //droneLaunch.setPower(launchDroneServo);
-
-
-            //digital
-            //boolean jointMove ((gamepad2.right_stick_y)>0.05) || ((gamepad2.right_stick_y)< -0.05);
-            /*
-            if (jointMove){
-                liftJoint.setPower(0.7);
-            }
-            */
-
-
             //analog
             double jointMove = gamepad2.right_stick_y;
-            if (jointMove > 1.0) {
+            if (jointMove > 1.0)
+            {
                 jointMove = 1.0;
             }
-            if (jointMove > 0.05 || jointMove < -0.05) {
+            if (jointMove > 0.05 || jointMove < -0.05)
+            {
                 liftJoint.setPower(jointMove * 0.4);
-            } else {
+            }
+            else
+            {
                 liftJoint.setPower(0);
             }
             telemetry.addData("Red  ", colorSensor.red());
