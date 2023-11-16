@@ -45,6 +45,9 @@ public class RobotAlpha extends LinearOpMode
 
         double liftJointMinimumPosition = 0;
         double liftJointMaximumPosition = 10000;
+        double liftDriveMinimumPosition = 0;
+        double liftDriveMaximumPosition = 10000;
+
         FLDrive = hardwareMap.get(DcMotor.class, "FLDrive");
         FRDrive = hardwareMap.get(DcMotor.class, "FRDrive");
         BLDrive = hardwareMap.get(DcMotor.class, "BLDrive");
@@ -144,11 +147,25 @@ public class RobotAlpha extends LinearOpMode
             }
             if (liftJoystick > 0.05 || liftJoystick < -0.05)
             {
-                liftDrive.setPower(liftJoystick * 0.4);
+                if(liftDrive.getCurrentPosition() >= liftDriveMinimumPosition && liftDrive.getCurrentPosition() <= liftDriveMaximumPosition)
+                {
+                    liftDrive.setPower(liftJoystick * 0.4);
+                }
             }
             else
             {
-                liftDrive.setPower(0);
+                if(liftDrive.getCurrentPosition() < liftDriveMinimumPosition)
+                {
+                    liftDrive.setPower(0.1);
+                }
+                else if (liftDrive.getCurrentPosition() > liftDriveMaximumPosition)
+                {
+                    liftDrive.setPower(-0.1);
+                }
+                else
+                {
+                    liftDrive.setPower(0);
+                }
             }
 
             boolean actuatorMoveUp = gamepad2.dpad_up;
@@ -214,7 +231,10 @@ public class RobotAlpha extends LinearOpMode
                 {
                     liftJoint.setPower(0.1);
                 }
-                liftJoint.setPower(0);
+                else
+                {
+                    liftJoint.setPower(0);
+                }
             }
             telemetry.addData("Red  ", colorSensor.red());
             telemetry.addData("Lift joint encoder value  ", liftJoint.getCurrentPosition());
