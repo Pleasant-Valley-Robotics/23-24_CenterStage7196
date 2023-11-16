@@ -42,6 +42,9 @@ public class RobotAlpha extends LinearOpMode
         CRServo claw = null;
 
         //Write numerical variables here
+
+        double liftJointMinimumPosition = 0;
+        double liftJointMaximumPosition = 10000;
         FLDrive = hardwareMap.get(DcMotor.class, "FLDrive");
         FRDrive = hardwareMap.get(DcMotor.class, "FRDrive");
         BLDrive = hardwareMap.get(DcMotor.class, "BLDrive");
@@ -196,10 +199,21 @@ public class RobotAlpha extends LinearOpMode
             }
             if (jointMove > 0.05 || jointMove < -0.05)
             {
-                liftJoint.setPower(jointMove * 0.4);
+                if(liftJoint.getCurrentPosition() >= liftJointMinimumPosition && liftJoint.getCurrentPosition() <= liftJointMaximumPosition)
+                {
+                    liftJoint.setPower(jointMove * 0.4);
+                }
             }
             else
             {
+                if(liftJoint.getCurrentPosition() > liftJointMaximumPosition)
+                {
+                    liftJoint.setPower(-0.1);
+                }
+                else if(liftJoint.getCurrentPosition() < liftJointMinimumPosition)
+                {
+                    liftJoint.setPower(0.1);
+                }
                 liftJoint.setPower(0);
             }
             telemetry.addData("Red  ", colorSensor.red());
