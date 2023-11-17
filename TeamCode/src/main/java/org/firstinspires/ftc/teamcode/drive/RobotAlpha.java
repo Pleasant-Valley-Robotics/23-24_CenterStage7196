@@ -42,7 +42,6 @@ public class RobotAlpha extends LinearOpMode
         CRServo claw = null;
 
         //Write numerical variables here
-
         double liftJointMinimumPosition = 0;
         double liftJointMaximumPosition = 10000;
         double liftDriveMinimumPosition = 0;
