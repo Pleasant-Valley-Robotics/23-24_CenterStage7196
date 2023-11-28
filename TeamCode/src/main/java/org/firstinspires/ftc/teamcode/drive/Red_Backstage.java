@@ -38,6 +38,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -118,6 +119,8 @@ public class Red_Backstage extends LinearOpMode {
     DcMotor FRDrive = null; // Front Right Drive Motor
     DcMotor BLDrive = null; // Back Left Drive Motor
     DcMotor BRDrive = null; // Back Right Drive Motor
+    DcMotor liftJoint = null;
+    DcMotor liftDrive = null;
     IMU imu = null; // Inertial Measurement Unit      // Control/Expansion Hub IMU
 
     private double headingError  = 0;
@@ -174,6 +177,8 @@ public class Red_Backstage extends LinearOpMode {
         FRDrive = hardwareMap.get(DcMotor.class, "FRDrive");
         BLDrive = hardwareMap.get(DcMotor.class, "BLDrive");
         BRDrive = hardwareMap.get(DcMotor.class, "BRDrive");
+        liftJoint = hardwareMap.get(DcMotor.class, "liftJoint");
+        liftDrive = hardwareMap.get(DcMotor.class, "liftDrive");
         // get a reference to our ColorSensor object.
         colorSensor1 = hardwareMap.get(ColorSensor.class, "sensor_color2");
         colorSensor2 = hardwareMap.get(ColorSensor.class, "sensor_color1");
@@ -185,10 +190,14 @@ public class Red_Backstage extends LinearOpMode {
         BLDrive.setDirection(DcMotor.Direction.FORWARD);
         FRDrive.setDirection(DcMotor.Direction.REVERSE);
         BRDrive.setDirection(DcMotor.Direction.FORWARD);
+        liftJoint.setDirection(DcMotor.Direction.FORWARD);
+        liftDrive.setDirection(DcMotor.Direction.REVERSE);
         FLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftJoint.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         /* The next two lines define Hub orientation.
          * The Default Orientation (shown) is when a hub is mounted horizontally with the printed logo pointing UP and the USB port pointing FORWARD.
@@ -209,10 +218,14 @@ public class Red_Backstage extends LinearOpMode {
         BLDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FRDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         BRDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftJoint.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         FRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftJoint.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Wait for the game to start (Display Gyro value while waiting)
         while (opModeInInit()) {
@@ -244,7 +257,12 @@ public class Red_Backstage extends LinearOpMode {
         driveStraight(DRIVE_SPEED,-48.0, 0.0);    // Drive in Reverse 48" (should return to approx. staring position)
 
         */
-
+        liftJoint.setPower(0.25);
+        sleep(500);
+        liftJoint.setPower(0);
+        liftDrive.setPower(0.5);
+        sleep(500);
+        liftDrive.setPower(0);
         double driftMod = 0.88;
         driveStraight(DRIVE_SPEED, 3 * driftMod, 0);
         turnToHeading(TURN_SPEED, -15);
@@ -261,6 +279,9 @@ public class Red_Backstage extends LinearOpMode {
             turnToHeading(TURN_SPEED, -30);
             holdHeading(TURN_SPEED,  -30.0, 0.5);    // Hold  30 Deg heading for a 1/2 second
             driveStraight(DRIVE_SPEED, -10, -30);
+            turnToHeading(TURN_SPEED, -90);
+            holdHeading(TURN_SPEED, -90, 0.5);
+            driveStraight(DRIVE_SPEED, 30, -90);
         }
         else
         {
@@ -274,10 +295,13 @@ public class Red_Backstage extends LinearOpMode {
             //holdHeading(TURN_SPEED,  90.0, 0.5);    // Hold  90 Deg heading for a 1/2 second
             //driveStraight(DRIVE_SPEED, 5 * driftMod, 90);
             sleep(500);
-            if (colorSensor2.red() > 300)
+            if (colorSensor2.red() > 150 && colorSensor2.blue() < 250)
             {
                 driveStraight(DRIVE_SPEED, 2, 0);
                 driveStraight(DRIVE_SPEED, -10, 0);
+                turnToHeading(TURN_SPEED, -90);
+                holdHeading(TURN_SPEED, -90, 0.5);
+                driveStraight(DRIVE_SPEED, 36, -90);
             }
             else
             {
@@ -287,7 +311,8 @@ public class Red_Backstage extends LinearOpMode {
                     BLDrive.setPower(DRIVE_SPEED);
                     FLDrive.setPower(DRIVE_SPEED);
                 }
-                driveStraight(DRIVE_SPEED, 20, 70);
+                driveStraight(DRIVE_SPEED, 18, 70);
+                driveStraight(DRIVE_SPEED, -36, 70);
             }
 
 

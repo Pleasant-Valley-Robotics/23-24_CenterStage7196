@@ -98,8 +98,8 @@ public class RobotAlpha extends LinearOpMode {
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             double straightMovement = gamepad1.left_stick_y;
-            double strafeMovement = gamepad1.left_stick_x;
-            double turnMovement = gamepad1.right_stick_x;
+            double strafeMovement = -gamepad1.left_stick_x;
+            double turnMovement = -gamepad1.right_stick_x;
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -249,7 +249,8 @@ public class RobotAlpha extends LinearOpMode {
             } else {
                 liftJoint.setPower(0);
             }
-//            telemetry.addData("Red  ", colorSensor.red());
+            telemetry.addData("Red  ", colorSensor.red());
+            telemetry.addData("Blue:  ",colorSensor.blue());
 //            telemetry.addData("Lift joint encoder value  ", liftJoint.getCurrentPosition());
 //            telemetry.addData("Lift drive encoder value  ", liftDrive.getCurrentPosition());
 //            telemetry.addData("LiftPosition: ", liftJoint.getCurrentPosition());

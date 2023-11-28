@@ -38,6 +38,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -98,25 +99,28 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 public class Blue_Backstage extends LinearOpMode {
 
     /*telemetry.addData("LED", bLedOn ? "On" : "Off");
-            telemetry.addData("Clear", colorSensor.alpha());
-            telemetry.addData("Red  ", colorSensor.red());
-            telemetry.addData("Green", colorSensor.green());
-            telemetry.addData("Blue ", colorSensor.blue());
+            telemetry.addData("Clear", colorSensor1.alpha());
+            telemetry.addData("Red  ", colorSensor1.red());
+            telemetry.addData("Green", colorSensor1.green());
+            telemetry.addData("Blue ", colorSensor1.blue());
             telemetry.addData("Hue", hsvValues[0]);
 
      */
-    int colorSensorRed = 0;
-    int colorSensorGreen = 0;
-    int colorSensorBlue = 0;
-    float colorSensorHue = 0;
-    int colorSensorClear = 0;
+    int colorSensor1Red = 0;
+    int colorSensor1Green = 0;
+    int colorSensor1Blue = 0;
+    float colorSensor1Hue = 0;
+    int colorSensor1Clear = 0;
     /* Declare OpMode members. */
-    ColorSensor colorSensor = null;    // Hardware Device Object
+    ColorSensor colorSensor1 = null;    // Hardware Device Object
+    ColorSensor colorSensor2 = null;
 
     DcMotor FLDrive = null; // Front Left Drive Motor
     DcMotor FRDrive = null; // Front Right Drive Motor
     DcMotor BLDrive = null; // Back Left Drive Motor
     DcMotor BRDrive = null; // Back Right Drive Motor
+    DcMotor liftJoint = null;
+    DcMotor liftDrive = null;
     IMU imu = null; // Inertial Measurement Unit      // Control/Expansion Hub IMU
 
     private double headingError  = 0;
@@ -153,10 +157,10 @@ public class Blue_Backstage extends LinearOpMode {
 
     // These constants define the desired driving/control characteristics
     // They can/should be tweaked to suit the specific robot drive train.
-    static final double     DRIVE_SPEED             = 0.4;     // Max driving speed for better distance accuracy.
+    static final double     DRIVE_SPEED             = 0.2;     // Max driving speed for better distance accuracy.
     static final double     TURN_SPEED              = 0.2;     // Max Turn speed to limit turn rate
     static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
-                                                               // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
+    // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
     // Define the Proportional control coefficient (or GAIN) for "heading control".
     // We define one value when Turning (larger errors), and the other is used when Driving straight (smaller errors).
     // Increase these numbers if the heading does not corrects strongly enough (eg: a heavy robot or using tracks)
@@ -173,8 +177,11 @@ public class Blue_Backstage extends LinearOpMode {
         FRDrive = hardwareMap.get(DcMotor.class, "FRDrive");
         BLDrive = hardwareMap.get(DcMotor.class, "BLDrive");
         BRDrive = hardwareMap.get(DcMotor.class, "BRDrive");
+        liftJoint = hardwareMap.get(DcMotor.class, "liftJoint");
+        liftDrive = hardwareMap.get(DcMotor.class, "liftDrive");
         // get a reference to our ColorSensor object.
-        colorSensor = hardwareMap.get(ColorSensor.class, "sensor_color1");
+        colorSensor1 = hardwareMap.get(ColorSensor.class, "sensor_color2");
+        colorSensor2 = hardwareMap.get(ColorSensor.class, "sensor_color1");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
@@ -183,10 +190,14 @@ public class Blue_Backstage extends LinearOpMode {
         BLDrive.setDirection(DcMotor.Direction.FORWARD);
         FRDrive.setDirection(DcMotor.Direction.REVERSE);
         BRDrive.setDirection(DcMotor.Direction.FORWARD);
+        liftJoint.setDirection(DcMotor.Direction.FORWARD);
+        liftDrive.setDirection(DcMotor.Direction.REVERSE);
         FLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftJoint.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         /* The next two lines define Hub orientation.
          * The Default Orientation (shown) is when a hub is mounted horizontally with the printed logo pointing UP and the USB port pointing FORWARD.
@@ -207,10 +218,14 @@ public class Blue_Backstage extends LinearOpMode {
         BLDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FRDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         BRDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftJoint.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         FRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftJoint.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Wait for the game to start (Display Gyro value while waiting)
         while (opModeInInit()) {
@@ -222,7 +237,7 @@ public class Blue_Backstage extends LinearOpMode {
         imu.resetYaw();
         waitForStart();
 
-    // Step through each leg of the path,
+        // Step through each leg of the path,
         // Notes:   Reverse movement is obtained by setting a negative distance (not speed)
         //          holdHeading() is used after turns to let the heading stabilize
         //          Add a sleep(2000) after any step to keep the telemetry data visible for review
@@ -242,45 +257,70 @@ public class Blue_Backstage extends LinearOpMode {
         driveStraight(DRIVE_SPEED,-48.0, 0.0);    // Drive in Reverse 48" (should return to approx. staring position)
 
         */
-
+        liftJoint.setPower(0.25);
+        sleep(500);
+        liftJoint.setPower(0);
+        liftDrive.setPower(0.5);
+        sleep(500);
+        liftDrive.setPower(0);
         double driftMod = 0.88;
-        driveStraight(DRIVE_SPEED, 15 * driftMod, 0);
-        turnToHeading(TURN_SPEED, -15);
-        holdHeading(TURN_SPEED,  -15.0, 0.5);    // Hold  15 Deg heading for a 1/2 second
-        driveStraight(DRIVE_SPEED, 10 * driftMod, -15);
+        driveStraight(DRIVE_SPEED, 3 * driftMod, 0);
+        turnToHeading(TURN_SPEED, 15);
+        holdHeading(TURN_SPEED,  15.0, 0.5);    // Hold  15 Deg heading for a 1/2 second
+        driveStraight(DRIVE_SPEED, 21 * driftMod, 15);
         turnToHeading(TURN_SPEED, 0);
         holdHeading(TURN_SPEED,  0, 0.5);    // Hold  0 Deg heading for a 1/2 second
         driveStraight(DRIVE_SPEED, 4 * driftMod, 0);
         sleep(500);
         colorCheck();
-        if (colorSensorBlue > 150)
+
+        if (colorSensor2.blue() > 150)
         {
-            turnToHeading(TURN_SPEED, -30);
-            holdHeading(TURN_SPEED,  -30.0, 0.5);    // Hold  30 Deg heading for a 1/2 second
-            driveStraight(DRIVE_SPEED, -10, -30);
+            turnToHeading(TURN_SPEED, 30);
+            holdHeading(TURN_SPEED,  30.0, 0.5);    // Hold  30 Deg heading for a 1/2 second
+            driveStraight(DRIVE_SPEED, -10, 30);
+            turnToHeading(TURN_SPEED, 90);
+            holdHeading(TURN_SPEED, 90, 0.5);
+            driveStraight(DRIVE_SPEED, 30, 90);
         }
         else
         {
-            turnToHeading(TURN_SPEED, 20);
-            holdHeading(TURN_SPEED,  20.0, 0.5);    // Hold  -20 Deg heading for a 1/2 second
-            driveStraight(DRIVE_SPEED, 1 * driftMod, 20);
-            turnToHeading(TURN_SPEED, 40);
-            holdHeading(TURN_SPEED,  40.0, 0.5);    // Hold  -40 Deg heading for a 1/2 second
-            driveStraight(DRIVE_SPEED, 12 * driftMod, 40);
+            turnToHeading(TURN_SPEED, -32);
+            holdHeading(TURN_SPEED, -32, 0.5);
+            driveStraight(DRIVE_SPEED, 8, -32);
+            turnToHeading(TURN_SPEED, 0);
+            holdHeading(TURN_SPEED, 0, 0.5);
+            //driveStraight(DRIVE_SPEED, 5 * driftMod, 0);
+            //turnToHeading(TURN_SPEED, 90);
+            //holdHeading(TURN_SPEED,  90.0, 0.5);    // Hold  90 Deg heading for a 1/2 second
+            //driveStraight(DRIVE_SPEED, 5 * driftMod, 90);
             sleep(500);
-            colorCheck();
-            if (colorSensorBlue >150)
+            if (colorSensor1.blue() > 400)
             {
-                driveStraight(DRIVE_SPEED, -10, 40);
+                driveStraight(DRIVE_SPEED, 2, 0);
+                driveStraight(DRIVE_SPEED, -10, 0);
+                turnToHeading(TURN_SPEED, 90);
+                holdHeading(TURN_SPEED, 90, 0.5);
+                driveStraight(DRIVE_SPEED, 36, 90);
             }
             else
             {
-                turnToHeading(TURN_SPEED, 90);
-                holdHeading(TURN_SPEED, 90, 0.5); // Hold -90 Deg heading for a 1/2 second
-                driveStraight(DRIVE_SPEED, 4, 90);
-                driveStraight(DRIVE_SPEED, -10, 90);
+                driveStraight(DRIVE_SPEED, 4, 0);
+                while( getHeading() < -70 || getHeading() > -80)
+                {
+                    BRDrive.setPower(DRIVE_SPEED);
+                    FRDrive.setPower(DRIVE_SPEED);
+                }
+                driveStraight(DRIVE_SPEED, 18, -70);
+                driveStraight(DRIVE_SPEED, -36, -70);
             }
+
+
+
+
         }
+
+
 
 
 
@@ -288,7 +328,7 @@ public class Blue_Backstage extends LinearOpMode {
         turnToHeading(TURN_SPEED, -20);
         colorCheck();
         sleep(5000);
-        if (colorSensorRed > 250)
+        if (colorSensor1Red > 250)
         {
             turnToHeading(TURN_SPEED, 20);
             driveStraight(DRIVE_SPEED, 3, 0);
@@ -300,7 +340,7 @@ public class Blue_Backstage extends LinearOpMode {
             turnToHeading(TURN_SPEED, -45);
             driveStraight(DRIVE_SPEED, 2,-45);
             colorCheck();
-            if (colorSensorRed > 250)
+            if (colorSensor1Red > 250)
             {
                 driveStraight(DRIVE_SPEED, 4, -45);
             }
@@ -310,6 +350,8 @@ public class Blue_Backstage extends LinearOpMode {
                 turnToHeading(TURN_SPEED, 45);
                 driveStraight(DRIVE_SPEED, 6, 45);
             }
+
+
         }
         driveStraight(DRIVE_SPEED, -25.0, 0.0);    // Drive Backward 25"
         sleep(500);
@@ -356,7 +398,7 @@ public class Blue_Backstage extends LinearOpMode {
 
 
         // Set the LED in the beginning
-        colorSensor.enableLed(bLedOn);
+        colorSensor1.enableLed(bLedOn);
         // check the status of the x button on either gamepad.
         bCurrState = true;
 
@@ -365,28 +407,28 @@ public class Blue_Backstage extends LinearOpMode {
 
             // button is transitioning to a pressed state. So Toggle LED
             bLedOn = !bLedOn;
-            colorSensor.enableLed(bLedOn);
+            colorSensor1.enableLed(bLedOn);
         }
 
         // update previous state variable.
         bPrevState = bCurrState;
 
         // convert the RGB values to HSV values.
-        Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
+        Color.RGBToHSV(colorSensor1.red() * 8, colorSensor1.green() * 8, colorSensor1.blue() * 8, hsvValues);
 
         // send the info back to driver station using telemetry function.
         telemetry.addData("LED", bLedOn ? "On" : "Off");
-        telemetry.addData("Clear", colorSensor.alpha());
-        telemetry.addData("Red  ", colorSensor.red());
-        telemetry.addData("Green", colorSensor.green());
-        telemetry.addData("Blue ", colorSensor.blue());
+        telemetry.addData("Clear", colorSensor1.alpha());
+        telemetry.addData("Red  ", colorSensor1.red());
+        telemetry.addData("Green", colorSensor1.green());
+        telemetry.addData("Blue ", colorSensor1.blue());
         telemetry.addData("Hue", hsvValues[0]);
 
-        colorSensorClear = colorSensor.alpha();
-        colorSensorRed = colorSensor.red();
-        colorSensorGreen = colorSensor.green();
-        colorSensorBlue = colorSensor.blue();
-        colorSensorHue = hsvValues[0];
+        colorSensor1Clear = colorSensor1.alpha();
+        colorSensor1Red = colorSensor1.red();
+        colorSensor1Green = colorSensor1.green();
+        colorSensor1Blue = colorSensor1.blue();
+        colorSensor1Hue = hsvValues[0];
 
         // change the background color to match the color detected by the RGB sensor.
         // pass a reference to the hue, saturation, and value array as an argument
@@ -410,17 +452,17 @@ public class Blue_Backstage extends LinearOpMode {
 
 
     /**
-    *  Drive in a straight line, on a fixed compass heading (angle), based on encoder counts.
-    *  Move will stop if either of these conditions occur:
-    *  1) Move gets to the desired position
-    *  2) Driver stops the OpMode running.
-    *
-    * @param maxDriveSpeed MAX Speed for forward/rev motion (range 0 to +1.0) .
-    * @param distance   Distance (in inches) to move from current position.  Negative distance means move backward.
-    * @param heading      Absolute Heading Angle (in Degrees) relative to last gyro reset.
-    *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-    *                   If a relative angle is required, add/subtract from the current robotHeading.
-    */
+     *  Drive in a straight line, on a fixed compass heading (angle), based on encoder counts.
+     *  Move will stop if either of these conditions occur:
+     *  1) Move gets to the desired position
+     *  2) Driver stops the OpMode running.
+     *
+     * @param maxDriveSpeed MAX Speed for forward/rev motion (range 0 to +1.0) .
+     * @param distance   Distance (in inches) to move from current position.  Negative distance means move backward.
+     * @param heading      Absolute Heading Angle (in Degrees) relative to last gyro reset.
+     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
+     *                   If a relative angle is required, add/subtract from the current robotHeading.
+     */
     public void driveStraight(double maxDriveSpeed,
                               double distance,
                               double heading) {
@@ -453,7 +495,7 @@ public class Blue_Backstage extends LinearOpMode {
 
             // keep looping while we are still active, and BOTH motors are running.
             while (opModeIsActive() &&
-                   (FLDrive.isBusy() && FRDrive.isBusy() && BLDrive.isBusy() && BRDrive.isBusy())) {
+                    (FLDrive.isBusy() && FRDrive.isBusy() && BLDrive.isBusy() && BRDrive.isBusy())) {
 
                 // Determine required steering to keep on heading
                 turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);

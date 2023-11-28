@@ -269,7 +269,7 @@ public class Blue_Depot extends LinearOpMode {
             driveStraight(DRIVE_SPEED, 12 * driftMod, -40);
             sleep(500);
             colorCheck();
-            if (colorSensorBlue >150)
+            if (colorSensorBlue >400)
             {
                 driveStraight(DRIVE_SPEED, -10, -40);
             }
