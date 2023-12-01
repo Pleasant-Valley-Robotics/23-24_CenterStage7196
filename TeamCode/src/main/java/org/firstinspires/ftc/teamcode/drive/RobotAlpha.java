@@ -35,7 +35,8 @@ public class RobotAlpha extends LinearOpMode {
         DcMotor liftJoint = null;
         DcMotor leftActuator = null;
         DcMotor rightActuator = null;
-        ColorSensor colorSensor = null;
+        ColorSensor colorSensor1 = null;
+        ColorSensor colorSensor2 = null;
 
         CRServo droneLaunch = null;
         CRServo claw = null;
@@ -49,7 +50,8 @@ public class RobotAlpha extends LinearOpMode {
         liftJoint = hardwareMap.get(DcMotor.class, "liftJoint");
         leftActuator = hardwareMap.get(DcMotor.class, "leftActuator");
         rightActuator = hardwareMap.get(DcMotor.class, "rightActuator");
-        colorSensor = hardwareMap.get(ColorSensor.class, "sensor_color1");
+        colorSensor1 = hardwareMap.get(ColorSensor.class, "sensor_color1");
+        colorSensor2 = hardwareMap.get(ColorSensor.class, "sensor_color2");
 
         droneLaunch = hardwareMap.get(CRServo.class, "droneLaunch");
         claw = hardwareMap.get(CRServo.class, "claw");
@@ -249,8 +251,12 @@ public class RobotAlpha extends LinearOpMode {
             } else {
                 liftJoint.setPower(0);
             }
-            telemetry.addData("Red  ", colorSensor.red());
-            telemetry.addData("Blue:  ",colorSensor.blue());
+            telemetry.addData("Red Left:  ", colorSensor1.red());
+            telemetry.addData("Blue Left:  ",colorSensor1.blue());
+            telemetry.addData("Green Left:  ",colorSensor1.green());
+            telemetry.addData("Red Right:  ",colorSensor2.red());
+            telemetry.addData("Blue Right:  ",colorSensor2.blue());
+            telemetry.addData("Green Left:  ",colorSensor1.green());
 //            telemetry.addData("Lift joint encoder value  ", liftJoint.getCurrentPosition());
 //            telemetry.addData("Lift drive encoder value  ", liftDrive.getCurrentPosition());
 //            telemetry.addData("LiftPosition: ", liftJoint.getCurrentPosition());
