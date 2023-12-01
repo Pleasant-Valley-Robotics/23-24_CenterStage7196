@@ -295,7 +295,7 @@ public class Red_Backstage extends LinearOpMode {
             //holdHeading(TURN_SPEED,  90.0, 0.5);    // Hold  90 Deg heading for a 1/2 second
             //driveStraight(DRIVE_SPEED, 5 * driftMod, 90);
             sleep(500);
-            if (colorSensor2.red() > 150 && colorSensor2.blue() < 250)
+            if (colorSensor2.red() > 150 && colorSensor2.blue() < 330)
             {
                 driveStraight(DRIVE_SPEED, 2, 0);
                 driveStraight(DRIVE_SPEED, -10, 0);
