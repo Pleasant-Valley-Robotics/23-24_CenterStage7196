@@ -274,7 +274,7 @@ public class Red_Backstage extends LinearOpMode {
         sleep(500);
         colorCheck();
 
-        if (colorSensor1Red > 150)
+        if (colorSensor1.red() > 150)
         {
             turnToHeading(TURN_SPEED, -30);
             holdHeading(TURN_SPEED,  -30.0, 0.5);    // Hold  30 Deg heading for a 1/2 second
@@ -378,10 +378,10 @@ public class Red_Backstage extends LinearOpMode {
     // **********  HIGH Level driving functions.  ********************
     public void colorCheck() {
         // hsvValues is an array that will hold the hue, saturation, and value information.
-        float hsvValues[] = {0F,0F,0F};
+        float[] hsvValues = {0F,0F,0F};
 
         // values is a reference to the hsvValues array.
-        final float values[] = hsvValues;
+        final float[] values = hsvValues;
 
         // get a reference to the RelativeLayout so we can change the background
         // color of the Robot Controller app to match the hue detected by the RGB sensor.
