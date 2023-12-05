@@ -98,14 +98,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 //@Disabled
 public class Red_Backstage extends LinearOpMode {
 
-    /*telemetry.addData("LED", bLedOn ? "On" : "Off");
-            telemetry.addData("Clear", colorSensor1.alpha());
-            telemetry.addData("Red  ", colorSensor1.red());
-            telemetry.addData("Green", colorSensor1.green());
-            telemetry.addData("Blue ", colorSensor1.blue());
-            telemetry.addData("Hue", hsvValues[0]);
-
-     */
     int colorSensor1Red = 0;
     int colorSensor1Green = 0;
     int colorSensor1Blue = 0;
@@ -141,12 +133,6 @@ public class Red_Backstage extends LinearOpMode {
 
     private int     backRightTarget   = 0;
 
-    // Calculate the COUNTS_PER_INCH for your specific drive train.
-    // Go to your motor vendor website to determine your motor's COUNTS_PER_MOTOR_REV
-    // For external drive gearing, set DRIVE_GEAR_REDUCTION as needed.
-    // For example, use a value of 2.0 for a 12-tooth spur gear driving a 24-tooth spur gear.
-    // This is gearing DOWN for less speed and more torque.
-    // For gearing UP, use a gear ratio less than 1.0. Note this will affect the direction of wheel rotation.
     private ElapsedTime runtime = new ElapsedTime(); // Timer for tracking time
 
     // Constants for calculating encoder counts and speed
@@ -183,9 +169,6 @@ public class Red_Backstage extends LinearOpMode {
         colorSensor1 = hardwareMap.get(ColorSensor.class, "sensor_color2");
         colorSensor2 = hardwareMap.get(ColorSensor.class, "sensor_color1");
 
-        // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
-        // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
-        // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
         FLDrive.setDirection(DcMotor.Direction.REVERSE);
         BLDrive.setDirection(DcMotor.Direction.FORWARD);
         FRDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -199,11 +182,6 @@ public class Red_Backstage extends LinearOpMode {
         liftJoint.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        /* The next two lines define Hub orientation.
-         * The Default Orientation (shown) is when a hub is mounted horizontally with the printed logo pointing UP and the USB port pointing FORWARD.
-         *
-         * To Do:  EDIT these two lines to match YOUR mounting configuration.
-         */
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
         RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.UP;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
@@ -237,26 +215,6 @@ public class Red_Backstage extends LinearOpMode {
         imu.resetYaw();
         waitForStart();
 
-    // Step through each leg of the path,
-        // Notes:   Reverse movement is obtained by setting a negative distance (not speed)
-        //          holdHeading() is used after turns to let the heading stabilize
-        //          Add a sleep(2000) after any step to keep the telemetry data visible for review
-
-       /* driveStraight(DRIVE_SPEED, 24.0, 0.0);    // Drive Forward 24"
-        turnToHeading( TURN_SPEED, -45.0);               // Turn  CW to -45 Degrees
-        holdHeading( TURN_SPEED, -45.0, 0.5);   // Hold -45 Deg heading for a 1/2 second
-        sleep(2000);
-        driveStraight(DRIVE_SPEED, 17.0, -45.0);  // Drive Forward 17" at -45 degrees (12"x and 12"y)
-        turnToHeading( TURN_SPEED,  45.0);               // Turn  CCW  to  45 Degrees
-        holdHeading( TURN_SPEED,  45.0, 0.5);    // Hold  45 Deg heading for a 1/2 second
-        sleep(2000);
-        driveStraight(DRIVE_SPEED, 17.0, 45.0);  // Drive Forward 17" at 45 degrees (-12"x and 12"y)
-        turnToHeading( TURN_SPEED,   0.0);               // Turn  CW  to 0 Degrees
-        holdHeading( TURN_SPEED,   0.0, 1.0);    // Hold  0 Deg heading for 1 second
-        sleep(2000);
-        driveStraight(DRIVE_SPEED,-48.0, 0.0);    // Drive in Reverse 48" (should return to approx. staring position)
-
-        */
         liftJoint.setPower(0.25);
         sleep(500);
         liftJoint.setPower(0);
@@ -290,10 +248,6 @@ public class Red_Backstage extends LinearOpMode {
             driveStraight(DRIVE_SPEED, 8, 32);
             turnToHeading(TURN_SPEED, 0);
             holdHeading(TURN_SPEED, 0, 0.5);
-            //driveStraight(DRIVE_SPEED, 5 * driftMod, 0);
-            //turnToHeading(TURN_SPEED, 90);
-            //holdHeading(TURN_SPEED,  90.0, 0.5);    // Hold  90 Deg heading for a 1/2 second
-            //driveStraight(DRIVE_SPEED, 5 * driftMod, 90);
             sleep(500);
             if (colorSensor2.red() > 150 && colorSensor2.blue() < 330)
             {
@@ -314,58 +268,7 @@ public class Red_Backstage extends LinearOpMode {
                 driveStraight(DRIVE_SPEED, 18, 70);
                 driveStraight(DRIVE_SPEED, -36, 70);
             }
-
-
-
-
         }
-
-
-
-
-
-        /*driveStraight(DRIVE_SPEED, 28.0, 0.0);    // Drive Forward 28"
-        turnToHeading(TURN_SPEED, -20);
-        colorCheck();
-        sleep(5000);
-        if (colorSensor1Red > 250)
-        {
-            turnToHeading(TURN_SPEED, 20);
-            driveStraight(DRIVE_SPEED, 3, 0);
-        }
-        else
-        {
-            turnToHeading(TURN_SPEED, 0);
-            driveStraight(DRIVE_SPEED, -4, 0);
-            turnToHeading(TURN_SPEED, -45);
-            driveStraight(DRIVE_SPEED, 2,-45);
-            colorCheck();
-            if (colorSensor1Red > 250)
-            {
-                driveStraight(DRIVE_SPEED, 4, -45);
-            }
-            else
-            {
-                driveStraight(DRIVE_SPEED, -2, -45);
-                turnToHeading(TURN_SPEED, 45);
-                driveStraight(DRIVE_SPEED, 6, 45);
-            }
-
-
-        }
-        driveStraight(DRIVE_SPEED, -25.0, 0.0);    // Drive Backward 25"
-        sleep(500);
-        turnToHeading(TURN_SPEED, -90.0);               // Turn  CW to -90 Degrees
-        sleep(500);
-        holdHeading(TURN_SPEED,  -90.0, 0.5);    // Hold  -90 Deg heading for a 1/2 second
-        sleep(500);
-        driveStraight(DRIVE_SPEED, 94.0, -90.0);    // Drive Forward 95"
-
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
-        sleep(1000);  // Pause to display last telemetry message.
-
-         */
     }
 
     /*
