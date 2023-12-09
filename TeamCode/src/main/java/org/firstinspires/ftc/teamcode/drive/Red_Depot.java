@@ -97,14 +97,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 //@Disabled
 public class Red_Depot extends LinearOpMode {
 
-    /*telemetry.addData("LED", bLedOn ? "On" : "Off");
-            telemetry.addData("Clear", colorSensor.alpha());
-            telemetry.addData("Red  ", colorSensor.red());
-            telemetry.addData("Green", colorSensor.green());
-            telemetry.addData("Blue ", colorSensor.blue());
-            telemetry.addData("Hue", hsvValues[0]);
-
-     */
     int colorSensorRed = 0;
     int colorSensorGreen = 0;
     int colorSensorBlue = 0;
@@ -222,27 +214,6 @@ public class Red_Depot extends LinearOpMode {
         imu.resetYaw();
         waitForStart();
 
-    // Step through each leg of the path,
-        // Notes:   Reverse movement is obtained by setting a negative distance (not speed)
-        //          holdHeading() is used after turns to let the heading stabilize
-        //          Add a sleep(2000) after any step to keep the telemetry data visible for review
-
-       /* driveStraight(DRIVE_SPEED, 24.0, 0.0);    // Drive Forward 24"
-        turnToHeading( TURN_SPEED, -45.0);               // Turn  CW to -45 Degrees
-        holdHeading( TURN_SPEED, -45.0, 0.5);   // Hold -45 Deg heading for a 1/2 second
-        sleep(2000);
-        driveStraight(DRIVE_SPEED, 17.0, -45.0);  // Drive Forward 17" at -45 degrees (12"x and 12"y)
-        turnToHeading( TURN_SPEED,  45.0);               // Turn  CCW  to  45 Degrees
-        holdHeading( TURN_SPEED,  45.0, 0.5);    // Hold  45 Deg heading for a 1/2 second
-        sleep(2000);
-        driveStraight(DRIVE_SPEED, 17.0, 45.0);  // Drive Forward 17" at 45 degrees (-12"x and 12"y)
-        turnToHeading( TURN_SPEED,   0.0);               // Turn  CW  to 0 Degrees
-        holdHeading( TURN_SPEED,   0.0, 1.0);    // Hold  0 Deg heading for 1 second
-        sleep(2000);
-        driveStraight(DRIVE_SPEED,-48.0, 0.0);    // Drive in Reverse 48" (should return to approx. staring position)
-
-        */
-
         double driftMod = 0.88;
         driveStraight(DRIVE_SPEED, 15 * driftMod, 0);
         turnToHeading(TURN_SPEED, 15);
@@ -281,49 +252,6 @@ public class Red_Depot extends LinearOpMode {
                 driveStraight(DRIVE_SPEED, -10, -90);
             }
         }
-
-
-
-        /*driveStraight(DRIVE_SPEED, 28.0, 0.0);    // Drive Forward 28"
-        turnToHeading(TURN_SPEED, -20);
-        colorCheck();
-        sleep(5000);
-        if (colorSensorRed > 250)
-        {
-            turnToHeading(TURN_SPEED, 20);
-            driveStraight(DRIVE_SPEED, 3, 0);
-        }
-        else
-        {
-            turnToHeading(TURN_SPEED, 0);
-            driveStraight(DRIVE_SPEED, -4, 0);
-            turnToHeading(TURN_SPEED, -45);
-            driveStraight(DRIVE_SPEED, 2,-45);
-            colorCheck();
-            if (colorSensorRed > 250)
-            {
-                driveStraight(DRIVE_SPEED, 4, -45);
-            }
-            else
-            {
-                driveStraight(DRIVE_SPEED, -2, -45);
-                turnToHeading(TURN_SPEED, 45);
-                driveStraight(DRIVE_SPEED, 6, 45);
-            }
-        }
-        driveStraight(DRIVE_SPEED, -25.0, 0.0);    // Drive Backward 25"
-        sleep(500);
-        turnToHeading(TURN_SPEED, -90.0);               // Turn  CW to -90 Degrees
-        sleep(500);
-        holdHeading(TURN_SPEED,  -90.0, 0.5);    // Hold  -90 Deg heading for a 1/2 second
-        sleep(500);
-        driveStraight(DRIVE_SPEED, 94.0, -90.0);    // Drive Forward 95"
-
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
-        sleep(1000);  // Pause to display last telemetry message.
-
-         */
     }
 
     /*
