@@ -35,8 +35,10 @@ import android.view.View;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -111,6 +113,7 @@ public class New_Red_Backstage extends LinearOpMode {
     DcMotor BRDrive = null; // Back Right Drive Motor
     DcMotor liftJoint = null;
     DcMotor liftDrive = null;
+    CRServo flimsyFlicker = null; //(pixel dropper for backboard) name picked by connor and jesse don't yell at me - oliver
     IMU imu = null; // Inertial Measurement Unit      // Control/Expansion Hub IMU
 
     private double headingError  = 0;
@@ -166,6 +169,7 @@ public class New_Red_Backstage extends LinearOpMode {
         // get a reference to our ColorSensor object.
         colorSensor1 = hardwareMap.get(ColorSensor.class, "sensor_color2");
         colorSensor2 = hardwareMap.get(ColorSensor.class, "sensor_color1");
+        flimsyFlicker = hardwareMap.get(CRServo.class, "flimsyFlicker");
 
         FLDrive.setDirection(DcMotor.Direction.REVERSE);
         BLDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -173,6 +177,7 @@ public class New_Red_Backstage extends LinearOpMode {
         BRDrive.setDirection(DcMotor.Direction.FORWARD);
         liftJoint.setDirection(DcMotor.Direction.FORWARD);
         liftDrive.setDirection(DcMotor.Direction.REVERSE);
+        flimsyFlicker.setDirection(DcMotorSimple.Direction.FORWARD);
         FLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -220,6 +225,8 @@ public class New_Red_Backstage extends LinearOpMode {
         sleep(500);
         liftDrive.setPower(0);
         double driftMod = 0.88;
+        dropYellowPixel();
+        /*
         driveStraight(DRIVE_SPEED, 3 * driftMod, 0);
         turnToHeading(TURN_SPEED, -15);
         holdHeading(TURN_SPEED,  -15.0, 0.5);    // Hold  15 Deg heading for a 1/2 second
@@ -267,6 +274,7 @@ public class New_Red_Backstage extends LinearOpMode {
                 driveStraight(DRIVE_SPEED, -36, 70);
             }
         }
+        */
     }
 
     /*
@@ -574,5 +582,12 @@ public class New_Red_Backstage extends LinearOpMode {
     public double getHeading() {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         return orientation.getYaw(AngleUnit.DEGREES);
+    }
+    public void dropYellowPixel(){
+        flimsyFlicker.setPower(-0.25);
+        sleep(1000);
+        flimsyFlicker.setPower(1);
+        //Oliver add code to drop the yellow pixel here. Servo power -.25 to drop, servo power 1 when not dropping.
+        //After you drop, reset the servo position back to 1
     }
 }

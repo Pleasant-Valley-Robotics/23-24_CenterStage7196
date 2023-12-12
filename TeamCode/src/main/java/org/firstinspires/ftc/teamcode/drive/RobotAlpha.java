@@ -18,6 +18,8 @@ import com.qualcomm.robotcore.hardware.SwitchableLight;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
@@ -51,7 +53,9 @@ public class RobotAlpha extends LinearOpMode {
         ColorSensor colorSensor2 = null;
 
         CRServo droneLaunch = null;
-        CRServo claw = null;
+        CRServo claw1 = null;
+        CRServo claw2 = null;
+        CRServo knuckle = null;
 
         initTfod();
 
@@ -83,7 +87,9 @@ public class RobotAlpha extends LinearOpMode {
         colorSensor1 = hardwareMap.get(ColorSensor.class, "sensor_color1");
         colorSensor2 = hardwareMap.get(ColorSensor.class, "sensor_color2");
         droneLaunch = hardwareMap.get(CRServo.class, "droneLaunch");
-        claw = hardwareMap.get(CRServo.class, "claw");
+        claw1 = hardwareMap.get(CRServo.class, "claw1");
+        claw2 = hardwareMap.get(CRServo.class, "claw2");
+        knuckle = hardwareMap.get(CRServo.class, "knuckle");
 
         FLDrive.setDirection(DcMotor.Direction.FORWARD);
         BLDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -95,7 +101,9 @@ public class RobotAlpha extends LinearOpMode {
         rightActuator.setDirection(DcMotor.Direction.FORWARD);
 
         droneLaunch.setDirection(CRServo.Direction.FORWARD);
-        claw.setDirection(CRServo.Direction.FORWARD);
+        claw1.setDirection(CRServo.Direction.FORWARD);
+        claw2.setDirection(CRServo.Direction.FORWARD);
+        knuckle.setDirection(DcMotorSimple.Direction.FORWARD);
 
         FLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -128,7 +136,7 @@ public class RobotAlpha extends LinearOpMode {
             double maxWheelPower;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double turnMovement = gamepad1.left_stick_y;
+            double turnMovement = gamepad1.left_stick_y * 0.8;
             double strafeMovement = -gamepad1.left_stick_x;
             double straightMovement = -gamepad1.right_stick_x;
 
@@ -183,8 +191,8 @@ public class RobotAlpha extends LinearOpMode {
                 liftDrive.setPower(0);
             }
 
-            boolean actuatorMoveUp = gamepad2.dpad_up;
-            boolean actuatorMoveDown = gamepad2.dpad_down;
+            boolean actuatorMoveUp = gamepad2.y;
+            boolean actuatorMoveDown = gamepad2.x;
 
             if (actuatorMoveUp && !actuatorMoveDown) {
                 leftActuator.setPower(0.7);
@@ -197,18 +205,46 @@ public class RobotAlpha extends LinearOpMode {
                 rightActuator.setPower(0);
             }
 
-            boolean clawOpen = gamepad2.a;
-            boolean clawClosed = gamepad2.b;
+            boolean clawOpen = gamepad2.b;
+            boolean clawClosed = gamepad2.a;
             //While holding A, hold the pixel
-            if (gamepad2.a) {
-                claw.setPower(0.9);
+            if (clawOpen) {
+                claw1.setPower(0.9);
+                claw2.setPower(0.9);
             }
             //When let go of A, let go of pixel
-            else if (gamepad2.b){
-                claw.setPower(1);
+            else if (clawClosed){
+                claw1.setPower(1);
+                claw2.setPower(1);
             }
 
-            if (gamepad2.right_trigger > 0.1) {
+            double knuckleUp = 0.0;
+            double knuckleDown = 0.0;
+
+            if (gamepad2.right_trigger > 0.05){
+                knuckleDown = gamepad2.right_trigger;
+            }
+            else{
+                knuckleDown = 0;
+            }
+
+            if (gamepad2.left_trigger > 0.05){
+                knuckleUp = gamepad2.left_trigger;
+            }
+            else{
+                knuckleUp = 0;
+            }
+            if (knuckleUp > 0){
+                knuckle.setPower(knuckle.getPower() + knuckleUp * 0.1);
+            }
+            else if (knuckleDown > 0){
+                knuckle.setPower(knuckle.getPower() - knuckleDown * 0.1);
+            }
+            else{
+                knuckle.setPower(knuckle.getPower());
+            }
+
+            if (gamepad2.right_bumper) {
                 droneLaunch.setPower(0);
             }
             else
