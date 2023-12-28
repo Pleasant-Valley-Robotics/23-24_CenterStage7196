@@ -178,10 +178,10 @@ public class Blue_Backstage extends LinearOpMode {
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        FLDrive.setDirection(DcMotor.Direction.REVERSE);
-        BLDrive.setDirection(DcMotor.Direction.FORWARD);
-        FRDrive.setDirection(DcMotor.Direction.REVERSE);
-        BRDrive.setDirection(DcMotor.Direction.FORWARD);
+        FLDrive.setDirection(DcMotor.Direction.FORWARD);
+        BLDrive.setDirection(DcMotor.Direction.REVERSE);
+        FRDrive.setDirection(DcMotor.Direction.FORWARD);
+        BRDrive.setDirection(DcMotor.Direction.REVERSE);
         liftJoint.setDirection(DcMotor.Direction.FORWARD);
         liftDrive.setDirection(DcMotor.Direction.REVERSE);
         FLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -229,47 +229,47 @@ public class Blue_Backstage extends LinearOpMode {
         imu.resetYaw();
         waitForStart();
 
-        liftJoint.setPower(0.25);
-        sleep(500);
+        liftJoint.setPower(0.5);
+        sleep(700);
         liftJoint.setPower(0);
         liftDrive.setPower(0.5);
         sleep(500);
         liftDrive.setPower(0);
         double driftMod = 0.88;
-        driveStraight(DRIVE_SPEED, 3 * driftMod, 0);
-        turnToHeading(TURN_SPEED, 15);
-        holdHeading(TURN_SPEED,  15.0, 0.5);    // Hold  15 Deg heading for a 1/2 second
-        driveStraight(DRIVE_SPEED, 21 * driftMod, 15);
-        turnToHeading(TURN_SPEED, 0);
+        driveStraight(DRIVE_SPEED, 3 * driftMod, 0);    // Drive straight 3 inches
+        turnToHeading(TURN_SPEED, 17);  // Turn left 15 degrees
+        holdHeading(TURN_SPEED,  17.0, 0.5);    // Hold  15 Deg heading for a 1/2 second
+        driveStraight(DRIVE_SPEED, 20 * driftMod, 17);  // Drive straight 21 inches at 15 degree heading
+        turnToHeading(TURN_SPEED, 0);   // Turn right 15 degrees
         holdHeading(TURN_SPEED,  0, 0.5);    // Hold  0 Deg heading for a 1/2 second
-        driveStraight(DRIVE_SPEED, 4 * driftMod, 0);
-        sleep(500);
-        colorCheck();
+        driveStraight(DRIVE_SPEED, 4 * driftMod, 0);    // Drive straight 4 inches
+        sleep(500); // Wait .5 seconds
+        colorCheck();   // Check color values
 
-        if (colorSensor2.blue() > 150)
+        if (colorSensor2.blue() > 200)  // If blue value is greater than 150
         {
-            turnToHeading(TURN_SPEED, 30);
-            holdHeading(TURN_SPEED,  30.0, 0.5);    // Hold  30 Deg heading for a 1/2 second
-            driveStraight(DRIVE_SPEED, -10, 30);
+            turnToHeading(TURN_SPEED, 25);
+            holdHeading(TURN_SPEED,  25.0, 0.5);    // Hold  30 Deg heading for a 1/2 second
+            driveStraight(DRIVE_SPEED, -10, 25);
             turnToHeading(TURN_SPEED, 90);
             holdHeading(TURN_SPEED, 90, 0.5);
-            driveStraight(DRIVE_SPEED, 30, 90);
+            driveStraight(DRIVE_SPEED, 35, 90);
         }
         else
         {
-            turnToHeading(TURN_SPEED, -32);
-            holdHeading(TURN_SPEED, -32, 0.5);
-            driveStraight(DRIVE_SPEED, 8, -32);
+            turnToHeading(TURN_SPEED, -30);
+            holdHeading(TURN_SPEED, -30, 0.5);
+            driveStraight(DRIVE_SPEED, 8, -30);
             turnToHeading(TURN_SPEED, 0);
             holdHeading(TURN_SPEED, 0, 0.5);
-            //driveStraight(DRIVE_SPEED, 5 * driftMod, 0);
+            //driveStraight(DRIVE_SPEED, 4 * driftMod, 0);
             //turnToHeading(TURN_SPEED, 90);
             //holdHeading(TURN_SPEED,  90.0, 0.5);    // Hold  90 Deg heading for a 1/2 second
             //driveStraight(DRIVE_SPEED, 5 * driftMod, 90);
             sleep(500);
-            if (colorSensor1.blue() > 600) //&& colorSensor1.green() < 800)
+            if (colorSensor1.blue() > 200) //&& colorSensor1.green() < 800)
             {
-                driveStraight(DRIVE_SPEED, 2, 0);
+                driveStraight(DRIVE_SPEED, 1.5, 0);
                 driveStraight(DRIVE_SPEED, -10, 0);
                 turnToHeading(TURN_SPEED, 90);
                 holdHeading(TURN_SPEED, 90, 0.5);
@@ -280,11 +280,11 @@ public class Blue_Backstage extends LinearOpMode {
                 driveStraight(DRIVE_SPEED, 4, 0);
                 while( getHeading() > -70 || getHeading() < -80)
                 {
-                    BRDrive.setPower(DRIVE_SPEED);
-                    FRDrive.setPower(DRIVE_SPEED);
+                    BRDrive.setPower(0.4);
+                    FRDrive.setPower(0.4);
                 }
-                driveStraight(DRIVE_SPEED, 18, -70);
-                driveStraight(DRIVE_SPEED, -36, -70);
+                driveStraight(0.2, 18, -70);
+                driveStraight(1, -36, -70);
             }
         }
     }

@@ -18,6 +18,16 @@ import com.qualcomm.robotcore.hardware.SwitchableLight;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.tfod.TfodProcessor;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 //import org.firstinspires.ftc.teamcode.util.Encoder;
@@ -37,9 +47,14 @@ public class RobotAlpha extends LinearOpMode {
         DcMotor rightActuator = null;
         ColorSensor colorSensor1 = null;
         ColorSensor colorSensor2 = null;
+        DistanceSensor dist = null;
 
         CRServo droneLaunch = null;
         CRServo claw = null;
+        CRServo flimsyFlicker = null;
+
+        boolean pose = false;
+        boolean strike = false;
 
         //Write numerical variables here
         FLDrive = hardwareMap.get(DcMotor.class, "FLDrive");
@@ -53,8 +68,11 @@ public class RobotAlpha extends LinearOpMode {
         colorSensor1 = hardwareMap.get(ColorSensor.class, "sensor_color1");
         colorSensor2 = hardwareMap.get(ColorSensor.class, "sensor_color2");
 
+        dist = hardwareMap.get(DistanceSensor.class, "dist");
+
         droneLaunch = hardwareMap.get(CRServo.class, "droneLaunch");
         claw = hardwareMap.get(CRServo.class, "claw");
+        flimsyFlicker = hardwareMap.get(CRServo.class, "flimsyFlicker");
 
         FLDrive.setDirection(DcMotor.Direction.FORWARD);
         BLDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -102,6 +120,24 @@ public class RobotAlpha extends LinearOpMode {
             double straightMovement = gamepad1.left_stick_y;
             double strafeMovement = -gamepad1.left_stick_x;
             double turnMovement = -gamepad1.right_stick_x;
+
+            double turnMovement = gamepad1.right_stick_x;
+            double strafeMovement = gamepad1.left_stick_x;
+            double straightMovement = -gamepad1.left_stick_y;
+
+            if (gamepad1.dpad_down) {
+                visionPortal.stopStreaming();
+            } else if (gamepad1.dpad_up) {
+                visionPortal.resumeStreaming();
+            }
+
+
+            if (gamepad1.left_trigger != 0) {
+                flimsyFlicker.setPower(-0.1);
+            }
+            else {
+                flimsyFlicker.setPower(0);
+            }
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -153,6 +189,7 @@ public class RobotAlpha extends LinearOpMode {
             telemetry.update();
 
 
+
             //TODO: WRITE MORE CODE HERE TO MAKE MOTORS MOVE
 /* THIS CODE IS FOR USING THE LIFT WITH BUTTONS. TESTING PURPOSES ONLY!
             if(gamepad2.x && (!gamepad2.y)){
@@ -173,8 +210,11 @@ public class RobotAlpha extends LinearOpMode {
             }
             */
 
+            //*TODO: WRITE MORE CODE HERE TO MAKE MOTORS MOVE
+
+
             // For analog
-            double liftJoystick = gamepad2.left_stick_y;
+            double liftJoystick = gamepad2.right_stick_y;
             if (liftJoystick > 1) {
                 liftJoystick = 1.0;
             }
@@ -198,16 +238,17 @@ public class RobotAlpha extends LinearOpMode {
                 rightActuator.setPower(0);
             }
 
-            boolean clawOpen = gamepad2.a;
-            boolean clawClosed = gamepad2.b;
+//            boolean clawOpen = gamepad2.a;
+//            boolean clawClosed = gamepad2.b;
             //While holding A, hold the pixel
             if (gamepad2.a) {
-                claw.setPower(0.9);
+                claw.setPower(0);
             }
             //When let go of A, let go of pixel
             else if (gamepad2.b){
                 claw.setPower(1);
             }
+
 
             /*
             double launchDroneServo = gamepad2.right_trigger;
@@ -220,6 +261,42 @@ public class RobotAlpha extends LinearOpMode {
                 droneLaunch.setPower(0);
             }
              */
+
+/*
+            if(gamepad2.a && !(pose)){
+                pose = true;
+            } else if (gamepad2.a && pose){
+                pose = false;
+                liftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                liftJoint.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                liftJoint.setTargetPosition(0);
+                liftDrive.setTargetPosition(0);
+                claw.setPower(-0.9);
+            }
+
+            if(pose){
+                //Run to a lift position
+                liftJoint.setTargetPosition(200);
+                liftDrive.setTargetPosition(200);
+                liftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                liftJoint.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            }
+
+            if(dist.getDistance() < 1 && (pose)){
+                //Begin Strike phase
+                liftJoint.setTargetPosition();
+                liftDrive.setTargetPosition();
+                liftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                liftJoint.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                strike = true;
+            }
+
+            if(strike){
+                claw.setPower(.9);
+            }
+ */
+
             if (gamepad2.right_trigger > 0.1) {
                 droneLaunch.setPower(0);
             }
@@ -242,7 +319,7 @@ public class RobotAlpha extends LinearOpMode {
 
 
             //analog
-            double jointMove = gamepad2.right_stick_y;
+            double jointMove = gamepad2.left_stick_y;
             if (jointMove > 1.0) {
                 jointMove = 1.0;
             }
@@ -259,6 +336,69 @@ public class RobotAlpha extends LinearOpMode {
             telemetry.addData("Blue Right:  ",colorSensor2.blue());
             telemetry.addData("Green Right:  ",colorSensor2.green());
             telemetry.addData("ARGB Right:  ",colorSensor2.argb());
+            telemetry.addData("Claw power:  ",claw.getPower());
         }
     }
+
+
+    private void initTfod() {
+
+        // Create the TensorFlow processor by using a builder.
+        tfod = new TfodProcessor.Builder()
+
+                // With the following lines commented out, the default TfodProcessor Builder
+                // will load the default model for the season. To define a custom model to load,
+                // choose one of the following:
+                //   Use setModelAssetName() if the custom TF Model is built in as an asset (AS only).
+                //   Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
+                //.setModelAssetName(TFOD_MODEL_ASSET)
+                //.setModelFileName(TFOD_MODEL_FILE)
+
+                // The following default settings are available to un-comment and edit as needed to
+                // set parameters for custom models.
+                //.setModelLabels(LABELS)
+                //.setIsModelTensorFlow2(true)
+                //.setIsModelQuantized(true)
+                //.setModelInputSize(300)
+                //.setModelAspectRatio(16.0 / 9.0)
+
+                .build();
+
+        // Create the vision portal by using a builder.
+        VisionPortal.Builder builder = new VisionPortal.Builder();
+
+        // Set the camera (webcam vs. built-in RC phone camera).
+        if (USE_WEBCAM) {
+            builder.setCamera(hardwareMap.get(WebcamName.class, "Microsoft Camera 1"));
+        } else {
+            builder.setCamera(BuiltinCameraDirection.BACK);
+        }
+
+        // Choose a camera resolution. Not all cameras support all resolutions.
+        //builder.setCameraResolution(new Size(640, 480));
+
+        // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
+        builder.enableLiveView(true);
+
+        // Set the stream format; MJPEG uses less bandwidth than default YUY2.
+        //builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
+
+        // Choose whether or not LiveView stops if no processors are enabled.
+        // If set "true", monitor shows solid orange screen if no processors enabled.
+        // If set "false", monitor shows camera view without annotations.
+        builder.setAutoStopLiveView(false);
+
+        // Set and enable the processor.
+        builder.addProcessor(tfod);
+
+        // Build the Vision Portal, using the above settings.
+        visionPortal = builder.build();
+
+        // Set confidence threshold for TFOD recognitions, at any time.
+        tfod.setMinResultConfidence(0.75f);
+
+        // Disable or re-enable the TFOD processor at any time.
+        //visionPortal.setProcessorEnabled(tfod, true);
+
+    }   // end method initTfod()
 }
