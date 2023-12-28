@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode.drive;
 
 import static java.lang.Math.signum;
-
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -18,16 +19,12 @@ import com.qualcomm.robotcore.hardware.SwitchableLight;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 //import org.firstinspires.ftc.teamcode.util.Encoder;
@@ -48,7 +45,6 @@ public class RobotAlpha extends LinearOpMode {
         ColorSensor colorSensor1 = null;
         ColorSensor colorSensor2 = null;
         DistanceSensor dist = null;
-
         CRServo droneLaunch = null;
         CRServo claw = null;
         CRServo flimsyFlicker = null;
@@ -117,19 +113,19 @@ public class RobotAlpha extends LinearOpMode {
             double maxWheelPower;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double straightMovement = gamepad1.left_stick_y;
-            double strafeMovement = -gamepad1.left_stick_x;
-            double turnMovement = -gamepad1.right_stick_x;
+            //double straightMovement = gamepad1.left_stick_y;
+            //double strafeMovement = -gamepad1.left_stick_x;
+            //double turnMovement = -gamepad1.right_stick_x;
 
             double turnMovement = gamepad1.right_stick_x;
             double strafeMovement = gamepad1.left_stick_x;
             double straightMovement = -gamepad1.left_stick_y;
 
-            if (gamepad1.dpad_down) {
+            /*if (gamepad1.dpad_down) {
                 visionPortal.stopStreaming();
             } else if (gamepad1.dpad_up) {
                 visionPortal.resumeStreaming();
-            }
+            }*/
 
 
             if (gamepad1.left_trigger != 0) {
@@ -340,9 +336,9 @@ public class RobotAlpha extends LinearOpMode {
         }
     }
 
-
+/*
     private void initTfod() {
-
+        final boolean USE_WEBCAM = true;
         // Create the TensorFlow processor by using a builder.
         tfod = new TfodProcessor.Builder()
 
@@ -401,4 +397,5 @@ public class RobotAlpha extends LinearOpMode {
         //visionPortal.setProcessorEnabled(tfod, true);
 
     }   // end method initTfod()
+    */
 }
