@@ -151,8 +151,8 @@ public class Red_Backstage extends LinearOpMode {
 
     // These constants define the desired driving/control characteristics
     // They can/should be tweaked to suit the specific robot drive train.
-    static final double     DRIVE_SPEED             = 0.2;     // Max driving speed for better distance accuracy.
-    static final double     TURN_SPEED              = 0.2;     // Max Turn speed to limit turn rate
+    static final double     DRIVE_SPEED             = 0.3;     // Max driving speed for better distance accuracy.
+    static final double     TURN_SPEED              = 0.3;     // Max Turn speed to limit turn rate
     static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
     // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
     // Define the Proportional control coefficient (or GAIN) for "heading control".
@@ -232,7 +232,6 @@ public class Red_Backstage extends LinearOpMode {
         // Set the encoders for closed loop speed control, and reset the heading.
         imu.resetYaw();
         waitForStart();
-
         liftJoint.setPower(0.5);
         sleep(700);
         liftJoint.setPower(0.05 );
@@ -242,10 +241,10 @@ public class Red_Backstage extends LinearOpMode {
         double driftMod = 0.88;
         driveStraight(DRIVE_SPEED, 3 * driftMod, 0);    // Drive straight 3 inches
         turnToHeading(TURN_SPEED, -18);  // Turn left 15 degrees
-        holdHeading(TURN_SPEED,  -18.0, 0.5);    // Hold  15 Deg heading for a 1/2 second
+        holdHeading(TURN_SPEED,  -18.0, 0.4);    // Hold  15 Deg heading for a 1/2 second
         driveStraight(DRIVE_SPEED, 20 * driftMod, -18);  // Drive straight 21 inches at 15 degree heading
         turnToHeading(TURN_SPEED, 0);   // Turn right 15 degrees
-        holdHeading(TURN_SPEED,  0, 0.5);    // Hold  0 Deg heading for a 1/2 second
+        holdHeading(TURN_SPEED,  0, 0.4);    // Hold  0 Deg heading for a 1/2 second
         driveStraight(DRIVE_SPEED, 6 * driftMod, 0);    // Drive straight 4 inches
         sleep(500); // Wait .5 seconds
 
@@ -260,44 +259,72 @@ public class Red_Backstage extends LinearOpMode {
             driveSideways(0.5, 8, 90);
             driveStraight(DRIVE_SPEED, -3, 90);
             dropPixel();
-            driveStraight(DRIVE_SPEED, 1, 90);
+            driveStraight(DRIVE_SPEED, 4, 90);
+            driveSideways(0.5, 30, 90);
+            flimsyFlicker.setPower(1);
+            sleep(500);
+            driveStraight(1, -6, 90);
         }
         else
         {
-            turnToHeading(TURN_SPEED, 30);
-            holdHeading(TURN_SPEED, 30, 0.5);
-            driveStraight(DRIVE_SPEED, 8, 30);
-            turnToHeading(TURN_SPEED, 10);
-            holdHeading(TURN_SPEED, 10, 0.5);
-            driveStraight(DRIVE_SPEED, 2, 10);
-            //driveStraight(DRIVE_SPEED, 4 * driftMod, 0);
-            //turnToHeading(TURN_SPEED, 90);
-            //holdHeading(TURN_SPEED,  90.0, 0.5);    // Hold  90 Deg heading for a 1/2 second
-            //driveStraight(DRIVE_SPEED, 5 * driftMod, 90);
+            //turnToHeading(TURN_SPEED, 30);
+            //holdHeading(TURN_SPEED, 30, 0.5);
+            //driveStraight(DRIVE_SPEED, 8, 30);
+            turnToHeading(TURN_SPEED, 0);
+            holdHeading(TURN_SPEED, 0, 0.4);
+            driveSideways(0.04, -7, 0);
+            sleep(250);
+            turnToHeading(0.3, 0);
+            holdHeading(TURN_SPEED, 0, 0.4);
+            driveStraight(0.1, 6, 0);
             sleep(500);
             if (colorSensor2.red() > 200) //&& colorSensor1.green() < 800)
             {
-                driveStraight(DRIVE_SPEED, 1.5, 0);
+                driveStraight(DRIVE_SPEED, 0.15, 0);
                 driveStraight(DRIVE_SPEED, -10, 0);
                 turnToHeading(TURN_SPEED, 90);
                 holdHeading(TURN_SPEED, 90, 0.5);
-                driveStraight(DRIVE_SPEED, -30, 90);
+                driveStraight(0.5, -35, 90);
+                sleep(500);
+                driveSideways(0.5, 14, 90);
+                turnToHeading(TURN_SPEED, 90);
+                holdHeading(TURN_SPEED, 90, 0.5);
+                driveStraight(0.2, -4, 90);
+                dropPixel();
+                sleep(1000);
+                driveStraight(DRIVE_SPEED, 4, 90);
+                driveSideways(0.5, 22, 90);
+                flimsyFlicker.setPower(1);
+                sleep(500);
+                driveStraight(1, -4, 90);
+
             }
             else
             {
                 driveStraight(DRIVE_SPEED, 4, 0);
                 while( getHeading() < 70 || getHeading() > 80)
                 {
-                    BLDrive.setPower(0.4);
-                    FLDrive.setPower(0.4);
+                    BLDrive.setPower(0.6);
+                    FLDrive.setPower(0.6);
                 }
-                driveStraight(DRIVE_SPEED, 20, 70);
-                driveStraight(DRIVE_SPEED, -10, 70);
+                driveStraight(0.3, 17, 70);
+                driveStraight(0.3, -10, 70);
                 turnToHeading(TURN_SPEED, 90);
-                holdHeading(TURN_SPEED, 90, 0.5);
-                driveStraight(DRIVE_SPEED, -15, 90);
+                holdHeading(TURN_SPEED, 90, 0.4);
+                driveStraight(0.5, -33, 90);
+                driveSideways(0.5, 18, 90);
+                driveStraight(DRIVE_SPEED, -5, 90);
+                dropPixel();
+                sleep(250);
+                driveStraight(DRIVE_SPEED, 4, 90);
+                driveSideways(0.5, 16, 90);
+                flimsyFlicker.setPower(1);
+                sleep(500);
+                driveStraight(1, -4, 90);
             }
         }
+
+
     }
 
     /*
@@ -677,11 +704,7 @@ public class Red_Backstage extends LinearOpMode {
         return orientation.getYaw(AngleUnit.DEGREES);
     }
     public void dropPixel(){
-        flimsyFlicker.setPower(0.3);
+        flimsyFlicker.setPower(-1);
         sleep(500);
-        flimsyFlicker.setPower(-0.5);
-        sleep(500);
-        flimsyFlicker.setPower(0);
-
     }
 }
