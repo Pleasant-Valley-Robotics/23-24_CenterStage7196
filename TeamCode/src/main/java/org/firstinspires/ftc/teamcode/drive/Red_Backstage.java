@@ -256,9 +256,10 @@ public class Red_Backstage extends LinearOpMode {
             turnToHeading(TURN_SPEED, 90);
             holdHeading(TURN_SPEED, 90, 0.5);
             driveStraight(DRIVE_SPEED, -33, 90);
-            driveSideways(0.5, 8, 90);
-            driveStraight(DRIVE_SPEED, -3, 90);
+            driveSideways(0.5, 6, 90);
+            driveStraight(DRIVE_SPEED, -6, 90);
             dropPixel();
+            sleep(500);
             driveStraight(DRIVE_SPEED, 4, 90);
             driveSideways(0.5, 30, 90);
             flimsyFlicker.setPower(1);
