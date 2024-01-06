@@ -36,6 +36,7 @@ import android.view.View;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -113,6 +114,7 @@ public class Blue_Backstage extends LinearOpMode {
     DcMotor BRDrive = null; // Back Right Drive Motor
     DcMotor liftJoint = null;
     DcMotor liftDrive = null;
+    CRServo flimsyFlicker = null;
     IMU imu = null; // Inertial Measurement Unit      // Control/Expansion Hub IMU
 
     private double headingError  = 0;
@@ -149,8 +151,8 @@ public class Blue_Backstage extends LinearOpMode {
 
     // These constants define the desired driving/control characteristics
     // They can/should be tweaked to suit the specific robot drive train.
-    static final double     DRIVE_SPEED             = 0.2;     // Max driving speed for better distance accuracy.
-    static final double     TURN_SPEED              = 0.2;     // Max Turn speed to limit turn rate
+    static final double     DRIVE_SPEED             = 0.3;     // Max driving speed for better distance accuracy.
+    static final double     TURN_SPEED              = 0.3;     // Max Turn speed to limit turn rate
     static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
     // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
     // Define the Proportional control coefficient (or GAIN) for "heading control".
@@ -174,6 +176,7 @@ public class Blue_Backstage extends LinearOpMode {
         // get a reference to our ColorSensor object.
         colorSensor1 = hardwareMap.get(ColorSensor.class, "sensor_color2");
         colorSensor2 = hardwareMap.get(ColorSensor.class, "sensor_color1");
+        flimsyFlicker = hardwareMap.get(CRServo.class, "flimsyFlicker");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
@@ -184,6 +187,7 @@ public class Blue_Backstage extends LinearOpMode {
         BRDrive.setDirection(DcMotor.Direction.REVERSE);
         liftJoint.setDirection(DcMotor.Direction.FORWARD);
         liftDrive.setDirection(DcMotor.Direction.REVERSE);
+        flimsyFlicker.setDirection(DcMotorSimple.Direction.FORWARD);
         FLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -250,41 +254,72 @@ public class Blue_Backstage extends LinearOpMode {
         {
             turnToHeading(TURN_SPEED, 25);
             holdHeading(TURN_SPEED,  25.0, 0.5);    // Hold  30 Deg heading for a 1/2 second
-            driveStraight(DRIVE_SPEED, -10, 25);
-            turnToHeading(TURN_SPEED, 90);
-            holdHeading(TURN_SPEED, 90, 0.5);
-            driveStraight(DRIVE_SPEED, 35, 90);
+            driveStraight(DRIVE_SPEED, -6, 25);
+            turnToHeading(TURN_SPEED, -90);
+            holdHeading(TURN_SPEED, -90, 0.5);
+            driveStraight(DRIVE_SPEED, -33, -90);
+            driveSideways(0.5, 4, -90);
+            driveStraight(DRIVE_SPEED, -3, -90);
+            dropPixel();
+            sleep(250);
+            driveStraight(DRIVE_SPEED, 4, -90);
+            driveSideways(0.5, -38, -90);
+            flimsyFlicker.setPower(1);
+            sleep(500);
+            driveStraight(1, -6, -90);
         }
         else
         {
-            turnToHeading(TURN_SPEED, -30);
-            holdHeading(TURN_SPEED, -30, 0.5);
-            driveStraight(DRIVE_SPEED, 8, -30);
             turnToHeading(TURN_SPEED, 0);
-            holdHeading(TURN_SPEED, 0, 0.5);
-            //driveStraight(DRIVE_SPEED, 4 * driftMod, 0);
-            //turnToHeading(TURN_SPEED, 90);
-            //holdHeading(TURN_SPEED,  90.0, 0.5);    // Hold  90 Deg heading for a 1/2 second
-            //driveStraight(DRIVE_SPEED, 5 * driftMod, 90);
+            holdHeading(TURN_SPEED, 0, 0.4);
+            driveSideways(0.04, 6, 0);
+            sleep(250);
+            turnToHeading(0.3, 0);
+            holdHeading(TURN_SPEED, 0, 0.4);
+            driveStraight(0.1, 6, 0);
             sleep(500);
             if (colorSensor1.blue() > 200) //&& colorSensor1.green() < 800)
             {
-                driveStraight(DRIVE_SPEED, 1.5, 0);
+                driveStraight(DRIVE_SPEED, 1, 0);
                 driveStraight(DRIVE_SPEED, -10, 0);
-                turnToHeading(TURN_SPEED, 90);
-                holdHeading(TURN_SPEED, 90, 0.5);
-                driveStraight(DRIVE_SPEED, 36, 90);
+                turnToHeading(TURN_SPEED, -90);
+                holdHeading(TURN_SPEED, -90, 0.5);
+                driveStraight(0.5, -35, -90);
+                sleep(500);
+                //driveSideways(0.5, -6, -90);
+                turnToHeading(TURN_SPEED, -90);
+                holdHeading(TURN_SPEED, -90, 0.5);
+                driveStraight(0.2, -4, -90);
+                dropPixel();
+                sleep(1000);
+                driveStraight(DRIVE_SPEED, 4, -90);
+                driveSideways(0.5, -34, -90);
+                flimsyFlicker.setPower(1);
+                sleep(500);
+                driveStraight(1, -6, -90);
             }
             else
             {
                 driveStraight(DRIVE_SPEED, 4, 0);
                 while( getHeading() > -70 || getHeading() < -80)
                 {
-                    BRDrive.setPower(0.4);
-                    FRDrive.setPower(0.4);
+                    BRDrive.setPower(0.6);
+                    FRDrive.setPower(0.6);
                 }
                 driveStraight(0.2, 18, -70);
-                driveStraight(1, -36, -70);
+                driveStraight(1, -30, -70);
+                turnToHeading(TURN_SPEED, -90);
+                holdHeading(TURN_SPEED, -90, 0.4);
+                driveStraight(0.5, -8, -90);
+                driveSideways(0.5, -14, -90);
+                driveStraight(DRIVE_SPEED, -8, -90);
+                dropPixel();
+                sleep(250);
+                driveStraight(DRIVE_SPEED, 4, -90);
+                driveSideways(1, -26, -90);
+                flimsyFlicker.setPower(1);
+                sleep(500);
+                driveStraight(1, -5, -90);
             }
         }
     }
@@ -384,6 +419,62 @@ public class Blue_Backstage extends LinearOpMode {
      *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
      *                   If a relative angle is required, add/subtract from the current robotHeading.
      */
+    public void driveSideways(double maxDriveSpeed,
+                              double distance,
+                              double heading) {
+
+        // Ensure that the OpMode is still active
+        if (opModeIsActive()) {
+
+            // Determine new target position, and pass to motor controller
+            int moveCounts = (int)(distance * COUNTS_PER_INCH);
+            frontLeftTarget = FLDrive.getCurrentPosition() + moveCounts;
+            frontRightTarget = FRDrive.getCurrentPosition() - moveCounts;
+            backLeftTarget = BLDrive.getCurrentPosition() - moveCounts;
+            backRightTarget = BRDrive.getCurrentPosition() + moveCounts;
+
+            // Set Target FIRST, then turn on RUN_TO_POSITION
+            FLDrive.setTargetPosition(frontLeftTarget);
+            FRDrive.setTargetPosition(frontRightTarget);
+            BLDrive.setTargetPosition(backLeftTarget);
+            BRDrive.setTargetPosition(backRightTarget);
+
+            FLDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            FRDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            BLDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            BRDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // Set the required driving speed  (must be positive for RUN_TO_POSITION)
+            // Start driving straight, and then enter the control loop
+            maxDriveSpeed = Math.abs(maxDriveSpeed);
+            moveRobot(maxDriveSpeed, 0);
+
+            // keep looping while we are still active, and BOTH motors are running.
+            while (opModeIsActive() &&
+                    (FLDrive.isBusy() && FRDrive.isBusy() && BLDrive.isBusy() && BRDrive.isBusy())) {
+
+                // Determine required steering to keep on heading
+                //turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
+
+                // if driving in reverse, the motor correction also needs to be reversed
+                if (distance < 0)
+                    turnSpeed *= -1.0;
+
+                // Apply the turning correction to the current driving speed.
+                moveRobot(driveSpeed, turnSpeed);
+
+                // Display drive status for the driver.
+                sendTelemetry(true);
+            }
+
+            // Stop all motion & Turn off RUN_TO_POSITION
+            moveRobot(0, 0);
+            FLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            FRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            BLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            BRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+    }
     public void driveStraight(double maxDriveSpeed,
                               double distance,
                               double heading) {
@@ -594,5 +685,9 @@ public class Blue_Backstage extends LinearOpMode {
     public double getHeading() {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         return orientation.getYaw(AngleUnit.DEGREES);
+    }
+    public void dropPixel(){
+        flimsyFlicker.setPower(-1);
+        sleep(500);
     }
 }
