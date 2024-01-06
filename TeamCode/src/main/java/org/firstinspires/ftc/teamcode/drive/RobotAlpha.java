@@ -51,6 +51,9 @@ public class RobotAlpha extends LinearOpMode {
 
         boolean pose = false;
         boolean strike = false;
+        double turnMovement = 0;
+        double strafeMovement = 0;
+        double straightMovement = 0;
 
         //Write numerical variables here
         FLDrive = hardwareMap.get(DcMotor.class, "FLDrive");
@@ -117,9 +120,16 @@ public class RobotAlpha extends LinearOpMode {
             //double strafeMovement = -gamepad1.left_stick_x;
             //double turnMovement = -gamepad1.right_stick_x;
 
-            double turnMovement = gamepad1.right_stick_x;
-            double strafeMovement = gamepad1.left_stick_x;
-            double straightMovement = -gamepad1.left_stick_y;
+            if (gamepad1.right_bumper) {
+                turnMovement = gamepad1.right_stick_x * 0.5;
+                strafeMovement = gamepad1.left_stick_x * 0.5;
+                straightMovement = -gamepad1.left_stick_y * 0.5;
+            }
+            else {
+                turnMovement = gamepad1.right_stick_x;
+                strafeMovement = gamepad1.left_stick_x;
+                straightMovement = -gamepad1.left_stick_y;
+            }
 
             /*if (gamepad1.dpad_down) {
                 visionPortal.stopStreaming();
@@ -129,7 +139,7 @@ public class RobotAlpha extends LinearOpMode {
 
 
             if (gamepad1.left_trigger != 0) {
-                flimsyFlicker.setPower(-0.1);
+                flimsyFlicker.setPower(-1);
             }
             else {
                 flimsyFlicker.setPower(0);
@@ -245,7 +255,6 @@ public class RobotAlpha extends LinearOpMode {
                 claw.setPower(1);
             }
 
-
             /*
             double launchDroneServo = gamepad2.right_trigger;
             boolean stopLaunchDroneServo = gamepad2.left_bumper;
@@ -257,7 +266,6 @@ public class RobotAlpha extends LinearOpMode {
                 droneLaunch.setPower(0);
             }
              */
-
 /*
             if(gamepad2.a && !(pose)){
                 pose = true;
