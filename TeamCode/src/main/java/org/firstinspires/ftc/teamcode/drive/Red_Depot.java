@@ -36,8 +36,10 @@ import android.view.View;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -97,26 +99,22 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 //@Disabled
 public class Red_Depot extends LinearOpMode {
 
-    /*telemetry.addData("LED", bLedOn ? "On" : "Off");
-            telemetry.addData("Clear", colorSensor.alpha());
-            telemetry.addData("Red  ", colorSensor.red());
-            telemetry.addData("Green", colorSensor.green());
-            telemetry.addData("Blue ", colorSensor.blue());
-            telemetry.addData("Hue", hsvValues[0]);
-
-     */
-    int colorSensorRed = 0;
-    int colorSensorGreen = 0;
-    int colorSensorBlue = 0;
-    float colorSensorHue = 0;
-    int colorSensorClear = 0;
+    int colorSensor1Red = 0;
+    int colorSensor1Green = 0;
+    int colorSensor1Blue = 0;
+    float colorSensor1Hue = 0;
+    int colorSensor1Clear = 0;
     /* Declare OpMode members. */
-    ColorSensor colorSensor = null;    // Hardware Device Object
+    ColorSensor colorSensor1 = null;    // Hardware Device Object
+    ColorSensor colorSensor2 = null;
 
     DcMotor FLDrive = null; // Front Left Drive Motor
     DcMotor FRDrive = null; // Front Right Drive Motor
     DcMotor BLDrive = null; // Back Left Drive Motor
     DcMotor BRDrive = null; // Back Right Drive Motor
+    DcMotor liftJoint = null;
+    DcMotor liftDrive = null;
+    CRServo flimsyFlicker = null;
     IMU imu = null; // Inertial Measurement Unit      // Control/Expansion Hub IMU
 
     private double headingError  = 0;
@@ -153,10 +151,10 @@ public class Red_Depot extends LinearOpMode {
 
     // These constants define the desired driving/control characteristics
     // They can/should be tweaked to suit the specific robot drive train.
-    static final double     DRIVE_SPEED             = 0.4;     // Max driving speed for better distance accuracy.
-    static final double     TURN_SPEED              = 0.2;     // Max Turn speed to limit turn rate
+    static final double     DRIVE_SPEED             = 0.3;     // Max driving speed for better distance accuracy.
+    static final double     TURN_SPEED              = 0.3;     // Max Turn speed to limit turn rate
     static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
-                                                               // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
+    // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
     // Define the Proportional control coefficient (or GAIN) for "heading control".
     // We define one value when Turning (larger errors), and the other is used when Driving straight (smaller errors).
     // Increase these numbers if the heading does not corrects strongly enough (eg: a heavy robot or using tracks)
@@ -173,8 +171,12 @@ public class Red_Depot extends LinearOpMode {
         FRDrive = hardwareMap.get(DcMotor.class, "FRDrive");
         BLDrive = hardwareMap.get(DcMotor.class, "BLDrive");
         BRDrive = hardwareMap.get(DcMotor.class, "BRDrive");
+        liftJoint = hardwareMap.get(DcMotor.class, "liftJoint");
+        liftDrive = hardwareMap.get(DcMotor.class, "liftDrive");
         // get a reference to our ColorSensor object.
-        colorSensor = hardwareMap.get(ColorSensor.class, "sensor_color1");
+        colorSensor1 = hardwareMap.get(ColorSensor.class, "sensor_color2");
+        colorSensor2 = hardwareMap.get(ColorSensor.class, "sensor_color1");
+        flimsyFlicker = hardwareMap.get(CRServo.class, "flimsyFlicker");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
@@ -183,10 +185,15 @@ public class Red_Depot extends LinearOpMode {
         BLDrive.setDirection(DcMotor.Direction.REVERSE);
         FRDrive.setDirection(DcMotor.Direction.FORWARD);
         BRDrive.setDirection(DcMotor.Direction.REVERSE);
+        liftJoint.setDirection(DcMotor.Direction.FORWARD);
+        liftDrive.setDirection(DcMotor.Direction.REVERSE);
+        flimsyFlicker.setDirection(DcMotorSimple.Direction.FORWARD);
         FLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftJoint.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         /* The next two lines define Hub orientation.
          * The Default Orientation (shown) is when a hub is mounted horizontally with the printed logo pointing UP and the USB port pointing FORWARD.
@@ -207,10 +214,14 @@ public class Red_Depot extends LinearOpMode {
         BLDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FRDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         BRDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftJoint.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         FRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftJoint.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Wait for the game to start (Display Gyro value while waiting)
         while (opModeInInit()) {
@@ -222,108 +233,63 @@ public class Red_Depot extends LinearOpMode {
         imu.resetYaw();
         waitForStart();
 
-    // Step through each leg of the path,
-        // Notes:   Reverse movement is obtained by setting a negative distance (not speed)
-        //          holdHeading() is used after turns to let the heading stabilize
-        //          Add a sleep(2000) after any step to keep the telemetry data visible for review
-
-       /* driveStraight(DRIVE_SPEED, 24.0, 0.0);    // Drive Forward 24"
-        turnToHeading( TURN_SPEED, -45.0);               // Turn  CW to -45 Degrees
-        holdHeading( TURN_SPEED, -45.0, 0.5);   // Hold -45 Deg heading for a 1/2 second
-        sleep(2000);
-        driveStraight(DRIVE_SPEED, 17.0, -45.0);  // Drive Forward 17" at -45 degrees (12"x and 12"y)
-        turnToHeading( TURN_SPEED,  45.0);               // Turn  CCW  to  45 Degrees
-        holdHeading( TURN_SPEED,  45.0, 0.5);    // Hold  45 Deg heading for a 1/2 second
-        sleep(2000);
-        driveStraight(DRIVE_SPEED, 17.0, 45.0);  // Drive Forward 17" at 45 degrees (-12"x and 12"y)
-        turnToHeading( TURN_SPEED,   0.0);               // Turn  CW  to 0 Degrees
-        holdHeading( TURN_SPEED,   0.0, 1.0);    // Hold  0 Deg heading for 1 second
-        sleep(2000);
-        driveStraight(DRIVE_SPEED,-48.0, 0.0);    // Drive in Reverse 48" (should return to approx. staring position)
-
-        */
-
-        double driftMod = 0.88;
-        driveStraight(DRIVE_SPEED, 15 * driftMod, 0);
-        turnToHeading(TURN_SPEED, 15);
-        holdHeading(TURN_SPEED,  15.0, 0.5);    // Hold  15 Deg heading for a 1/2 second
-        driveStraight(DRIVE_SPEED, 10 * driftMod, 15);
-        turnToHeading(TURN_SPEED, 0);
-        holdHeading(TURN_SPEED,  0, 0.5);    // Hold  0 Deg heading for a 1/2 second
-        driveStraight(DRIVE_SPEED, 4 * driftMod, 0);
+        liftJoint.setPower(0.5);
+        sleep(700);
+        liftJoint.setPower(0);
+        liftDrive.setPower(0.5);
         sleep(500);
-        colorCheck();
-        if (colorSensorRed > 150)
-        {
-            turnToHeading(TURN_SPEED, 30);
-            holdHeading(TURN_SPEED,  30.0, 0.5);    // Hold  30 Deg heading for a 1/2 second
-            driveStraight(DRIVE_SPEED, -10, 30);
-        }
-        else
-        {
-            turnToHeading(TURN_SPEED, -20);
-            holdHeading(TURN_SPEED,  -20.0, 0.5);    // Hold  -20 Deg heading for a 1/2 second
-            driveStraight(DRIVE_SPEED, 1 * driftMod, -20);
-            turnToHeading(TURN_SPEED, -40);
-            holdHeading(TURN_SPEED,  -40.0, 0.5);    // Hold  -40 Deg heading for a 1/2 second
-            driveStraight(DRIVE_SPEED, 12 * driftMod, -40);
-            sleep(500);
-            colorCheck();
-            if (colorSensorRed >150)
-            {
-                driveStraight(DRIVE_SPEED, -10, -40);
-            }
-            else
-            {
-                turnToHeading(TURN_SPEED, -90);
-                holdHeading(TURN_SPEED, -90, 0.5); // Hold -90 Deg heading for a 1/2 second
-                driveStraight(DRIVE_SPEED, 4, -90);
-                driveStraight(DRIVE_SPEED, -10, -90);
-            }
-        }
+        liftDrive.setPower(0);
+        double driftMod = 0.88;
+        driveStraight(DRIVE_SPEED, 3 * driftMod, 0);    // Drive straight 3 inches
+        turnToHeading(TURN_SPEED, 17);  // Turn left 15 degrees
+        holdHeading(TURN_SPEED,  17.0, 0.5);    // Hold  15 Deg heading for a 1/2 second
+        driveStraight(DRIVE_SPEED, 20 * driftMod, 17);  // Drive straight 21 inches at 15 degree heading
+        turnToHeading(TURN_SPEED, 0);   // Turn right 15 degrees
+        holdHeading(TURN_SPEED,  0, 0.5);    // Hold  0 Deg heading for a 1/2 second
+        driveStraight(DRIVE_SPEED, 4 * driftMod, 0);    // Drive straight 4 inches
+        sleep(500); // Wait .5 seconds
+        colorCheck();   // Check color values
 
-
-
-        /*driveStraight(DRIVE_SPEED, 28.0, 0.0);    // Drive Forward 28"
-        turnToHeading(TURN_SPEED, -20);
-        colorCheck();
-        sleep(5000);
-        if (colorSensorRed > 250)
+        if (colorSensor2.red() > 200)  // If blue value is greater than 150
         {
-            turnToHeading(TURN_SPEED, 20);
-            driveStraight(DRIVE_SPEED, 3, 0);
+            turnToHeading(TURN_SPEED, 25);
+            holdHeading(TURN_SPEED,  25.0, 0.5);    // Hold  30 Deg heading for a 1/2 second
+            driveStraight(DRIVE_SPEED, -6, 25);
+            turnToHeading(TURN_SPEED, -90);
+            holdHeading(TURN_SPEED, -90, 0.5);
         }
         else
         {
             turnToHeading(TURN_SPEED, 0);
-            driveStraight(DRIVE_SPEED, -4, 0);
-            turnToHeading(TURN_SPEED, -45);
-            driveStraight(DRIVE_SPEED, 2,-45);
-            colorCheck();
-            if (colorSensorRed > 250)
+            holdHeading(TURN_SPEED, 0, 0.4);
+            driveSideways(0.04, 6, 0);
+            sleep(250);
+            turnToHeading(0.3, 0);
+            holdHeading(TURN_SPEED, 0, 0.4);
+            driveStraight(0.1, 6, 0);
+            sleep(500);
+            if (colorSensor1.red() > 200) //&& colorSensor1.green() < 800)
             {
-                driveStraight(DRIVE_SPEED, 4, -45);
+                driveStraight(DRIVE_SPEED, 1, 0);
+                driveStraight(DRIVE_SPEED, -10, 0);
+                turnToHeading(TURN_SPEED, -90);
+                holdHeading(TURN_SPEED, -90, 0.5);
             }
             else
             {
-                driveStraight(DRIVE_SPEED, -2, -45);
-                turnToHeading(TURN_SPEED, 45);
-                driveStraight(DRIVE_SPEED, 6, 45);
+                driveStraight(DRIVE_SPEED, 4, 0);
+                driveSideways(0.04, 6, 0);
+                while( getHeading() > -70 || getHeading() < -80)
+                {
+                    BRDrive.setPower(0.6);
+                    FRDrive.setPower(0.6);
+                }
+                driveStraight(0.2, 14, -70);
+                driveStraight(DRIVE_SPEED, -10, -70);
+                turnToHeading(TURN_SPEED, -90);
+                holdHeading(TURN_SPEED, -90, 0.4);
             }
         }
-        driveStraight(DRIVE_SPEED, -25.0, 0.0);    // Drive Backward 25"
-        sleep(500);
-        turnToHeading(TURN_SPEED, -90.0);               // Turn  CW to -90 Degrees
-        sleep(500);
-        holdHeading(TURN_SPEED,  -90.0, 0.5);    // Hold  -90 Deg heading for a 1/2 second
-        sleep(500);
-        driveStraight(DRIVE_SPEED, 94.0, -90.0);    // Drive Forward 95"
-
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
-        sleep(1000);  // Pause to display last telemetry message.
-
-         */
     }
 
     /*
@@ -356,7 +322,7 @@ public class Red_Depot extends LinearOpMode {
 
 
         // Set the LED in the beginning
-        colorSensor.enableLed(bLedOn);
+        colorSensor1.enableLed(bLedOn);
         // check the status of the x button on either gamepad.
         bCurrState = true;
 
@@ -365,28 +331,28 @@ public class Red_Depot extends LinearOpMode {
 
             // button is transitioning to a pressed state. So Toggle LED
             bLedOn = !bLedOn;
-            colorSensor.enableLed(bLedOn);
+            colorSensor1.enableLed(bLedOn);
         }
 
         // update previous state variable.
         bPrevState = bCurrState;
 
         // convert the RGB values to HSV values.
-        Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
+        Color.RGBToHSV(colorSensor1.red() * 8, colorSensor1.green() * 8, colorSensor1.blue() * 8, hsvValues);
 
         // send the info back to driver station using telemetry function.
         telemetry.addData("LED", bLedOn ? "On" : "Off");
-        telemetry.addData("Clear", colorSensor.alpha());
-        telemetry.addData("Red  ", colorSensor.red());
-        telemetry.addData("Green", colorSensor.green());
-        telemetry.addData("Blue ", colorSensor.blue());
+        telemetry.addData("Clear", colorSensor1.alpha());
+        telemetry.addData("Red  ", colorSensor1.red());
+        telemetry.addData("Green", colorSensor1.green());
+        telemetry.addData("Blue ", colorSensor1.blue());
         telemetry.addData("Hue", hsvValues[0]);
 
-        colorSensorClear = colorSensor.alpha();
-        colorSensorRed = colorSensor.red();
-        colorSensorGreen = colorSensor.green();
-        colorSensorBlue = colorSensor.blue();
-        colorSensorHue = hsvValues[0];
+        colorSensor1Clear = colorSensor1.alpha();
+        colorSensor1Red = colorSensor1.red();
+        colorSensor1Green = colorSensor1.green();
+        colorSensor1Blue = colorSensor1.blue();
+        colorSensor1Hue = hsvValues[0];
 
         // change the background color to match the color detected by the RGB sensor.
         // pass a reference to the hue, saturation, and value array as an argument
@@ -410,17 +376,73 @@ public class Red_Depot extends LinearOpMode {
 
 
     /**
-    *  Drive in a straight line, on a fixed compass heading (angle), based on encoder counts.
-    *  Move will stop if either of these conditions occur:
-    *  1) Move gets to the desired position
-    *  2) Driver stops the OpMode running.
-    *
-    * @param maxDriveSpeed MAX Speed for forward/rev motion (range 0 to +1.0) .
-    * @param distance   Distance (in inches) to move from current position.  Negative distance means move backward.
-    * @param heading      Absolute Heading Angle (in Degrees) relative to last gyro reset.
-    *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-    *                   If a relative angle is required, add/subtract from the current robotHeading.
-    */
+     *  Drive in a straight line, on a fixed compass heading (angle), based on encoder counts.
+     *  Move will stop if either of these conditions occur:
+     *  1) Move gets to the desired position
+     *  2) Driver stops the OpMode running.
+     *
+     * @param maxDriveSpeed MAX Speed for forward/rev motion (range 0 to +1.0) .
+     * @param distance   Distance (in inches) to move from current position.  Negative distance means move backward.
+     * @param heading      Absolute Heading Angle (in Degrees) relative to last gyro reset.
+     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
+     *                   If a relative angle is required, add/subtract from the current robotHeading.
+     */
+    public void driveSideways(double maxDriveSpeed,
+                              double distance,
+                              double heading) {
+
+        // Ensure that the OpMode is still active
+        if (opModeIsActive()) {
+
+            // Determine new target position, and pass to motor controller
+            int moveCounts = (int)(distance * COUNTS_PER_INCH);
+            frontLeftTarget = FLDrive.getCurrentPosition() + moveCounts;
+            frontRightTarget = FRDrive.getCurrentPosition() - moveCounts;
+            backLeftTarget = BLDrive.getCurrentPosition() - moveCounts;
+            backRightTarget = BRDrive.getCurrentPosition() + moveCounts;
+
+            // Set Target FIRST, then turn on RUN_TO_POSITION
+            FLDrive.setTargetPosition(frontLeftTarget);
+            FRDrive.setTargetPosition(frontRightTarget);
+            BLDrive.setTargetPosition(backLeftTarget);
+            BRDrive.setTargetPosition(backRightTarget);
+
+            FLDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            FRDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            BLDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            BRDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // Set the required driving speed  (must be positive for RUN_TO_POSITION)
+            // Start driving straight, and then enter the control loop
+            maxDriveSpeed = Math.abs(maxDriveSpeed);
+            moveRobot(maxDriveSpeed, 0);
+
+            // keep looping while we are still active, and BOTH motors are running.
+            while (opModeIsActive() &&
+                    (FLDrive.isBusy() && FRDrive.isBusy() && BLDrive.isBusy() && BRDrive.isBusy())) {
+
+                // Determine required steering to keep on heading
+                //turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
+
+                // if driving in reverse, the motor correction also needs to be reversed
+                if (distance < 0)
+                    turnSpeed *= -1.0;
+
+                // Apply the turning correction to the current driving speed.
+                moveRobot(driveSpeed, turnSpeed);
+
+                // Display drive status for the driver.
+                sendTelemetry(true);
+            }
+
+            // Stop all motion & Turn off RUN_TO_POSITION
+            moveRobot(0, 0);
+            FLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            FRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            BLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            BRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+    }
     public void driveStraight(double maxDriveSpeed,
                               double distance,
                               double heading) {
@@ -453,7 +475,7 @@ public class Red_Depot extends LinearOpMode {
 
             // keep looping while we are still active, and BOTH motors are running.
             while (opModeIsActive() &&
-                   (FLDrive.isBusy() && FRDrive.isBusy() && BLDrive.isBusy() && BRDrive.isBusy())) {
+                    (FLDrive.isBusy() && FRDrive.isBusy() && BLDrive.isBusy() && BRDrive.isBusy())) {
 
                 // Determine required steering to keep on heading
                 turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
@@ -631,5 +653,9 @@ public class Red_Depot extends LinearOpMode {
     public double getHeading() {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         return orientation.getYaw(AngleUnit.DEGREES);
+    }
+    public void dropPixel(){
+        flimsyFlicker.setPower(-1);
+        sleep(1000);
     }
 }
