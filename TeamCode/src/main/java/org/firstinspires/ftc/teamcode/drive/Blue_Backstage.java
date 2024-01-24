@@ -258,15 +258,17 @@ public class Blue_Backstage extends LinearOpMode {
             turnToHeading(TURN_SPEED, -90);
             holdHeading(TURN_SPEED, -90, 0.5);
             driveStraight(DRIVE_SPEED, -33, -90);
-            driveSideways(0.5, 4, -90);
-            driveStraight(DRIVE_SPEED, -5, -90);
+            driveSideways(DRIVE_SPEED, 6, -90);
+            driveStraight(DRIVE_SPEED, -7.5, -90);
             dropPixel();
-            sleep(250);
+            sleep(500);
             driveStraight(DRIVE_SPEED, 4, -90);
-            driveSideways(0.5, -38, -90);
+            //driveStraight(DRIVE_SPEED, 20, -90);
+            driveSideways(1, -40, -90);
+            //sleep(9000);
+            driveStraight(1, -5, -90);
             flimsyFlicker.setPower(1);
             sleep(500);
-            driveStraight(1, -6, -90);
         }
         else
         {
@@ -289,11 +291,11 @@ public class Blue_Backstage extends LinearOpMode {
                 //driveSideways(0.5, -6, -90);
                 turnToHeading(TURN_SPEED, -90);
                 holdHeading(TURN_SPEED, -90, 0.5);
-                driveStraight(0.2, -6, -90);
+                driveStraight(0.2, -8, -90);
                 dropPixel();
                 sleep(1000);
                 driveStraight(DRIVE_SPEED, 4, -90);
-                driveSideways(0.5, -34, -90);
+                driveSideways(0.5, 34, -90);
                 flimsyFlicker.setPower(1);
                 sleep(500);
                 driveStraight(1, -6, -90);
@@ -312,11 +314,11 @@ public class Blue_Backstage extends LinearOpMode {
                 holdHeading(TURN_SPEED, -90, 0.4);
                 driveStraight(0.5, -8, -90);
                 driveSideways(0.5, -14, -90);
-                driveStraight(DRIVE_SPEED, -10, -90);
+                driveStraight(DRIVE_SPEED, -12, -90);
                 dropPixel();
                 sleep(250);
                 driveStraight(DRIVE_SPEED, 4, -90);
-                driveSideways(1, -26, -90);
+                driveSideways(1, 26, -90);
                 flimsyFlicker.setPower(1);
                 sleep(500);
                 driveStraight(1, -5, -90);

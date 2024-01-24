@@ -241,9 +241,9 @@ public class Blue_Depot extends LinearOpMode {
         liftDrive.setPower(0);
         double driftMod = 0.88;
         driveStraight(DRIVE_SPEED, 3 * driftMod, 0);    // Drive straight 3 inches
-        turnToHeading(TURN_SPEED, 17);  // Turn left 15 degrees
-        holdHeading(TURN_SPEED,  17.0, 0.5);    // Hold  15 Deg heading for a 1/2 second
-        driveStraight(DRIVE_SPEED, 20 * driftMod, 17);  // Drive straight 21 inches at 15 degree heading
+        turnToHeading(TURN_SPEED, -17);  // Turn left 15 degrees
+        holdHeading(TURN_SPEED,  -17.0, 0.5);    // Hold  15 Deg heading for a 1/2 second
+        driveStraight(DRIVE_SPEED, 17 * driftMod, -17);  // Drive straight 21 inches at 15 degree heading
         turnToHeading(TURN_SPEED, 0);   // Turn right 15 degrees
         holdHeading(TURN_SPEED,  0, 0.5);    // Hold  0 Deg heading for a 1/2 second
         driveStraight(DRIVE_SPEED, 4 * driftMod, 0);    // Drive straight 4 inches
