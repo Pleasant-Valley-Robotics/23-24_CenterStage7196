@@ -234,7 +234,7 @@ public class Red_Backstage extends LinearOpMode {
         waitForStart();
         liftJoint.setPower(0.5);
         sleep(700);
-        liftJoint.setPower(0.05 );
+        liftJoint.setPower(0.05);
         liftDrive.setPower(0.5);
         sleep(500);
         liftDrive.setPower(0);

@@ -235,7 +235,7 @@ public class Blue_Backstage extends LinearOpMode {
 
         liftJoint.setPower(0.5);
         sleep(700);
-        liftJoint.setPower(0);
+        liftJoint.setPower(0.05);
         liftDrive.setPower(0.5);
         sleep(500);
         liftDrive.setPower(0);
@@ -294,7 +294,7 @@ public class Blue_Backstage extends LinearOpMode {
                 driveStraight(0.2, -8, -90);
                 dropPixel();
                 sleep(1000);
-                driveStraight(DRIVE_SPEED, 4, -90);
+                driveStraight(DRIVE_SPEED, 6, -90);
                 driveSideways(0.5, 34, -90);
                 flimsyFlicker.setPower(1);
                 sleep(500);
