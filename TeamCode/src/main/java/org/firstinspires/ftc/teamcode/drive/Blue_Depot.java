@@ -235,7 +235,7 @@ public class Blue_Depot extends LinearOpMode {
 
         liftJoint.setPower(0.5);
         sleep(700);
-        liftJoint.setPower(0);
+        liftJoint.setPower(0.05);
         liftDrive.setPower(0.5);
         sleep(500);
         liftDrive.setPower(0);
@@ -243,7 +243,7 @@ public class Blue_Depot extends LinearOpMode {
         driveStraight(DRIVE_SPEED, 3 * driftMod, 0);    // Drive straight 3 inches
         turnToHeading(TURN_SPEED, -17);  // Turn left 15 degrees
         holdHeading(TURN_SPEED,  -17.0, 0.5);    // Hold  15 Deg heading for a 1/2 second
-        driveStraight(DRIVE_SPEED, 17 * driftMod, -17);  // Drive straight 21 inches at 15 degree heading
+        driveStraight(DRIVE_SPEED, 17, -17);  // Drive straight 21 inches at 15 degree heading
         turnToHeading(TURN_SPEED, 0);   // Turn right 15 degrees
         holdHeading(TURN_SPEED,  0, 0.5);    // Hold  0 Deg heading for a 1/2 second
         driveStraight(DRIVE_SPEED, 4 * driftMod, 0);    // Drive straight 4 inches
@@ -262,7 +262,7 @@ public class Blue_Depot extends LinearOpMode {
         {
             turnToHeading(TURN_SPEED, 0);
             holdHeading(TURN_SPEED, 0, 0.4);
-            driveSideways(0.04, -6, 0);
+            driveSideways(0.04, -8, 0);
             sleep(250);
             turnToHeading(0.3, 0);
             holdHeading(TURN_SPEED, 0, 0.4);
@@ -270,7 +270,7 @@ public class Blue_Depot extends LinearOpMode {
             sleep(500);
             if (colorSensor2.blue() > 200) //&& colorSensor1.green() < 800)
             {
-                driveStraight(DRIVE_SPEED, 1, 0);
+//                driveStraight(DRIVE_SPEED, 3, 0);
                 driveStraight(DRIVE_SPEED, -10, 0);
                 turnToHeading(TURN_SPEED, -90);
                 holdHeading(TURN_SPEED, -90, 0.5);
@@ -279,10 +279,10 @@ public class Blue_Depot extends LinearOpMode {
             {
                 driveStraight(DRIVE_SPEED, 4, 0);
                 driveSideways(0.04, -6, 0);
-                while( getHeading() > 70 || getHeading() < 80)
+                while( getHeading() < 70 || getHeading() > 80)
                 {
-                    BRDrive.setPower(0.6);
-                    FRDrive.setPower(0.6);
+                    FLDrive.setPower(0.6);
+                    BLDrive.setPower(0.6);
                 }
                 driveStraight(0.2, 14, 70);
                 driveStraight(DRIVE_SPEED, -10, 70);

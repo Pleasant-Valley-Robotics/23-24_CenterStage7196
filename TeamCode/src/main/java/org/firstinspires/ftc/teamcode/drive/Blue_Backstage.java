@@ -234,7 +234,7 @@ public class Blue_Backstage extends LinearOpMode {
         waitForStart();
 
         liftJoint.setPower(0.5);
-        sleep(700);
+        sleep(1000);
         liftJoint.setPower(0.05);
         liftDrive.setPower(0.5);
         sleep(500);
@@ -250,7 +250,7 @@ public class Blue_Backstage extends LinearOpMode {
         sleep(500); // Wait .5 seconds
         colorCheck();   // Check color values
 
-        if (colorSensor2.blue() > 200)  // If blue value is greater than 150
+        if (colorSensor2.blue() > 200)  // If team element is on the left spike make
         {
             turnToHeading(TURN_SPEED, 25);
             holdHeading(TURN_SPEED,  25.0, 0.5);    // Hold  30 Deg heading for a 1/2 second
@@ -259,27 +259,32 @@ public class Blue_Backstage extends LinearOpMode {
             holdHeading(TURN_SPEED, -90, 0.5);
             driveStraight(DRIVE_SPEED, -33, -90);
             driveSideways(DRIVE_SPEED, 6, -90);
-            driveStraight(DRIVE_SPEED, -7.5, -90);
+            driveStraight(DRIVE_SPEED, -4, -90);
             dropPixel();
             sleep(500);
+
+            /*
             driveStraight(DRIVE_SPEED, 4, -90);
             //driveStraight(DRIVE_SPEED, 20, -90);
             driveSideways(1, -40, -90);
             //sleep(9000);
             driveStraight(1, -5, -90);
             flimsyFlicker.setPower(1);
-            sleep(500);
+            sleep(250);
+             */
         }
         else
         {
             turnToHeading(TURN_SPEED, 0);
             holdHeading(TURN_SPEED, 0, 0.4);
             driveSideways(0.04, 6, 0);
+            driveStraight(DRIVE_SPEED, 2, 0);
+            driveSideways(0.04, 3, 0);
             sleep(250);
             turnToHeading(0.3, 0);
             holdHeading(TURN_SPEED, 0, 0.4);
             driveStraight(0.1, 6, 0);
-            sleep(500);
+            sleep(250);
             if (colorSensor1.blue() > 200) //&& colorSensor1.green() < 800)
             {
                 driveStraight(DRIVE_SPEED, 1, 0);
@@ -291,14 +296,17 @@ public class Blue_Backstage extends LinearOpMode {
                 //driveSideways(0.5, -6, -90);
                 turnToHeading(TURN_SPEED, -90);
                 holdHeading(TURN_SPEED, -90, 0.5);
-                driveStraight(0.2, -8, -90);
+                driveStraight(0.2, -4, -90);
                 dropPixel();
                 sleep(1000);
+
+                /*
                 driveStraight(DRIVE_SPEED, 6, -90);
-                driveSideways(0.5, 34, -90);
+                driveSideways(0.5, 24, -90);
                 flimsyFlicker.setPower(1);
                 sleep(500);
                 driveStraight(1, -6, -90);
+                 */
             }
             else
             {
@@ -308,20 +316,22 @@ public class Blue_Backstage extends LinearOpMode {
                     BRDrive.setPower(0.6);
                     FRDrive.setPower(0.6);
                 }
-                driveStraight(0.2, 18, -70);
+                driveStraight(0.2, 16, -70);
                 driveStraight(1, -30, -70);
                 turnToHeading(TURN_SPEED, -90);
                 holdHeading(TURN_SPEED, -90, 0.4);
                 driveStraight(0.5, -8, -90);
                 driveSideways(0.5, -14, -90);
-                driveStraight(DRIVE_SPEED, -12, -90);
+                driveStraight(DRIVE_SPEED, -8, -90);
                 dropPixel();
                 sleep(250);
+                /*
                 driveStraight(DRIVE_SPEED, 4, -90);
-                driveSideways(1, 26, -90);
+                driveSideways(1, 36, -90);
                 flimsyFlicker.setPower(1);
-                sleep(500);
+                sleep(250);
                 driveStraight(1, -5, -90);
+                 */
             }
         }
     }

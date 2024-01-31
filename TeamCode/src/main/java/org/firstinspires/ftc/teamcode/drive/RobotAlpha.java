@@ -248,9 +248,10 @@ public class RobotAlpha extends LinearOpMode {
 //            boolean clawClosed = gamepad2.b;
             //While holding A, hold the pixel
             if (gamepad2.a) {
-                claw.setPower(0);
+
+                claw.setPower(0.4);
             }
-            //When let go of A, let go of pixel
+            //When press b, let go of pixel
             else if (gamepad2.b){
                 claw.setPower(1);
             }
@@ -330,7 +331,7 @@ public class RobotAlpha extends LinearOpMode {
             if (jointMove > 0.05 || jointMove < -0.05) {
                 liftJoint.setPower(jointMove * 0.4);
             } else {
-                liftJoint.setPower(0);
+                liftJoint.setPower(0.05);
             }
             telemetry.addData("Red Left:  ", colorSensor1.red());
             telemetry.addData("Blue Left:  ",colorSensor1.blue());

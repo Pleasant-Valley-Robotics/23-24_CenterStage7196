@@ -235,7 +235,7 @@ public class Red_Depot extends LinearOpMode {
 
         liftJoint.setPower(0.5);
         sleep(700);
-        liftJoint.setPower(0);
+        liftJoint.setPower(0.05);
         liftDrive.setPower(0.5);
         sleep(500);
         liftDrive.setPower(0);
@@ -270,7 +270,7 @@ public class Red_Depot extends LinearOpMode {
             sleep(500);
             if (colorSensor1.red() > 200) //&& colorSensor1.green() < 800)
             {
-                driveStraight(DRIVE_SPEED, 1, 0);
+                driveStraight(DRIVE_SPEED, 2, 0);
                 driveStraight(DRIVE_SPEED, -10, 0);
                 turnToHeading(TURN_SPEED, -90);
                 holdHeading(TURN_SPEED, -90, 0.5);
