@@ -258,10 +258,12 @@ public class Blue_Backstage extends LinearOpMode {
             turnToHeading(TURN_SPEED, -90);
             holdHeading(TURN_SPEED, -90, 0.5);
             driveStraight(DRIVE_SPEED, -33, -90);
-            driveSideways(DRIVE_SPEED, 6, -90);
-            driveStraight(DRIVE_SPEED, -4, -90);
+            //Was 6.
+            driveSideways(DRIVE_SPEED, 4, -90);
+            driveStraight(DRIVE_SPEED, -5, -90);
             dropPixel();
             sleep(500);
+
 
             /*
             driveStraight(DRIVE_SPEED, 4, -90);

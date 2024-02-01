@@ -244,29 +244,15 @@ public class RobotAlpha extends LinearOpMode {
                 rightActuator.setPower(0);
             }
 
-//            boolean clawOpen = gamepad2.a;
-//            boolean clawClosed = gamepad2.b;
             //While holding A, hold the pixel
             if (gamepad2.a) {
 
-                claw.setPower(0.4);
+                claw.setPower(0.45);
             }
             //When press b, let go of pixel
             else if (gamepad2.b){
                 claw.setPower(1);
             }
-
-            /*
-            double launchDroneServo = gamepad2.right_trigger;
-            boolean stopLaunchDroneServo = gamepad2.left_bumper;
-            if (launchDroneServo > 0.2){
-                droneLaunch.setPower(0.7);
-            }
-            else if (stopLaunchDroneServo == true);
-            {
-                droneLaunch.setPower(0);
-            }
-             */
 /*
             if(gamepad2.a && !(pose)){
                 pose = true;
@@ -310,19 +296,6 @@ public class RobotAlpha extends LinearOpMode {
                 droneLaunch.setPower(-1.3);
             }
 
-
-            //droneLaunch.setPower(launchDroneServo);
-
-
-            //digital
-            //boolean jointMove ((gamepad2.right_stick_y)>0.05) || ((gamepad2.right_stick_y)< -0.05);
-            /*
-            if (jointMove){
-                liftJoint.setPower(0.7);
-            }
-            */
-
-
             //analog
             double jointMove = gamepad2.left_stick_y;
             if (jointMove > 1.0) {
@@ -331,7 +304,7 @@ public class RobotAlpha extends LinearOpMode {
             if (jointMove > 0.05 || jointMove < -0.05) {
                 liftJoint.setPower(jointMove * 0.4);
             } else {
-                liftJoint.setPower(0.05);
+                liftJoint.setPower(-0.05);
             }
             telemetry.addData("Red Left:  ", colorSensor1.red());
             telemetry.addData("Blue Left:  ",colorSensor1.blue());
