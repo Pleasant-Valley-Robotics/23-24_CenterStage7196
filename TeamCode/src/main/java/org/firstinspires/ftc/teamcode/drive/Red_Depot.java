@@ -237,7 +237,8 @@ public class Red_Depot extends LinearOpMode {
         sleep(700);
         liftJoint.setPower(0.05);
         liftDrive.setPower(0.5);
-        sleep(500);
+        //Was 500.
+        sleep(250);
         liftDrive.setPower(0);
         double driftMod = 0.88;
         driveStraight(DRIVE_SPEED, 3 * driftMod, 0);    // Drive straight 3 inches
@@ -247,9 +248,11 @@ public class Red_Depot extends LinearOpMode {
         turnToHeading(TURN_SPEED, 0);   // Turn right 15 degrees
         holdHeading(TURN_SPEED,  0, 0.5);    // Hold  0 Deg heading for a 1/2 second
         driveStraight(DRIVE_SPEED, 4 * driftMod, 0);    // Drive straight 4 inches
-        sleep(500); // Wait .5 seconds
+        //Was 500
+        sleep(250); // Wait .5 seconds
         colorCheck();   // Check color values
 
+        //Checks the spikemark furthest from the truss.
         if (colorSensor2.red() > 200)  // If blue value is greater than 150
         {
             turnToHeading(TURN_SPEED, 25);
@@ -257,25 +260,37 @@ public class Red_Depot extends LinearOpMode {
             driveStraight(DRIVE_SPEED, -6, 25);
             turnToHeading(TURN_SPEED, -90);
             holdHeading(TURN_SPEED, -90, 0.5);
+
+            //Completely new code.
+            //Get through the truss to help drivers be closer to the backboard.
+            driveStraight(DRIVE_SPEED, 2, 25);
+            turnToHeading(TURN_SPEED, 0);
+            holdHeading(TURN_SPEED, 0, 0.5);
+            driveStraight(DRIVE_SPEED, 20, 90);
+            turnToHeading(TURN_SPEED, -90);
+            holdHeading(TURN_SPEED, -90, 0.5);
+            driveStraight(DRIVE_SPEED, 36, -90);
+
         }
-        else
+        else //Drive to middle
         {
             turnToHeading(TURN_SPEED, 0);
             holdHeading(TURN_SPEED, 0, 0.4);
-            driveSideways(0.04, 6, 0);
+            driveSideways(0.05, 6, 0);
             sleep(250);
             turnToHeading(0.3, 0);
             holdHeading(TURN_SPEED, 0, 0.4);
             driveStraight(0.1, 6, 0);
-            sleep(500);
-            if (colorSensor1.red() > 200) //&& colorSensor1.green() < 800)
+            //Was 500.
+            sleep(250);
+            if (colorSensor1.red() > 200) //&& colorSensor1.green() < 800) //Middle
             {
                 driveStraight(DRIVE_SPEED, 2, 0);
                 driveStraight(DRIVE_SPEED, -10, 0);
                 turnToHeading(TURN_SPEED, -90);
                 holdHeading(TURN_SPEED, -90, 0.5);
             }
-            else
+            else //Close to truss
             {
                 driveStraight(DRIVE_SPEED, 4, 0);
                 driveSideways(0.04, 6, 0);

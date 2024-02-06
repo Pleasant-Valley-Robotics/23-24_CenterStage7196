@@ -310,7 +310,7 @@ public class Blue_Backstage extends LinearOpMode {
                 driveStraight(1, -6, -90);
                  */
             }
-            else
+            else //Maybe the middle?
             {
                 driveStraight(DRIVE_SPEED, 4, 0);
                 while( getHeading() > -70 || getHeading() < -80)
