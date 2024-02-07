@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -15,23 +16,14 @@ public class RobotAlpha2 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         ElapsedTime runtime = new ElapsedTime();
-        DcMotor FLDrive = null; // standard motor declarations
-        DcMotor FRDrive = null;
-        DcMotor BLDrive = null;
-        DcMotor BRDrive = null;
-        DcMotor liftDrive = null;
-        DcMotor liftJoint = null;
-        DcMotor leftActuator = null;
-        DcMotor rightActuator = null;
-        ColorSensor colorSensor1 = null;
-        ColorSensor colorSensor2 = null;
-        DistanceSensor dist = null;
-        CRServo droneLaunch = null;
-        CRServo claw = null;
-        CRServo flimsyFlicker = null;
-
-        boolean pose = false;
-        boolean strike = false;
+        DcMotor FLDrive = null; // FLDrive is in port 0 of CH
+        DcMotor FRDrive = null; // FRDrive is in port 1 of CH
+        DcMotor BLDrive = null; // BLDrive is in port 2 of CH
+        DcMotor BRDrive = null; // BRDrive is in port 3 of CH
+        //* TODO uncomment this code for defining liftDRiveLeft, liftDriveRight, and DroneLauncher
+        //DcMotor liftDriveLeft = null; // liftDriveLeft is in port 0 of EH
+        //DcMotor liftDriveRight = null; // liftDriveRight is in port 1 of EH
+        //CRServo droneLaunch = null;
         double turnMovement = 0;
         double strafeMovement = 0;
         double straightMovement = 0;
@@ -41,39 +33,29 @@ public class RobotAlpha2 extends LinearOpMode {
         FRDrive = hardwareMap.get(DcMotor.class, "FRDrive");
         BLDrive = hardwareMap.get(DcMotor.class, "BLDrive");
         BRDrive = hardwareMap.get(DcMotor.class, "BRDrive");
-        liftDrive = hardwareMap.get(DcMotor.class, "liftDrive");
-        liftJoint = hardwareMap.get(DcMotor.class, "liftJoint");
-        leftActuator = hardwareMap.get(DcMotor.class, "leftActuator");
-        rightActuator = hardwareMap.get(DcMotor.class, "rightActuator");
-        colorSensor1 = hardwareMap.get(ColorSensor.class, "sensor_color1");
-        colorSensor2 = hardwareMap.get(ColorSensor.class, "sensor_color2");
+        //* TODO uncomment this code for hardware mapping liftDRiveLeft, liftDriveRight, and DroneLauncher
+        // liftDrive = hardwareMap.get(DcMotor.class, "liftDrive");
+        // liftJoint = hardwareMap.get(DcMotor.class, "liftJoint");
+        //droneLaunch = hardwareMap.get(CRServo.class, "droneLaunch");
 
-        dist = hardwareMap.get(DistanceSensor.class, "dist");
-
-        droneLaunch = hardwareMap.get(CRServo.class, "droneLaunch");
-        claw = hardwareMap.get(CRServo.class, "claw");
-        flimsyFlicker = hardwareMap.get(CRServo.class, "flimsyFlicker");
-
-        FLDrive.setDirection(DcMotor.Direction.FORWARD);
+        FLDrive.setDirection(DcMotor.Direction.REVERSE);
         BLDrive.setDirection(DcMotor.Direction.REVERSE);
         FRDrive.setDirection(DcMotor.Direction.FORWARD);
-        BRDrive.setDirection(DcMotor.Direction.REVERSE);
-        liftDrive.setDirection(DcMotor.Direction.FORWARD);
-        liftJoint.setDirection(DcMotor.Direction.REVERSE);
-        leftActuator.setDirection(DcMotor.Direction.FORWARD);
-        rightActuator.setDirection(DcMotor.Direction.FORWARD);
+        BRDrive.setDirection(DcMotor.Direction.FORWARD);
 
-        droneLaunch.setDirection(CRServo.Direction.FORWARD);
-        claw.setDirection(CRServo.Direction.FORWARD);
+        //* TODO uncomment this code for setting direction liftDRiveLeft, liftDriveRight, and DroneLauncher
+        //  liftDrive.setDirection(DcMotor.Direction.FORWARD);
+        //   liftJoint.setDirection(DcMotor.Direction.REVERSE);
+        //droneLaunch.setDirection(CRServo.Direction.FORWARD);
 
         FLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        liftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        liftJoint.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftActuator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightActuator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        //* TODO uncomment this code for defining ZeroPowerBehavior liftDRiveLeft, liftDriveRight, and DroneLauncher
+        // liftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //  liftJoint.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         IMU imu = hardwareMap.get(IMU.class, "imu");
         // Adjust the orientation parameters to match your robot
@@ -83,8 +65,6 @@ public class RobotAlpha2 extends LinearOpMode {
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
         imu.resetYaw();
-
-
 
 
         waitForStart();
@@ -105,8 +85,7 @@ public class RobotAlpha2 extends LinearOpMode {
                 turnMovement = gamepad1.right_stick_x * 0.5;
                 strafeMovement = gamepad1.left_stick_x * 0.5;
                 straightMovement = -gamepad1.left_stick_y * 0.5;
-            }
-            else {
+            } else {
                 turnMovement = gamepad1.right_stick_x;
                 strafeMovement = gamepad1.left_stick_x;
                 straightMovement = -gamepad1.left_stick_y;
@@ -118,13 +97,6 @@ public class RobotAlpha2 extends LinearOpMode {
                 visionPortal.resumeStreaming();
             }*/
 
-
-            if (gamepad1.left_trigger != 0) {
-                flimsyFlicker.setPower(-1);
-            }
-            else {
-                flimsyFlicker.setPower(0);
-            }
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -175,127 +147,42 @@ public class RobotAlpha2 extends LinearOpMode {
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", BLPower, BRPower);
             telemetry.update();
 
-
-
-            //TODO: WRITE MORE CODE HERE TO MAKE MOTORS MOVE
-/* THIS CODE IS FOR USING THE LIFT WITH BUTTONS. TESTING PURPOSES ONLY!
-            if(gamepad2.x && (!gamepad2.y)){
-               liftDrive.setPower(0.7);
-            }else if(gamepad2.y && !(gamepad2.x)){
-                liftDrive.setPower(-0.7);
-            }else{
-                liftDrive.setPower(0);
-            }
-*/
-
-            //THIS CODE IS FOR USING THE LIFT WITH JOYSICKS LIKE A NORMAL PERSON
-            // For digital
-            //boolean liftJoysick = ((gamepad2.left_stick_y)>0.05) || ((gamepad2.left_stick_y)< -0.05);
-            /*
-            if (liftJoystick){
-                liftDrive.setPower(0.7);
-            }
-            */
-
-            //*TODO: WRITE MORE CODE HERE TO MAKE MOTORS MOVE
-
-
             // For analog
+            //*TODO Commented out liftDriveLeft code
+            /*
             double liftJoystick = gamepad2.right_stick_y;
             if (liftJoystick > 1) {
                 liftJoystick = 1.0;
             }
             if (liftJoystick > 0.05 || liftJoystick < -0.05) {
-                liftDrive.setPower(liftJoystick * 0.4);
+                liftDriveRight.setPower(liftJoystick * 0.4);
+                liftDriveLeft.setPower(liftJoystick * 0.4);
             } else {
-                liftDrive.setPower(0);
+                liftDriveRight.setPower(0);
+                liftDriveLeft.setPower(0);
             }
-
-            boolean actuatorMoveUp = gamepad2.dpad_up;
-            boolean actuatorMoveDown = gamepad2.dpad_down;
-
-            if (actuatorMoveUp && !actuatorMoveDown) {
-                leftActuator.setPower(0.7);
-                rightActuator.setPower(0.69);
-            } else if (actuatorMoveDown && !actuatorMoveUp) {
-                leftActuator.setPower(-0.7);
-                rightActuator.setPower(-0.69);
-            } else {
-                leftActuator.setPower(0);
-                rightActuator.setPower(0);
-            }
-
-            //While holding A, hold the pixel
-            if (gamepad2.a) {
-
-                claw.setPower(0.4);
-            }
-            //When press b, let go of pixel
-            else if (gamepad2.b){
-                claw.setPower(.6);
-            }
-/*
-            if(gamepad2.a && !(pose)){
-                pose = true;
-            } else if (gamepad2.a && pose){
-                pose = false;
-                liftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                liftJoint.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                liftJoint.setTargetPosition(0);
-                liftDrive.setTargetPosition(0);
-                claw.setPower(-0.9);
-            }
-
-            if(pose){
-                //Run to a lift position
-                liftJoint.setTargetPosition(200);
-                liftDrive.setTargetPosition(200);
-                liftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                liftJoint.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            }
-
-            if(dist.getDistance() < 1 && (pose)){
-                //Begin Strike phase
-                liftJoint.setTargetPosition();
-                liftDrive.setTargetPosition();
-                liftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                liftJoint.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                strike = true;
-            }
-
-            if(strike){
-                claw.setPower(.9);
-            }
- */
-
-            if (gamepad2.right_trigger > 0.1) {
+             */
+            //* TODO delete this comment for DroneLauncher
+            /*if (gamepad2.right_trigger > 0.1) {
                 droneLaunch.setPower(0);
             }
             else
             {
                 droneLaunch.setPower(-1.3);
             }
+             */
 
+            //* TODO uncomment this code and reprogram for joint move that is now liftDiveRight
             //analog
-            double jointMove = gamepad2.left_stick_y;
+          /*  double jointMove = gamepad2.left_stick_y;
             if (jointMove > 1.0) {
                 jointMove = 1.0;
             }
             if (jointMove > 0.05 || jointMove < -0.05) {
-                liftJoint.setPower(jointMove * 0.4);
+                //liftJoint.setPower(jointMove * 0.4);
             } else {
-                liftJoint.setPower(-0.05);
+              //  liftJoint.setPower(-0.05);
             }
-            telemetry.addData("Red Left:  ", colorSensor1.red());
-            telemetry.addData("Blue Left:  ",colorSensor1.blue());
-            telemetry.addData("Green Left:  ",colorSensor1.green());
-            telemetry.addData("ARGB Left:  ",colorSensor1.argb());
-            telemetry.addData("Red Right:  ",colorSensor2.red());
-            telemetry.addData("Blue Right:  ",colorSensor2.blue());
-            telemetry.addData("Green Right:  ",colorSensor2.green());
-            telemetry.addData("ARGB Right:  ",colorSensor2.argb());
-            telemetry.addData("Claw power:  ",claw.getPower());
         }
     }
 
@@ -361,4 +248,6 @@ public class RobotAlpha2 extends LinearOpMode {
 
     }   // end method initTfod()
     */
+        }
+    }
 }
