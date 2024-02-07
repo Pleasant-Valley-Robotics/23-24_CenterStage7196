@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name = "V1.0.0", group = "Iterative Opmode")
+@TeleOp(name = "DriveTesting", group = "Iterative Opmode")
 public class DriveTesitng extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
