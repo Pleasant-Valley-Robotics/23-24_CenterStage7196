@@ -56,4 +56,43 @@ public class VisionCamera {
     public @Api CubeSide getCubePrediction() {
         return pipeline.getCubeSide();
     }
+
+    /**
+     * Loop through to check every prediction to see if one side has been seen [insert windowSize] in a row as a consistency check.
+     * @param windowSize the amount of times in a row you want to see a value/prediction.
+     * @return the CubeSide value that was found [insert windowSize] in a row.
+     */
+    public CubeSide getStableCubeSidePrediction(int windowSize)
+    {
+        //When this starts 0 values have been seen in a row because there haven't been any seen yet.
+        int timesSeen = 0;
+        //The last prediction.
+        CubeSide previousPrediction = null;
+        //The current Prediction.
+        CubeSide prediction = null;
+
+        //while there hasn't been a value in a row [insert windowSize] times grab the prediction and evaluate it.
+        while (timesSeen != windowSize)
+        {
+            //get the current prediction.
+            prediction = getCubePrediction();
+            //check current reading.
+            //if the prediction isn't null and gives the same value as the last prediction increment how many times a value has been seen
+            //in a row by 1.
+            if(prediction != null && prediction == previousPrediction)
+            {
+                timesSeen++;
+            }
+            //else set the previous prediction to the new prediction to compare again and start over how many of a prediction
+            //have been seen in a row.
+            else
+            {
+                previousPrediction = prediction;
+                timesSeen = 1;
+            }
+        }
+
+        //return the prediction found [insert windowSize] times.
+        return prediction;
+    }
 }
