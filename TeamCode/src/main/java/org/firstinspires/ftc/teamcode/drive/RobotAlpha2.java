@@ -6,10 +6,8 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -27,7 +25,7 @@ public class RobotAlpha2 extends LinearOpMode {
         CRServo spinny = null; // spinny is in port 0 of CH
         CRServo upperDrop = null; // upperDrop is in port 1 of CH
         CRServo lowerDrop = null; // lowerDrop is in port 2 of CH
-        //* TODO uncomment this code for defining liftDRiveLeft, liftDriveRight, and DroneLauncher
+        //* TODO uncomment this code for defining DroneLauncher.
         DcMotor liftDriveLeft = null; // liftDriveLeft is in port 0 of EH
         DcMotor liftDriveRight = null; // liftDriveRight is in port 1 of EH
         //CRServo droneLaunch = null;
@@ -43,7 +41,7 @@ public class RobotAlpha2 extends LinearOpMode {
         spinny = hardwareMap.get(CRServo.class, "spinny");
         upperDrop = hardwareMap.get(CRServo.class, "upperDrop");
         lowerDrop = hardwareMap.get(CRServo.class, "lowerDrop");
-        //* TODO uncomment this code for hardware mapping liftDRiveLeft, liftDriveRight, and DroneLauncher
+        //* TODO uncomment this code for hardware mapping DroneLauncher.
          liftDriveLeft = hardwareMap.get(DcMotor.class, "liftDriveLeft");
          liftDriveRight = hardwareMap.get(DcMotor.class, "liftDriveRight");
         //droneLaunch = hardwareMap.get(CRServo.class, "droneLaunch");
@@ -56,11 +54,12 @@ public class RobotAlpha2 extends LinearOpMode {
         upperDrop.setDirection(CRServo.Direction.FORWARD);
         lowerDrop.setDirection(CRServo.Direction.FORWARD);
 
-        //* TODO uncomment this code for setting direction liftDRiveLeft, liftDriveRight, and DroneLauncher
+        //* TODO uncomment this code for setting direction DroneLauncher.
         liftDriveLeft.setDirection(DcMotor.Direction.REVERSE);
         liftDriveRight.setDirection(DcMotor.Direction.REVERSE);
         //droneLaunch.setDirection(CRServo.Direction.FORWARD);
 
+        //Set the zero
         FLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -87,27 +86,19 @@ public class RobotAlpha2 extends LinearOpMode {
         while (opModeIsActive()) {
             double maxWheelPower;
 
-            // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            //double straightMovement = gamepad1.left_stick_y;
-            //double strafeMovement = -gamepad1.left_stick_x;
-            //double turnMovement = -gamepad1.right_stick_x;
-
+            //if the gamepad 1s right bumper is clicked, set every type of movement to their corresponding joysticks. and give them
+            //more power.
             if (gamepad1.right_bumper) {
                 turnMovement = gamepad1.right_stick_x * 0.5;
                 strafeMovement = gamepad1.left_stick_x * 0.5;
                 straightMovement = -gamepad1.left_stick_y * 0.5;
-            } else {
+            }
+            //else set them with their regular power.
+            else {
                 turnMovement = gamepad1.right_stick_x;
                 strafeMovement = gamepad1.left_stick_x;
                 straightMovement = -gamepad1.left_stick_y;
             }
-
-            /*if (gamepad1.dpad_down) {
-                visionPortal.stopStreaming();
-            } else if (gamepad1.dpad_up) {
-                visionPortal.resumeStreaming();
-            }*/
-
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -122,6 +113,7 @@ public class RobotAlpha2 extends LinearOpMode {
             maxWheelPower = Math.max(maxWheelPower, Math.abs(BLPower));
             maxWheelPower = Math.max(maxWheelPower, Math.abs(BRPower));
 
+            //if the maximum wheel power is greater than 1 set each motors power to themselves/the maximum wheel power.
             if (maxWheelPower > 1.0) {
                 FLPower /= maxWheelPower;
                 FRPower /= maxWheelPower;
@@ -161,6 +153,8 @@ public class RobotAlpha2 extends LinearOpMode {
             telemetry.update();
 
             double liftJoystick = gamepad2.right_stick_y;
+            //if the joystick for the servo flipping the blue 3d printed part is at a power of more than 1, reset it to the
+            //maximum power allowed to keep it in bounds.
             if (liftJoystick > 1) {
                 liftJoystick = 1.0;
             }
@@ -172,10 +166,9 @@ public class RobotAlpha2 extends LinearOpMode {
                 liftDriveRight.setPower(0);
             }
 
-            //TODO make spinny turn the axle to spin the 3d printed part.
             //-1 power for having it as far in as possible.
             //1 for having it as far out as possible.
-            double intakeLiftJoystick = -gamepad2.left_stick_y * 0.2;
+            double intakeLiftJoystick = -gamepad2.left_stick_y;
 
             if (Math.abs(intakeLiftJoystick) > 0.05)
             {
@@ -185,8 +178,6 @@ public class RobotAlpha2 extends LinearOpMode {
             {
                 spinny.setPower(spinny.getPower());
             }
-
-            //TODO make holding button open the drop not toggle
 
             //When A is pressed toggles the position of upperDrop
             if (gamepad2.a) {
@@ -217,83 +208,6 @@ public class RobotAlpha2 extends LinearOpMode {
                 droneLaunch.setPower(-1.3);
             }
              */
-
-            //* TODO uncomment this code and reprogram for joint move that is now liftDiveRight
-            //analog
-          /*  double jointMove = gamepad2.left_stick_y;
-            if (jointMove > 1.0) {
-                jointMove = 1.0;
-            }
-            if (jointMove > 0.05 || jointMove < -0.05) {
-                //liftJoint.setPower(jointMove * 0.4);
-            } else {
-              //  liftJoint.setPower(-0.05);
-            }
-        }
-    }
-
-/*
-    private void initTfod() {
-        final boolean USE_WEBCAM = true;
-        // Create the TensorFlow processor by using a builder.
-        tfod = new TfodProcessor.Builder()
-
-                // With the following lines commented out, the default TfodProcessor Builder
-                // will load the default model for the season. To define a custom model to load,
-                // choose one of the following:
-                //   Use setModelAssetName() if the custom TF Model is built in as an asset (AS only).
-                //   Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
-                //.setModelAssetName(TFOD_MODEL_ASSET)
-                //.setModelFileName(TFOD_MODEL_FILE)
-
-                // The following default settings are available to un-comment and edit as needed to
-                // set parameters for custom models.
-                //.setModelLabels(LABELS)
-                //.setIsModelTensorFlow2(true)
-                //.setIsModelQuantized(true)
-                //.setModelInputSize(300)
-                //.setModelAspectRatio(16.0 / 9.0)
-
-                .build();
-
-        // Create the vision portal by using a builder.
-        VisionPortal.Builder builder = new VisionPortal.Builder();
-
-        // Set the camera (webcam vs. built-in RC phone camera).
-        if (USE_WEBCAM) {
-            builder.setCamera(hardwareMap.get(WebcamName.class, "Microsoft Camera 1"));
-        } else {
-            builder.setCamera(BuiltinCameraDirection.BACK);
-        }
-
-        // Choose a camera resolution. Not all cameras support all resolutions.
-        //builder.setCameraResolution(new Size(640, 480));
-
-        // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
-        builder.enableLiveView(true);
-
-        // Set the stream format; MJPEG uses less bandwidth than default YUY2.
-        //builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
-
-        // Choose whether or not LiveView stops if no processors are enabled.
-        // If set "true", monitor shows solid orange screen if no processors enabled.
-        // If set "false", monitor shows camera view without annotations.
-        builder.setAutoStopLiveView(false);
-
-        // Set and enable the processor.
-        builder.addProcessor(tfod);
-
-        // Build the Vision Portal, using the above settings.
-        visionPortal = builder.build();
-
-        // Set confidence threshold for TFOD recognitions, at any time.
-        tfod.setMinResultConfidence(0.75f);
-
-        // Disable or re-enable the TFOD processor at any time.
-        //visionPortal.setProcessorEnabled(tfod, true);
-
-    }   // end method initTfod()
-    */
         }
     }
 }
