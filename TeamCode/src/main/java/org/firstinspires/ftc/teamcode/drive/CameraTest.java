@@ -13,7 +13,7 @@ public class CameraTest extends LinearOpMode {
         telemetry.addData("Status", "Initializing");
         telemetry.update();
 
-        VisionCamera camera = new VisionCamera(hardwareMap, FieldSide.RedClose);
+        VisionCamera camera = new VisionCamera(hardwareMap, FieldSide.BlueClose);
         waitForStart();
 
         //camera.enableAprilTags();
