@@ -28,8 +28,8 @@ public class RobotAlpha2 extends LinearOpMode {
         CRServo upperDrop = null; // upperDrop is in port 1 of CH
         CRServo lowerDrop = null; // lowerDrop is in port 2 of CH
         //* TODO uncomment this code for defining liftDRiveLeft, liftDriveRight, and DroneLauncher
-        //DcMotor liftDriveLeft = null; // liftDriveLeft is in port 0 of EH
-        //DcMotor liftDriveRight = null; // liftDriveRight is in port 1 of EH
+        DcMotor liftDriveLeft = null; // liftDriveLeft is in port 0 of EH
+        DcMotor liftDriveRight = null; // liftDriveRight is in port 1 of EH
         //CRServo droneLaunch = null;
         double turnMovement = 0;
         double strafeMovement = 0;
@@ -44,8 +44,8 @@ public class RobotAlpha2 extends LinearOpMode {
         upperDrop = hardwareMap.get(CRServo.class, "upperDrop");
         lowerDrop = hardwareMap.get(CRServo.class, "lowerDrop");
         //* TODO uncomment this code for hardware mapping liftDRiveLeft, liftDriveRight, and DroneLauncher
-        // liftDrive = hardwareMap.get(DcMotor.class, "liftDrive");
-        // liftJoint = hardwareMap.get(DcMotor.class, "liftJoint");
+         liftDriveLeft = hardwareMap.get(DcMotor.class, "liftDriveLeft");
+         liftDriveRight = hardwareMap.get(DcMotor.class, "liftDriveRight");
         //droneLaunch = hardwareMap.get(CRServo.class, "droneLaunch");
 
         FLDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -57,18 +57,16 @@ public class RobotAlpha2 extends LinearOpMode {
         lowerDrop.setDirection(CRServo.Direction.FORWARD);
 
         //* TODO uncomment this code for setting direction liftDRiveLeft, liftDriveRight, and DroneLauncher
-        //  liftDrive.setDirection(DcMotor.Direction.FORWARD);
-        //   liftJoint.setDirection(DcMotor.Direction.REVERSE);
+        liftDriveLeft.setDirection(DcMotor.Direction.REVERSE);
+        liftDriveRight.setDirection(DcMotor.Direction.REVERSE);
         //droneLaunch.setDirection(CRServo.Direction.FORWARD);
 
         FLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        //* TODO uncomment this code for defining ZeroPowerBehavior liftDRiveLeft, liftDriveRight, and DroneLauncher
-        // liftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //  liftJoint.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftDriveLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftDriveRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         IMU imu = hardwareMap.get(IMU.class, "imu");
         // Adjust the orientation parameters to match your robot
@@ -162,34 +160,30 @@ public class RobotAlpha2 extends LinearOpMode {
             telemetry.addData("LowerPower: ", lowerDrop.getPower());
             telemetry.update();
 
-            // For analog
-            //*TODO Commented out liftDriveLeft code
-            /*
             double liftJoystick = gamepad2.right_stick_y;
             if (liftJoystick > 1) {
                 liftJoystick = 1.0;
             }
             if (liftJoystick > 0.05 || liftJoystick < -0.05) {
-                liftDriveRight.setPower(liftJoystick * 0.4);
-                liftDriveLeft.setPower(liftJoystick * 0.4);
+                liftDriveLeft.setPower(liftJoystick);
+                liftDriveRight.setPower(liftJoystick);
             } else {
-                liftDriveRight.setPower(0);
                 liftDriveLeft.setPower(0);
+                liftDriveRight.setPower(0);
             }
-             */
 
             //TODO make spinny turn the axle to spin the 3d printed part.
             //-1 power for having it as far in as possible.
             //1 for having it as far out as possible.
-            double intakeLiftJoystick = gamepad2.right_stick_y;
+            double intakeLiftJoystick = -gamepad2.left_stick_y * 0.2;
 
-            if (intakeLiftJoystick > 1)
+            if (Math.abs(intakeLiftJoystick) > 0.05)
             {
-                spinny.setPower(1);
+                spinny.setPower(intakeLiftJoystick);
             }
             else
             {
-                spinny.setPower(-1); 
+                spinny.setPower(spinny.getPower());
             }
 
             //TODO make holding button open the drop not toggle
