@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive;
 
+import static java.lang.Thread.sleep;
+
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -11,6 +13,8 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.checkerframework.checker.units.qual.C;
+
 @TeleOp(name = "V1.0.0", group = "Iterative Opmode")
 public class RobotAlpha2 extends LinearOpMode {
     @Override
@@ -20,6 +24,9 @@ public class RobotAlpha2 extends LinearOpMode {
         DcMotor FRDrive = null; // FRDrive is in port 1 of CH
         DcMotor BLDrive = null; // BLDrive is in port 2 of CH
         DcMotor BRDrive = null; // BRDrive is in port 3 of CH
+        CRServo spinny = null; // spinny is in port 0 of CH
+        CRServo upperDrop = null; // upperDrop is in port 1 of CH
+        CRServo lowerDrop = null; // lowerDrop is in port 2 of CH
         //* TODO uncomment this code for defining liftDRiveLeft, liftDriveRight, and DroneLauncher
         //DcMotor liftDriveLeft = null; // liftDriveLeft is in port 0 of EH
         //DcMotor liftDriveRight = null; // liftDriveRight is in port 1 of EH
@@ -33,6 +40,9 @@ public class RobotAlpha2 extends LinearOpMode {
         FRDrive = hardwareMap.get(DcMotor.class, "FRDrive");
         BLDrive = hardwareMap.get(DcMotor.class, "BLDrive");
         BRDrive = hardwareMap.get(DcMotor.class, "BRDrive");
+        spinny = hardwareMap.get(CRServo.class, "spinny");
+        upperDrop = hardwareMap.get(CRServo.class, "upperDrop");
+        lowerDrop = hardwareMap.get(CRServo.class, "lowerDrop");
         //* TODO uncomment this code for hardware mapping liftDRiveLeft, liftDriveRight, and DroneLauncher
         // liftDrive = hardwareMap.get(DcMotor.class, "liftDrive");
         // liftJoint = hardwareMap.get(DcMotor.class, "liftJoint");
@@ -42,6 +52,9 @@ public class RobotAlpha2 extends LinearOpMode {
         BLDrive.setDirection(DcMotor.Direction.REVERSE);
         FRDrive.setDirection(DcMotor.Direction.FORWARD);
         BRDrive.setDirection(DcMotor.Direction.FORWARD);
+        spinny.setDirection(DcMotorSimple.Direction.FORWARD);
+        upperDrop.setDirection(CRServo.Direction.FORWARD);
+        lowerDrop.setDirection(CRServo.Direction.FORWARD);
 
         //* TODO uncomment this code for setting direction liftDRiveLeft, liftDriveRight, and DroneLauncher
         //  liftDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -145,6 +158,8 @@ public class RobotAlpha2 extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", FLPower, FRPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", BLPower, BRPower);
+            telemetry.addData("UpperPower: ", upperDrop.getPower());
+            telemetry.addData("LowerPower: ", lowerDrop.getPower());
             telemetry.update();
 
             // For analog
@@ -162,6 +177,27 @@ public class RobotAlpha2 extends LinearOpMode {
                 liftDriveLeft.setPower(0);
             }
              */
+
+            //TODO make holding button open the drop not toggle
+
+            //When A is pressed toggles the position of upperDrop
+            if (gamepad2.a) {
+                {
+                    upperDrop.setPower(0.9);
+                }
+            } else {
+                upperDrop.setPower(-0.8);
+            }
+
+            //When B is pressed toggles the position of lowerDrop
+            if (gamepad2.b) {
+                {
+                    lowerDrop.setPower(0.85);
+                }
+            } else {
+                lowerDrop.setPower(-1);
+            }
+
             //* TODO delete this comment for DroneLauncher
             /*if (gamepad2.right_trigger > 0.1) {
                 droneLaunch.setPower(0);
