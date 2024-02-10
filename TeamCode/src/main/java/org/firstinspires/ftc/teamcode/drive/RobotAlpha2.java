@@ -178,6 +178,20 @@ public class RobotAlpha2 extends LinearOpMode {
             }
              */
 
+            //TODO make spinny turn the axle to spin the 3d printed part.
+            //-1 power for having it as far in as possible.
+            //1 for having it as far out as possible.
+            double intakeLiftJoystick = gamepad2.right_stick_y;
+
+            if (intakeLiftJoystick > 1)
+            {
+                spinny.setPower(1);
+            }
+            else
+            {
+                spinny.setPower(-1); 
+            }
+
             //TODO make holding button open the drop not toggle
 
             //When A is pressed toggles the position of upperDrop
