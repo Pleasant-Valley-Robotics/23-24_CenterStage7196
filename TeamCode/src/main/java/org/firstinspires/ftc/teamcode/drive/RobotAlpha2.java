@@ -183,10 +183,12 @@ public class RobotAlpha2 extends LinearOpMode {
             //When A is pressed toggles the position of upperDrop
             if (gamepad2.a) {
                 {
-                    upperDrop.setPower(0.9);
+                    upperDrop.setPower(0.5);
+                    lowerDrop.setPower(0.85);
+
                 }
             } else {
-                upperDrop.setPower(-0.8);
+                upperDrop.setPower(-0.2);
             }
 
             //When B is pressed toggles the position of lowerDrop
@@ -194,8 +196,8 @@ public class RobotAlpha2 extends LinearOpMode {
                 {
                     lowerDrop.setPower(0.85);
                 }
-            } else {
-                lowerDrop.setPower(-1);
+            } else if (!gamepad2.b && !gamepad2.a){
+                lowerDrop.setPower(0.2);
             }
 
             //* TODO delete this comment for DroneLauncher
