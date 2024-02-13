@@ -112,8 +112,6 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
     DcMotor FRDrive = null; // Front Right Drive Motor
     DcMotor BLDrive = null; // Back Left Drive Motor
     DcMotor BRDrive = null; // Back Right Drive Motor
-    //DcMotor liftJoint = null;
-    //DcMotor liftDrive = null;
     CRServo flimsyFlicker = null;
     IMU imu = null; // Inertial Measurement Unit      // Control/Expansion Hub IMU
 
@@ -171,8 +169,6 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
         FRDrive = hardwareMap.get(DcMotor.class, "FRDrive");
         BLDrive = hardwareMap.get(DcMotor.class, "BLDrive");
         BRDrive = hardwareMap.get(DcMotor.class, "BRDrive");
-        //liftJoint = hardwareMap.get(DcMotor.class, "liftJoint");
-        //liftDrive = hardwareMap.get(DcMotor.class, "liftDrive");
         // get a reference to our ColorSensor object.
         colorSensor1 = hardwareMap.get(ColorSensor.class, "sensor_color2");
         colorSensor2 = hardwareMap.get(ColorSensor.class, "sensor_color1");
@@ -185,15 +181,11 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
         BLDrive.setDirection(DcMotor.Direction.REVERSE);
         FRDrive.setDirection(DcMotor.Direction.FORWARD);
         BRDrive.setDirection(DcMotor.Direction.REVERSE);
-        //liftJoint.setDirection(DcMotor.Direction.FORWARD);
-        //liftDrive.setDirection(DcMotor.Direction.REVERSE);
         flimsyFlicker.setDirection(DcMotorSimple.Direction.FORWARD);
         FLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //liftJoint.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //liftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         /* The next two lines define Hub orientation.
          * The Default Orientation (shown) is when a hub is mounted horizontally with the printed logo pointing UP and the USB port pointing FORWARD.
@@ -214,14 +206,10 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
         BLDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FRDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         BRDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //liftJoint.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //liftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         FRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //liftJoint.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //liftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Wait for the game to start (Display Gyro value while waiting)
         while (opModeInInit()) {
@@ -233,10 +221,7 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
         imu.resetYaw();
         waitForStart();
 
-        //liftJoint.setPower(0.5);
         sleep(1000);
-        //liftJoint.setPower(0.05);
-        //liftDrive.setPower(0.5);
         sleep(500);
         //liftDrive.setPower(0);
         double driftMod = 0.88;
