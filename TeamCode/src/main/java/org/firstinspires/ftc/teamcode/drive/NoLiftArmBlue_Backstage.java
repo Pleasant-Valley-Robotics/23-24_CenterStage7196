@@ -46,6 +46,10 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.hardware.VisionCamera;
+
+import org.firstinspires.ftc.teamcode.utility.FieldSide;
+import org.firstinspires.ftc.teamcode.utility.CubeSide;
 
 /*
  *  This OpMode illustrates the concept of driving an autonomous path based on Gyro (IMU) heading and encoder counts.
@@ -143,7 +147,7 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
 
     // Constants for calculating encoder counts and speed
     static final double COUNTS_PER_MOTOR_REV = 28; // Encoder counts per motor revolution
-    static final double DRIVE_GEAR_REDUCTION = 5.23 * 3.61; //Gear ratio of 5:1 gearbox * 4:1 gearbox
+    static final double DRIVE_GEAR_REDUCTION = (((1+(46/17))) * (1+(46/11))); //Gear ratio of 19:1 gearbox.
     static final double WHEEL_DIAMETER_INCHES = 96/25.4; // Diameter of the robot's wheels in mm/(mm/in)
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);
 
@@ -173,6 +177,9 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
         colorSensor1 = hardwareMap.get(ColorSensor.class, "sensor_color2");
         colorSensor2 = hardwareMap.get(ColorSensor.class, "sensor_color1");
         flimsyFlicker = hardwareMap.get(CRServo.class, "flimsyFlicker");
+
+        //Grab and store the reference for the camera.
+        VisionCamera camera = new VisionCamera(hardwareMap, FieldSide.BlueClose);
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
@@ -219,11 +226,20 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
 
         // Set the encoders for closed loop speed control, and reset the heading.
         imu.resetYaw();
+
+        //Start the pipeline for detection.
+        camera.enableCubePipeline();
+
         waitForStart();
 
-        sleep(1000);
+        //Set up a variable to store the cubeside detected.
+        //window size is the amount of times you want it to find a value in a row.
+        CubeSide cubeSide = camera.getStableCubeSidePrediction(15);
+
+        //sleep(1000);
         sleep(500);
-        //liftDrive.setPower(0);
+
+        //Robot drives to the farthest spikemark.
         double driftMod = 0.88;
         driveStraight(DRIVE_SPEED, 3 * driftMod, 0);    // Drive straight 3 inches
         turnToHeading(TURN_SPEED, 17);  // Turn left 15 degrees
@@ -235,7 +251,10 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
         sleep(500); // Wait .5 seconds
         colorCheck();   // Check color values
 
-        if (colorSensor2.blue() > 200)  // If team element is on the left spike make
+        //colorSensor2.blue() > 200 //Know it works. Don't delete until we know camera works for every side.
+        //if team element is on the farthest spikemark from the truss.
+        //in this case that means left.
+        if (cubeSide.equals("left"))
         {
             turnToHeading(TURN_SPEED, 25);
             holdHeading(TURN_SPEED,  25.0, 0.5);    // Hold  30 Deg heading for a 1/2 second
@@ -260,7 +279,7 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
             sleep(250);
              */
         }
-        else
+        else //The robot drives to the middle
         {
             turnToHeading(TURN_SPEED, 0);
             holdHeading(TURN_SPEED, 0, 0.4);
@@ -272,7 +291,9 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
             holdHeading(TURN_SPEED, 0, 0.4);
             driveStraight(0.1, 6, 0);
             sleep(250);
-            if (colorSensor1.blue() > 200) //&& colorSensor1.green() < 800)
+
+            //colorSensor1.blue() > 200 && colorSensor1.green() < 800 //Know it works. Don't delete until we know camera works for every side.
+            if (cubeSide.equals("middle")) //if the robot is in middle.
             {
                 driveStraight(DRIVE_SPEED, 1, 0);
                 driveStraight(DRIVE_SPEED, -10, 0);
@@ -295,7 +316,7 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
                 driveStraight(1, -6, -90);
                  */
             }
-            else //Maybe the middle?
+            else //drive to closest spikemark to truss. Assumes the pixel is on the mark closest to the spikemark.
             {
                 driveStraight(DRIVE_SPEED, 4, 0);
                 while( getHeading() > -70 || getHeading() < -80)

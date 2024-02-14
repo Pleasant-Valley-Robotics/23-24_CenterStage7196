@@ -46,6 +46,9 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.hardware.VisionCamera;
+import org.firstinspires.ftc.teamcode.utility.CubeSide;
+import org.firstinspires.ftc.teamcode.utility.FieldSide;
 
 /*
  *  This OpMode illustrates the concept of driving an autonomous path based on Gyro (IMU) heading and encoder counts.
@@ -174,6 +177,9 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
         colorSensor1 = hardwareMap.get(ColorSensor.class, "sensor_color2");
         colorSensor2 = hardwareMap.get(ColorSensor.class, "sensor_color1");
 
+        //Grab a instance of the camera and store it.
+        VisionCamera camera = new VisionCamera(hardwareMap, FieldSide.RedClose);
+
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
@@ -219,10 +225,17 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
 
         // Set the encoders for closed loop speed control, and reset the heading.
         imu.resetYaw();
+
+        camera.enableCubePipeline();
+
         waitForStart();
+
+        CubeSide cubeSide = camera.getStableCubeSidePrediction(15);
+
         sleep(700);
         sleep(500);
-        //liftDrive.setPower(0);
+
+        //Drive to the farthest spikemark.
         double driftMod = 0.88;
         driveStraight(DRIVE_SPEED, 3 * driftMod, 0);    // Drive straight 3 inches
         turnToHeading(TURN_SPEED, -18);  // Turn left 15 degrees
@@ -233,7 +246,9 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
         driveStraight(DRIVE_SPEED, 6 * driftMod, 0);    // Drive straight 4 inches
         sleep(500); // Wait .5 seconds
 
-        if (colorSensor1.red() > 200)  // If Red value is greater than 200
+        //colorSensor1.red() > 200 //Know this works.
+        //If the game element is on the mark farthest from the truss.
+        if (cubeSide == CubeSide.Left)  // If Red value is greater than 200.
         {
             turnToHeading(TURN_SPEED, -25);
             holdHeading(TURN_SPEED,  -25.0, 0.5);    // Hold  30 Deg heading for a 1/2 second
@@ -253,6 +268,7 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
         }
         else
         {
+            //Drive to the middle spikemark.
             //turnToHeading(TURN_SPEED, 30);
             //holdHeading(TURN_SPEED, 30, 0.5);
             //driveStraight(DRIVE_SPEED, 8, 30);
@@ -264,7 +280,10 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
             holdHeading(TURN_SPEED, 0, 0.4);
             driveStraight(0.1, 6, 0);
             sleep(500);
-            if (colorSensor2.red() > 200) //&& colorSensor1.green() < 800)
+
+            //colorSensor2.red() > 200 //This works.
+            //if the game object is on the middle spikemark.
+            if (cubeSide == CubeSide.Middle) //&& colorSensor1.green() < 800)
             {
                 driveStraight(DRIVE_SPEED, 0.15, 0);
                 driveStraight(DRIVE_SPEED, -10, 0);
@@ -285,7 +304,7 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
                 driveStraight(1, -4, 90);
 
             }
-            else
+            else //Assume the game object is on the mark closest to the truss and drive to it.
             {
                 driveStraight(DRIVE_SPEED, 4, 0);
                 while( getHeading() < 70 || getHeading() > 80)

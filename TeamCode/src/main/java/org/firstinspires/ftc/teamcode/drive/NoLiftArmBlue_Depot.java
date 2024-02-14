@@ -46,6 +46,10 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.hardware.VisionCamera;
+
+import org.firstinspires.ftc.teamcode.utility.FieldSide;
+import org.firstinspires.ftc.teamcode.utility.CubeSide;
 
 /*
  *  This OpMode illustrates the concept of driving an autonomous path based on Gyro (IMU) heading and encoder counts.
@@ -174,6 +178,9 @@ public class NoLiftArmBlue_Depot extends LinearOpMode {
         colorSensor2 = hardwareMap.get(ColorSensor.class, "sensor_color1");
         flimsyFlicker = hardwareMap.get(CRServo.class, "flimsyFlicker");
 
+        //Grab and store the instance of the needed Camera.
+        VisionCamera camera = new VisionCamera(hardwareMap, FieldSide.BlueFar);
+
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
@@ -219,11 +226,17 @@ public class NoLiftArmBlue_Depot extends LinearOpMode {
 
         // Set the encoders for closed loop speed control, and reset the heading.
         imu.resetYaw();
+
+        camera.enableCubePipeline();
+
         waitForStart();
 
+        CubeSide cubeSide = camera.getStableCubeSidePrediction(15);
+
+        //Robot drives to farthest spikemark.
         sleep(700);
         sleep(500);
-        //liftDrive.setPower(0);
+
         double driftMod = 0.88;
         driveStraight(DRIVE_SPEED, 3 * driftMod, 0);    // Drive straight 3 inches
         turnToHeading(TURN_SPEED, -17);  // Turn left 15 degrees
@@ -233,9 +246,15 @@ public class NoLiftArmBlue_Depot extends LinearOpMode {
         holdHeading(TURN_SPEED,  0, 0.5);    // Hold  0 Deg heading for a 1/2 second
         driveStraight(DRIVE_SPEED, 4 * driftMod, 0);    // Drive straight 4 inches
         sleep(500); // Wait .5 seconds
-        colorCheck();   // Check color values
+        //colorCheck();   // Check color values
 
-        if (colorSensor1.blue() > 200)  // If blue value is greater than 150
+        camera.addTelemetry(telemetry);
+        telemetry.update();
+
+        //Determines if the game element is on the farthest spikemark.
+        //In this auto that means right side.
+        //colorSensor1.blue() > 200 // know this works as a condition.
+        if (cubeSide == CubeSide.Right)  // If blue value is greater than 150 //
         {
             turnToHeading(TURN_SPEED, -25);
             holdHeading(TURN_SPEED,  -25.0, 0.5);    // Hold  30 Deg heading for a 1/2 second
@@ -243,7 +262,7 @@ public class NoLiftArmBlue_Depot extends LinearOpMode {
             turnToHeading(TURN_SPEED, 90);
             holdHeading(TURN_SPEED, 90, 0.5);
         }
-        else
+        else //The robot drives to the middle.
         {
             turnToHeading(TURN_SPEED, 0);
             holdHeading(TURN_SPEED, 0, 0.4);
@@ -253,14 +272,17 @@ public class NoLiftArmBlue_Depot extends LinearOpMode {
             holdHeading(TURN_SPEED, 0, 0.4);
             driveStraight(0.1, 6, 0);
             sleep(500);
-            if (colorSensor2.blue() > 200) //&& colorSensor1.green() < 800)
+
+            //Robot checks if the game element is on the middle mark.
+            //colorSensor2.blue() > 200 //Know this works a condition.
+            if (cubeSide == CubeSide.Middle) //&& colorSensor1.green() < 800)
             {
 //                driveStraight(DRIVE_SPEED, 3, 0);
                 driveStraight(DRIVE_SPEED, -10, 0);
                 turnToHeading(TURN_SPEED, -90);
                 holdHeading(TURN_SPEED, -90, 0.5);
             }
-            else
+            else //Drive to closest spikemark to the truss. Assumes the pixel is on the closest spikemark.
             {
                 driveStraight(DRIVE_SPEED, 4, 0);
                 driveSideways(0.04, -6, 0);
@@ -303,8 +325,6 @@ public class NoLiftArmBlue_Depot extends LinearOpMode {
 
         // bLedOn represents the state of the LED.
         boolean bLedOn = true;
-
-
 
         // Set the LED in the beginning
         colorSensor1.enableLed(bLedOn);

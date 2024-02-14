@@ -46,6 +46,9 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.hardware.VisionCamera;
+import org.firstinspires.ftc.teamcode.utility.FieldSide;
+import org.firstinspires.ftc.teamcode.utility.CubeSide;
 
 /*
  *  This OpMode illustrates the concept of driving an autonomous path based on Gyro (IMU) heading and encoder counts.
@@ -174,6 +177,9 @@ public class NoLiftArmRed_Depot extends LinearOpMode {
         colorSensor2 = hardwareMap.get(ColorSensor.class, "sensor_color1");
         flimsyFlicker = hardwareMap.get(CRServo.class, "flimsyFlicker");
 
+        //grab and store the refernce to the camera.
+        VisionCamera camera = new VisionCamera(hardwareMap, FieldSide.RedFar);
+
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
@@ -219,13 +225,18 @@ public class NoLiftArmRed_Depot extends LinearOpMode {
 
         // Set the encoders for closed loop speed control, and reset the heading.
         imu.resetYaw();
+
+        camera.enableCubePipeline();
+
         waitForStart();
 
-        //liftJoint.setPower(0.5);
+        //Grab the side that's detected and store it.
+        CubeSide cubeSide = camera.getStableCubeSidePrediction(15);
+
         sleep(700);
         //Was 500.
         sleep(250);
-        //liftDrive.setPower(0);
+
         double driftMod = 0.88;
         driveStraight(DRIVE_SPEED, 3 * driftMod, 0);    // Drive straight 3 inches
         turnToHeading(TURN_SPEED, 17);  // Turn left 15 degrees
@@ -239,7 +250,8 @@ public class NoLiftArmRed_Depot extends LinearOpMode {
         colorCheck();   // Check color values
 
         //Checks the spikemark furthest from the truss.
-        if (colorSensor2.red() > 200)  // If blue value is greater than 150
+        //colorSensor2.red() > 200 //Know it works.
+        if (cubeSide == CubeSide.Right)  // If blue value is greater than 150
         {
             turnToHeading(TURN_SPEED, 25);
             holdHeading(TURN_SPEED,  25.0, 0.5);    // Hold  30 Deg heading for a 1/2 second
@@ -269,14 +281,15 @@ public class NoLiftArmRed_Depot extends LinearOpMode {
             driveStraight(0.1, 6, 0);
             //Was 500.
             sleep(250);
-            if (colorSensor1.red() > 200) //&& colorSensor1.green() < 800) //Middle
+            //colorSensor1.red() > 200 // Know it works.
+            if (cubeSide == CubeSide.Middle) //&& colorSensor1.green() < 800) //Middle side.
             {
                 driveStraight(DRIVE_SPEED, 2, 0);
                 driveStraight(DRIVE_SPEED, -10, 0);
                 turnToHeading(TURN_SPEED, -90);
                 holdHeading(TURN_SPEED, -90, 0.5);
             }
-            else //Close to truss
+            else //Closest to truss
             {
                 driveStraight(DRIVE_SPEED, 4, 0);
                 driveSideways(0.04, 6, 0);
