@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.utility.Api;
 import org.firstinspires.ftc.teamcode.utility.CubeSide;
 import org.firstinspires.ftc.teamcode.utility.FieldSide;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 /**
  * Contains all the vision logic we use on the robot.
@@ -20,6 +21,8 @@ public class VisionCamera {
     private final VisionPortal portal;
     private final CubePipeline pipeline;
 
+    private final AprilTagProcessor apriltags;
+
     /**
      * @param hardwareMap The hardwareMap to initialize the camera with.
      * @param fieldSide   The side of the field this auto is running on.
@@ -27,15 +30,28 @@ public class VisionCamera {
     public VisionCamera(HardwareMap hardwareMap, FieldSide fieldSide) {
         WebcamName camera = hardwareMap.get(WebcamName.class, "Webcam 1");
         this.pipeline = new CubePipeline(fieldSide);
+        this.apriltags = AprilTagProcessor.easyCreateWithDefaults();
+
         this.portal = new VisionPortal.Builder()
                 .setCamera(camera)
                 .setCameraResolution(new Size(960, 720))
                 .enableLiveView(true)
                 .addProcessor(pipeline)
+                .addProcessor(apriltags)
                 .build();
-        this.portal.setProcessorEnabled(this.pipeline, true);
-        this.portal.resumeStreaming();
-        this.portal.resumeLiveView();
+
+
+        //this.portal.setProcessorEnabled(this.pipeline, true);
+        //this.portal.resumeStreaming();
+        //this.portal.resumeLiveView();
+    }
+
+    /**
+     * Turn on cube detection and turn off apriltag detection so only the game element will be detected.
+     */
+    public @Api void enableCubePipeline() {
+        portal.setProcessorEnabled(pipeline, true);
+        portal.setProcessorEnabled(apriltags, false);
     }
 
     /**
