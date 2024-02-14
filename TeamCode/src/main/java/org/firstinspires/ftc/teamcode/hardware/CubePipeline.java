@@ -40,8 +40,16 @@ public class CubePipeline implements VisionProcessor {
     private static final Scalar redMaxs = new Scalar(255, 255, 255);
     private static final double crop_x = 90;
     private static final double crop_y = 130;
-    private static final int cutoff_left = 349;
-    private static final int cutoff_right = 606;
+    //The 2 cutoff variables cut the image into 3 peices.
+    //To make it go more left subtract from both.
+    //2nd line to cut the image in 3 pieces. Is the amount along the x axis of the picture to go and cut.
+    //cuts the 1st third.
+    //Was 349.
+    private static final int cutoff_left = 343;
+    //Was 606.
+    //1st line to cut the image in 3 pieces. Is the amount along the x axis of the picture to go and cut.
+    //Cuts the 2nd and third portion by spliting them up. 
+    private static final int cutoff_right = 600;
 
     private final List<Mat> yrb = new ArrayList<>();
     private final Mat buf = new Mat();
