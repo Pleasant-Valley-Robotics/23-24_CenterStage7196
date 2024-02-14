@@ -248,7 +248,7 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
 
         //colorSensor1.red() > 200 //Know this works.
         //If the game element is on the mark farthest from the truss.
-        if (cubeSide == CubeSide.Left)  // If Red value is greater than 200.
+        if (cubeSide == CubeSide.Right)  // If Red value is greater than 200.
         {
             turnToHeading(TURN_SPEED, -25);
             holdHeading(TURN_SPEED,  -25.0, 0.5);    // Hold  30 Deg heading for a 1/2 second

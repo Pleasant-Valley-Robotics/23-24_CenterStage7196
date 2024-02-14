@@ -249,12 +249,12 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
         holdHeading(TURN_SPEED,  0, 0.5);    // Hold  0 Deg heading for a 1/2 second
         driveStraight(DRIVE_SPEED, 4 * driftMod, 0);    // Drive straight 4 inches
         sleep(500); // Wait .5 seconds
-        colorCheck();   // Check color values
+        //colorCheck();   // Check color values
 
         //colorSensor2.blue() > 200 //Know it works. Don't delete until we know camera works for every side.
         //if team element is on the farthest spikemark from the truss.
         //in this case that means left.
-        if (cubeSide.equals("left"))
+        if (cubeSide ==  CubeSide.Left)
         {
             turnToHeading(TURN_SPEED, 25);
             holdHeading(TURN_SPEED,  25.0, 0.5);    // Hold  30 Deg heading for a 1/2 second

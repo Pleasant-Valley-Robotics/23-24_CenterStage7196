@@ -247,11 +247,11 @@ public class NoLiftArmRed_Depot extends LinearOpMode {
         driveStraight(DRIVE_SPEED, 4 * driftMod, 0);    // Drive straight 4 inches
         //Was 500
         sleep(250); // Wait .5 seconds
-        colorCheck();   // Check color values
+        //colorCheck();   // Check color values
 
         //Checks the spikemark furthest from the truss.
         //colorSensor2.red() > 200 //Know it works.
-        if (cubeSide == CubeSide.Right)  // If blue value is greater than 150
+        if (cubeSide == CubeSide.Left)  // If blue value is greater than 150
         {
             turnToHeading(TURN_SPEED, 25);
             holdHeading(TURN_SPEED,  25.0, 0.5);    // Hold  30 Deg heading for a 1/2 second
