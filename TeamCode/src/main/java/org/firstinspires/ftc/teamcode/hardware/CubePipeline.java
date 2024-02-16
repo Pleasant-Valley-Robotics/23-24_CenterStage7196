@@ -38,17 +38,24 @@ public class CubePipeline implements VisionProcessor {
     private static final Scalar blueMaxs = new Scalar(255, 255, 255);
     private static final Scalar redMins = new Scalar(0, 160, 0);
     private static final Scalar redMaxs = new Scalar(255, 255, 255);
-    private static final double crop_x = 90;
+    //Cuts the image down to a certain size for its x axis.
+    private static final double crop_x = 0;
+    //Cuts the image down to a certain size for its y axis.
     private static final double crop_y = 130;
     //The 2 cutoff variables cut the image into 3 peices.
     //To make it go more left subtract from both.
     //2nd line to cut the image in 3 pieces. Is the amount along the x axis of the picture to go and cut.
     //cuts the 1st third.
-    //Was 349.
-    private static final int cutoff_left = 343;
+    //Was 346.
+    //decrease this if
+    private static final int cutoff_left = 190;
     //Was 606.
     //1st line to cut the image in 3 pieces. Is the amount along the x axis of the picture to go and cut.
-    //Cuts the 2nd and third portion by spliting them up. 
+    //Cuts the 2nd and third portion by spliting them up.
+    //What side the cube is on is determined by the cutoff left and cutoff right vars. If the cube is detected left of
+    //the first cut(cutoff left) the cubes on left side.
+    //if the cube is between cutoff left and cutoff right then it's in the middle.
+    //if the cube is after the cutoff right then the cube's on the right.
     private static final int cutoff_right = 600;
 
     private final List<Mat> yrb = new ArrayList<>();
@@ -179,6 +186,27 @@ public class CubePipeline implements VisionProcessor {
                 (float) (point.x + crop_x) * scaleBmpPxToCanvasPx,
                 (float) (point.y + crop_y) * scaleBmpPxToCanvasPx,
                 20, pointPaint);
+
+        final Paint cutoffPaint = new Paint();
+        cutoffPaint.setARGB(255, 0, 255, 0);
+        cutoffPaint.setStyle(Paint.Style.STROKE);
+        cutoffPaint.setStrokeWidth(5);
+
+        canvas.drawLine(
+                cutoff_left * scaleBmpPxToCanvasPx,
+                (float) crop_y * scaleBmpPxToCanvasPx,
+                cutoff_left * scaleBmpPxToCanvasPx,
+                (float) (canvas.getHeight() - crop_y * scaleBmpPxToCanvasPx),
+                cutoffPaint
+        );
+
+        canvas.drawLine(
+                cutoff_right * scaleBmpPxToCanvasPx,
+                (float) crop_y * scaleBmpPxToCanvasPx,
+                cutoff_right * scaleBmpPxToCanvasPx,
+                (float) (canvas.getHeight() - crop_y * scaleBmpPxToCanvasPx),
+                cutoffPaint
+        );
 
 
         final Paint linePaint = new Paint();
