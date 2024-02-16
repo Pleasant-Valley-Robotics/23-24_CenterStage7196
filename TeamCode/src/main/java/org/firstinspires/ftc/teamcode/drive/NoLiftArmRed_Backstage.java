@@ -250,6 +250,11 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
         //If the game element is on the mark farthest from the truss.
         if (cubeSide == CubeSide.Right)  // If Red value is greater than 200.
         {
+            //Testing statements.
+            telemetry.setAutoClear(false);
+            camera.addTelemetry(telemetry);
+            telemetry.update();
+
             turnToHeading(TURN_SPEED, -25);
             holdHeading(TURN_SPEED,  -25.0, 0.5);    // Hold  30 Deg heading for a 1/2 second
             driveStraight(DRIVE_SPEED, -6, -25);
@@ -285,6 +290,11 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
             //if the game object is on the middle spikemark.
             if (cubeSide == CubeSide.Middle) //&& colorSensor1.green() < 800)
             {
+                //Testing statements.
+                telemetry.setAutoClear(false);
+                camera.addTelemetry(telemetry);
+                telemetry.update();
+
                 driveStraight(DRIVE_SPEED, 0.15, 0);
                 driveStraight(DRIVE_SPEED, -10, 0);
                 turnToHeading(TURN_SPEED, 90);
@@ -306,6 +316,11 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
             }
             else //Assume the game object is on the mark closest to the truss and drive to it.
             {
+                //Testing statements.
+                telemetry.setAutoClear(false);
+                camera.addTelemetry(telemetry);
+                telemetry.update();
+
                 driveStraight(DRIVE_SPEED, 4, 0);
                 while( getHeading() < 70 || getHeading() > 80)
                 {

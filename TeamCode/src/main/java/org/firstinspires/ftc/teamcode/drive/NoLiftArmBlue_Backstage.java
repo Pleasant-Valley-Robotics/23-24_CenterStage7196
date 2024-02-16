@@ -251,19 +251,28 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
         sleep(500); // Wait .5 seconds
         //colorCheck();   // Check color values
 
+        //Add telemetry to see what side the camera is on.
+        camera.addTelemetry(telemetry);
+        telemetry.update();
+
         //colorSensor2.blue() > 200 //Know it works. Don't delete until we know camera works for every side.
         //if team element is on the farthest spikemark from the truss.
         //in this case that means left.
-        if (cubeSide ==  CubeSide.Left)
+        if (cubeSide == CubeSide.Left)
         {
+            //Testing statements.
+            telemetry.setAutoClear(false);
+            camera.addTelemetry(telemetry);
+            telemetry.update();
+
+            //Driving to score on the left side of board.
             turnToHeading(TURN_SPEED, 25);
             holdHeading(TURN_SPEED,  25.0, 0.5);    // Hold  30 Deg heading for a 1/2 second
             driveStraight(DRIVE_SPEED, -6, 25);
             turnToHeading(TURN_SPEED, -90);
             holdHeading(TURN_SPEED, -90, 0.5);
             driveStraight(DRIVE_SPEED, -33, -90);
-            //Was 6.
-            driveSideways(DRIVE_SPEED, 4, -90);
+            driveSideways(DRIVE_SPEED, 6, -90);
             driveStraight(DRIVE_SPEED, -5, -90);
             dropPixel();
             sleep(500);
@@ -293,8 +302,14 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
             sleep(250);
 
             //colorSensor1.blue() > 200 && colorSensor1.green() < 800 //Know it works. Don't delete until we know camera works for every side.
-            if (cubeSide.equals("middle")) //if the robot is in middle.
+            if (cubeSide == CubeSide.Middle) //if the robot is in middle.
             {
+                //Testing statements.
+                telemetry.setAutoClear(false);
+                camera.addTelemetry(telemetry);
+                telemetry.update();
+
+                //Score on the middle part of board.
                 driveStraight(DRIVE_SPEED, 1, 0);
                 driveStraight(DRIVE_SPEED, -10, 0);
                 turnToHeading(TURN_SPEED, -90);
@@ -318,8 +333,13 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
             }
             else //drive to closest spikemark to truss. Assumes the pixel is on the mark closest to the spikemark.
             {
+                //Testing statements.
+                telemetry.setAutoClear(false);
+                camera.addTelemetry(telemetry);
+                telemetry.update();
+
                 driveStraight(DRIVE_SPEED, 4, 0);
-                while( getHeading() > -70 || getHeading() < -80)
+                while(getHeading() > -70 || getHeading() < -80)
                 {
                     BRDrive.setPower(0.6);
                     FRDrive.setPower(0.6);
