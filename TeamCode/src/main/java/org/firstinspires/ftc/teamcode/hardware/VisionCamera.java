@@ -41,9 +41,9 @@ public class VisionCamera {
                 .build();
 
 
-        //this.portal.setProcessorEnabled(this.pipeline, true);
-        //this.portal.resumeStreaming();
-        //this.portal.resumeLiveView();
+        this.portal.setProcessorEnabled(this.pipeline, true);
+        this.portal.resumeStreaming();
+        this.portal.resumeLiveView();
     }
 
     /**
