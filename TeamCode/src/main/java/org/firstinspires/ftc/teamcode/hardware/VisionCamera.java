@@ -4,15 +4,20 @@ import android.util.Size;
 
 import androidx.annotation.Nullable;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Supplier;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.utility.Api;
 import org.firstinspires.ftc.teamcode.utility.CubeSide;
 import org.firstinspires.ftc.teamcode.utility.FieldSide;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+import java.util.List;
 
 /**
  * Contains all the vision logic we use on the robot.
@@ -108,5 +113,23 @@ public class VisionCamera {
 
         //return the prediction found [insert windowSize] times.
         return prediction;
+    }
+
+    public @Api void enableAprilTags()
+    {
+        portal.setProcessorEnabled(pipeline, false);
+        portal.setProcessorEnabled(apriltags, true);
+    }
+
+    public @Api Supplier<AprilTagDetection> getTagById(int tagId)
+    {
+        return () -> {
+            List<AprilTagDetection> detections = apriltags.getFreshDetections();
+            if (detections == null)
+            {
+                return null;
+            }
+            return detections.stream().filter(x -> x.id == tagId).findFirst().orElse(null);
+        };
     }
 }
