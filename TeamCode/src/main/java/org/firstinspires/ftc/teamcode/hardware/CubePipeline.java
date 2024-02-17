@@ -41,7 +41,7 @@ public class CubePipeline implements VisionProcessor {
     //Cuts the image down to a certain size for its x axis.
     private static final double crop_x = 0;
     //Cuts the image down to a certain size for its y axis.
-    private static final double crop_y = 130;
+    private static final double crop_y = 120;
     //The 2 cutoff variables cut the image into 3 peices.
     //To make it go more left subtract from both.
     //2nd line to cut the image in 3 pieces. Is the amount along the x axis of the picture to go and cut.
