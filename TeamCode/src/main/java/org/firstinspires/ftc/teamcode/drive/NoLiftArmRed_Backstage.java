@@ -230,21 +230,10 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
 
         waitForStart();
 
-        CubeSide cubeSide = camera.getStableCubeSidePrediction(15);
+        CubeSide cubeSide = camera.getStableCubeSidePrediction(20);
 
         sleep(700);
         sleep(500);
-
-        //Drive to the farthest spikemark.
-        double driftMod = 0.88;
-        driveStraight(DRIVE_SPEED, 3 * driftMod, 0);    // Drive straight 3 inches
-        turnToHeading(TURN_SPEED, -18);  // Turn left 15 degrees
-        holdHeading(TURN_SPEED,  -18.0, 0.4);    // Hold  15 Deg heading for a 1/2 second
-        driveStraight(DRIVE_SPEED, 20 * driftMod, -18);  // Drive straight 21 inches at 15 degree heading
-        turnToHeading(TURN_SPEED, 0);   // Turn right 15 degrees
-        holdHeading(TURN_SPEED,  0, 0.4);    // Hold  0 Deg heading for a 1/2 second
-        driveStraight(DRIVE_SPEED, 6 * driftMod, 0);    // Drive straight 4 inches
-        sleep(500); // Wait .5 seconds
 
         //colorSensor1.red() > 200 //Know this works.
         //If the game element is on the mark farthest from the truss.
@@ -254,6 +243,17 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
             telemetry.setAutoClear(false);
             camera.addTelemetry(telemetry);
             telemetry.update();
+
+            //Drive to the farthest spikemark.
+            double driftMod = 0.88;
+            driveStraight(DRIVE_SPEED, 3 * driftMod, 0);    // Drive straight 3 inches
+            turnToHeading(TURN_SPEED, -18);  // Turn left 15 degrees
+            holdHeading(TURN_SPEED,  -18.0, 0.4);    // Hold  15 Deg heading for a 1/2 second
+            driveStraight(DRIVE_SPEED, 20 * driftMod, -18);  // Drive straight 21 inches at 15 degree heading
+            turnToHeading(TURN_SPEED, 0);   // Turn right 15 degrees
+            holdHeading(TURN_SPEED,  0, 0.4);    // Hold  0 Deg heading for a 1/2 second
+            driveStraight(DRIVE_SPEED, 6 * driftMod, 0);    // Drive straight 4 inches
+            sleep(500); // Wait .5 seconds
 
             turnToHeading(TURN_SPEED, -25);
             holdHeading(TURN_SPEED,  -25.0, 0.5);    // Hold  30 Deg heading for a 1/2 second
@@ -273,19 +273,6 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
         }
         else
         {
-            //Drive to the middle spikemark.
-            //turnToHeading(TURN_SPEED, 30);
-            //holdHeading(TURN_SPEED, 30, 0.5);
-            //driveStraight(DRIVE_SPEED, 8, 30);
-            turnToHeading(TURN_SPEED, 0);
-            holdHeading(TURN_SPEED, 0, 0.4);
-            driveSideways(0.04, -7, 0);
-            sleep(250);
-            turnToHeading(0.3, 0);
-            holdHeading(TURN_SPEED, 0, 0.4);
-            driveStraight(0.1, 6, 0);
-            sleep(500);
-
             //colorSensor2.red() > 200 //This works.
             //if the game object is on the middle spikemark.
             if (cubeSide == CubeSide.Middle) //&& colorSensor1.green() < 800)
@@ -294,6 +281,19 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
                 telemetry.setAutoClear(false);
                 camera.addTelemetry(telemetry);
                 telemetry.update();
+
+                //Drive to the middle spikemark.
+                //turnToHeading(TURN_SPEED, 30);
+                //holdHeading(TURN_SPEED, 30, 0.5);
+                //driveStraight(DRIVE_SPEED, 8, 30);
+                turnToHeading(TURN_SPEED, 0);
+                holdHeading(TURN_SPEED, 0, 0.4);
+                driveSideways(0.04, -7, 0);
+                sleep(250);
+                turnToHeading(0.3, 0);
+                holdHeading(TURN_SPEED, 0, 0.4);
+                driveStraight(0.1, 6, 0);
+                sleep(500);
 
                 driveStraight(DRIVE_SPEED, 0.15, 0);
                 driveStraight(DRIVE_SPEED, -10, 0);

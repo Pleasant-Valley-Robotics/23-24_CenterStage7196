@@ -241,14 +241,6 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
 
         //Robot drives to the farthest spikemark.
         double driftMod = 0.88;
-        driveStraight(DRIVE_SPEED, 3 * driftMod, 0);    // Drive straight 3 inches
-        turnToHeading(TURN_SPEED, 17);  // Turn left 15 degrees
-        holdHeading(TURN_SPEED,  17.0, 0.5);    // Hold  15 Deg heading for a 1/2 second
-        driveStraight(DRIVE_SPEED, 20 * driftMod, 17);  // Drive straight 21 inches at 15 degree heading
-        turnToHeading(TURN_SPEED, 0);   // Turn right 15 degrees
-        holdHeading(TURN_SPEED,  0, 0.5);    // Hold  0 Deg heading for a 1/2 second
-        driveStraight(DRIVE_SPEED, 4 * driftMod, 0);    // Drive straight 4 inches
-        sleep(500); // Wait .5 seconds
         //colorCheck();   // Check color values
 
         //Add telemetry to see what side the camera is on.
@@ -264,6 +256,16 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
             telemetry.setAutoClear(false);
             camera.addTelemetry(telemetry);
             telemetry.update();
+
+            //Was 3.
+            driveStraight(DRIVE_SPEED, 3 * driftMod, 0);    // Drive straight 3 inches
+            turnToHeading(TURN_SPEED, 17);  // Turn left 15 degrees
+            holdHeading(TURN_SPEED,  17.0, 0.5);    // Hold  15 Deg heading for a 1/2 second
+            driveStraight(DRIVE_SPEED, 20 * driftMod, 17);  // Drive straight 21 inches at 15 degree heading
+            turnToHeading(TURN_SPEED, 0);   // Turn right 15 degrees
+            holdHeading(TURN_SPEED,  0, 0.5);    // Hold  0 Deg heading for a 1/2 second
+            driveStraight(DRIVE_SPEED, 4 * driftMod, 0);    // Drive straight 4 inches
+            sleep(500); // Wait .5 seconds
 
             //Driving to score on the left side of board.
             turnToHeading(TURN_SPEED, 25);
@@ -290,17 +292,6 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
         }
         else //The robot drives to the middle
         {
-            turnToHeading(TURN_SPEED, 0);
-            holdHeading(TURN_SPEED, 0, 0.4);
-            driveSideways(0.04, 6, 0);
-            driveStraight(DRIVE_SPEED, 2, 0);
-            driveSideways(0.04, 3, 0);
-            sleep(250);
-            turnToHeading(0.3, 0);
-            holdHeading(TURN_SPEED, 0, 0.4);
-            driveStraight(0.1, 6, 0);
-            sleep(250);
-
             //colorSensor1.blue() > 200 && colorSensor1.green() < 800 //Know it works. Don't delete until we know camera works for every side.
             if (cubeSide == CubeSide.Middle) //if the robot is in middle.
             {
@@ -308,6 +299,17 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
                 telemetry.setAutoClear(false);
                 camera.addTelemetry(telemetry);
                 telemetry.update();
+
+                turnToHeading(TURN_SPEED, 0);
+                holdHeading(TURN_SPEED, 0, 0.4);
+                driveSideways(0.04, 6, 0);
+                driveStraight(DRIVE_SPEED, 2, 0);
+                driveSideways(0.04, 3, 0);
+                sleep(250);
+                turnToHeading(0.3, 0);
+                holdHeading(TURN_SPEED, 0, 0.4);
+                driveStraight(0.1, 6, 0);
+                sleep(250);
 
                 //Score on the middle part of board.
                 driveStraight(DRIVE_SPEED, 1, 0);
