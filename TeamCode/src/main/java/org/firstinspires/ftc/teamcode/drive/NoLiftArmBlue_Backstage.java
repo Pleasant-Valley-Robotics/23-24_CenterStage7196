@@ -241,13 +241,7 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
 
         //Robot drives to the farthest spikemark.
         double driftMod = 0.88;
-        //colorCheck();   // Check color values
 
-        //Add telemetry to see what side the camera is on.
-        camera.addTelemetry(telemetry);
-        telemetry.update();
-
-        //colorSensor2.blue() > 200 //Know it works. Don't delete until we know camera works for every side.
         //if team element is on the farthest spikemark from the truss.
         //in this case that means left.
         if (cubeSide == CubeSide.Left)
@@ -257,6 +251,7 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
             camera.addTelemetry(telemetry);
             telemetry.update();
 
+            //Score pixel on the spikemark.
             driveStraight(DRIVE_SPEED, 3 * driftMod, 0);    // Drive straight 3 inches
             turnToHeading(TURN_SPEED, 20);  // Turn left 15 degrees
             holdHeading(TURN_SPEED,  20.0, 0.5);    // Hold  15 Deg heading for a 1/2 second
@@ -268,22 +263,11 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
             turnToHeading(TURN_SPEED, -90);
             holdHeading(TURN_SPEED, -90, 0.5);
             //Allign to left spot on backboard.
-            driveStraight(DRIVE_SPEED, -33, -90);
+            driveStraight(DRIVE_SPEED, -42, -90);
             driveSideways(DRIVE_SPEED, 6, -90);
             driveStraight(DRIVE_SPEED, -5, -90);
             dropPixel();
             sleep(500);
-
-
-            /*
-            driveStraight(DRIVE_SPEED, 4, -90);
-            //driveStraight(DRIVE_SPEED, 20, -90);
-            driveSideways(1, -40, -90);
-            //sleep(9000);
-            driveStraight(1, -5, -90);
-            flimsyFlicker.setPower(1);
-            sleep(250);
-             */
         }
         else //The robot drives to the middle
         {
@@ -295,86 +279,43 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
                 camera.addTelemetry(telemetry);
                 telemetry.update();
 
-                turnToHeading(TURN_SPEED, 0);
-                holdHeading(TURN_SPEED, 0, 0.4);
-                driveSideways(0.04, 6, 0);
-                driveStraight(DRIVE_SPEED, 2, 0);
-                driveSideways(0.04, 3, 0);
-                sleep(250);
-                turnToHeading(0.3, 0);
-                holdHeading(TURN_SPEED, 0, 0.4);
-                driveStraight(0.1, 6, 0);
-                sleep(250);
-
-                //Score on the middle part of board.
-                driveStraight(DRIVE_SPEED, 1, 0);
-                driveStraight(DRIVE_SPEED, -10, 0);
-                turnToHeading(TURN_SPEED, -90);
-                holdHeading(TURN_SPEED, -90, 0.5);
-                driveStraight(0.5, -35, -90);
-                sleep(500);
-                //driveSideways(0.5, -6, -90);
-                turnToHeading(TURN_SPEED, -90);
-                holdHeading(TURN_SPEED, -90, 0.5);
-                driveStraight(0.2, -4, -90);
-                dropPixel();
-                sleep(1000);
-
-                /*
-                driveStraight(DRIVE_SPEED, 6, -90);
-                driveSideways(0.5, 24, -90);
-                flimsyFlicker.setPower(1);
-                sleep(500);
-                driveStraight(1, -6, -90);
-                 */
-            }
-            else //drive to closest spikemark to truss. Assumes the pixel is on the mark closest to the spikemark.
-            {
-//                //Testing statements.
-//                telemetry.setAutoClear(false);
-//                camera.addTelemetry(telemetry);
-//                telemetry.update();
-//
-//                driveStraight(DRIVE_SPEED, 4, 0);
-//                while(getHeading() > -70 || getHeading() < -80)
-//                {
-//                    BRDrive.setPower(0.6);
-//                    FRDrive.setPower(0.6);
-//                }
-//                driveStraight(0.2, 16, -70);
-//                driveStraight(1, -30, -70);
-//                turnToHeading(TURN_SPEED, -90);
-//                holdHeading(TURN_SPEED, -90, 0.4);
-//                driveStraight(0.5, -8, -90);
-//                driveSideways(0.5, -14, -90);
-//                driveStraight(DRIVE_SPEED, -8, -90);
-//                dropPixel();
-//                sleep(250);
-                /*
-                driveStraight(DRIVE_SPEED, 4, -90);
-                driveSideways(1, 36, -90);
-                flimsyFlicker.setPower(1);
-                sleep(250);
-                driveStraight(1, -5, -90);
-                 */
-
-                driveStraight(DRIVE_SPEED, 20 * driftMod, 0);    // Drive straight 3 inches
-                turnToHeading(TURN_SPEED, -15);  // Turn left 15 degrees
-                holdHeading(TURN_SPEED,  -15.0, 0.5);    // Hold  15 Deg heading for a 1/2 second
-                //This value will change (decrease).
-                driveStraight(DRIVE_SPEED, 22 * driftMod, -15);  // Drive straight 21 inches at 15 degree heading
+                driveStraight(DRIVE_SPEED, 42 * driftMod, 0);  // Drive straight 21 inches at 15 degree heading
                 sleep(500); // Wait .5 seconds
 
                 //Back up robot to start the process of scoring on the backboard.
-                driveStraight(DRIVE_SPEED, -8, -15);
-                holdHeading(TURN_SPEED, -15, 0.5);
-                turnToHeading(TURN_SPEED, 90);
-                holdHeading(TURN_SPEED, 90, 0.5);
+                driveStraight(DRIVE_SPEED, -6, 0);
+                turnToHeading(TURN_SPEED, -90);
+                holdHeading(TURN_SPEED, -90, 0.5);
+                //Allign to middle spot on backboard.
+                driveStraight(DRIVE_SPEED, -47, -90);
+                driveSideways(DRIVE_SPEED, 6, -90);
+                driveStraight(DRIVE_SPEED, -5, -90);
+                dropPixel();
+                sleep(500);
+            }
+            else //drive to closest spikemark to truss. Assumes the pixel is on the mark closest to the spikemark.
+            {
+                //Testing statements.
+                telemetry.setAutoClear(false);
+                camera.addTelemetry(telemetry);
+                telemetry.update();
 
-                //Allign to left spot on backboard.
-                driveStraight(DRIVE_SPEED, -33, 90);
-                driveSideways(DRIVE_SPEED, 6, 90);
-                driveStraight(DRIVE_SPEED, -5, 90);
+                driveStraight(DRIVE_SPEED, 20 * driftMod, 0);    // Drive straight 3 inches
+                turnToHeading(TURN_SPEED, -25);  // Turn left 15 degrees
+                holdHeading(TURN_SPEED,  -25.0, 0.5);    // Hold  15 Deg heading for a 1/2 second
+                driveStraight(DRIVE_SPEED, 22 * driftMod, -25);  // Drive straight 21 inches at 15 degree heading
+                sleep(500); // Wait .5 seconds
+
+                //Back up robot to start the process of scoring on the backboard.
+                driveStraight(DRIVE_SPEED, -8, -25);
+                holdHeading(TURN_SPEED, -25, 0.5);
+                turnToHeading(TURN_SPEED, -90);
+                holdHeading(TURN_SPEED, -90, 0.5);
+
+                //Allign to right spot on backboard.
+                driveStraight(DRIVE_SPEED, -55, -90);
+                driveSideways(DRIVE_SPEED, -8, -90);
+                driveStraight(DRIVE_SPEED, -5, -90);
                 dropPixel();
                 sleep(500);
             }
