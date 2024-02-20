@@ -12,8 +12,9 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.checkerframework.checker.units.qual.C;
+import org.firstinspires.ftc.robotcore.internal.camera.delegating.DelegatingCaptureSequence;
 
-@TeleOp(name = "V1.0.0", group = "Iterative Opmode")
+@TeleOp(name = "Teleop New Robot", group = "Iterative Opmode")
 public class RobotAlpha2 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
@@ -28,6 +29,7 @@ public class RobotAlpha2 extends LinearOpMode {
         //* TODO uncomment this code for defining DroneLauncher.
         DcMotor liftDriveLeft = null; // liftDriveLeft is in port 0 of EH
         DcMotor liftDriveRight = null; // liftDriveRight is in port 1 of EH
+        DcMotor spintake = null; // spintake is in port 2 of EH
         //CRServo droneLaunch = null;
         double turnMovement = 0;
         double strafeMovement = 0;
@@ -41,6 +43,7 @@ public class RobotAlpha2 extends LinearOpMode {
         spinny = hardwareMap.get(CRServo.class, "spinny");
         upperDrop = hardwareMap.get(CRServo.class, "upperDrop");
         lowerDrop = hardwareMap.get(CRServo.class, "lowerDrop");
+        spintake = hardwareMap.get(DcMotor.class, "spintake");
         //* TODO uncomment this code for hardware mapping DroneLauncher.
          liftDriveLeft = hardwareMap.get(DcMotor.class, "liftDriveLeft");
          liftDriveRight = hardwareMap.get(DcMotor.class, "liftDriveRight");
@@ -53,6 +56,7 @@ public class RobotAlpha2 extends LinearOpMode {
         spinny.setDirection(DcMotorSimple.Direction.FORWARD);
         upperDrop.setDirection(CRServo.Direction.FORWARD);
         lowerDrop.setDirection(CRServo.Direction.FORWARD);
+        spintake.setDirection(DcMotor.Direction.FORWARD);
 
         //* TODO uncomment this code for setting direction DroneLauncher.
         liftDriveLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -66,6 +70,7 @@ public class RobotAlpha2 extends LinearOpMode {
         BRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftDriveLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftDriveRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        spintake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         IMU imu = hardwareMap.get(IMU.class, "imu");
         // Adjust the orientation parameters to match your robot
@@ -98,6 +103,89 @@ public class RobotAlpha2 extends LinearOpMode {
                 turnMovement = gamepad1.right_stick_x;
                 strafeMovement = gamepad1.left_stick_x;
                 straightMovement = -gamepad1.left_stick_y;
+            }
+
+             //COLE codes spintake
+             // Good job looks good - Oliver
+            if (gamepad1.a)
+            {
+                spintake.setPower(-1);
+            }
+            else if (gamepad1.b)
+            {
+                spintake.setPower(1);
+            }
+            else
+            {
+                spintake.setPower(0);
+            }
+
+
+
+ /*   OLD SPINTAKE CODE        if (!gamepad1.a && gamepad1.b) // if a is NOT pressed AND b are pressed then set power to 1 and open drops
+            {
+                spintake.setPower(1);
+                upperDrop.setPower(0.5);
+                lowerDrop.setPower(0.85);
+            }
+
+  */
+
+  /*          else if (!gamepad1.a && !gamepad1.b); // if a AND b NOT presses set power 0
+            {
+                spintake.setPower(0);
+                if (gamepad2.a) // if a pressed set drops to be open
+                {
+                    {
+                        upperDrop.setPower(0.5);
+                        lowerDrop.setPower(0.85);
+                    }
+                }
+
+                else if (!gamepad1.b) // if a is not pressed set upper drop to closed
+                {
+                    upperDrop.setPower(-0.2);
+                }
+
+                //When B is pressed toggles the position of lowerDrop
+                if (gamepad2.b) // if b pressed open lower drop
+                {
+                    {
+                        lowerDrop.setPower(0.85);
+                    }
+                }
+
+                else if (!gamepad2.b && !gamepad2.a && !gamepad1.b) // if 2b AND 2a AND 1b NOT pressed set lower drop to closed
+                {
+                    lowerDrop.setPower(0.2);
+                }
+            }
+
+   */
+            if (gamepad2.a) // if a pressed set drops to be open
+            {
+                {
+                    upperDrop.setPower(0.5);
+                    lowerDrop.setPower(0.85);
+                }
+            }
+
+            else if (!gamepad1.b) // if a is not pressed set upper drop to closed
+            {
+                upperDrop.setPower(-0.2);
+            }
+
+            //When B is pressed toggles the position of lowerDrop
+            if (gamepad2.b) // if b pressed open lower drop
+            {
+                {
+                    lowerDrop.setPower(0.85);
+                }
+            }
+
+            else if (!gamepad2.b && !gamepad2.a && !gamepad1.b) // if 2b AND 2a AND 1b NOT pressed set lower drop to closed
+            {
+                lowerDrop.setPower(0.2);
             }
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
@@ -150,9 +238,13 @@ public class RobotAlpha2 extends LinearOpMode {
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", BLPower, BRPower);
             telemetry.addData("UpperPower: ", upperDrop.getPower());
             telemetry.addData("LowerPower: ", lowerDrop.getPower());
+            telemetry.addData("SpinTakePower: ", spintake.getPower());
+
+            telemetry.addData("Left lift position: ", String.valueOf(liftDriveLeft.getCurrentPosition()));
+            telemetry.addData("Right lift position: ", String.valueOf(liftDriveRight.getCurrentPosition()));
             telemetry.update();
 
-            double liftJoystick = gamepad2.right_stick_y;
+            double liftJoystick = gamepad2.left_stick_y;
             //if the joystick for the servo flipping the blue 3d printed part is at a power of more than 1, reset it to the
             //maximum power allowed to keep it in bounds.
             if (liftJoystick > 1) {
@@ -166,37 +258,31 @@ public class RobotAlpha2 extends LinearOpMode {
                 liftDriveRight.setPower(0);
             }
 
+            // furthest it can go is 5000 with current wires
+            // furthest with extention wires is 5970
+            /*
+            if (liftDriveRight.getCurrentPosition() >= 3000 || liftDriveLeft.getCurrentPosition() >= 3000);
+            {
+                for (int x=0; x<=5; x++);
+                {
+                    if (Math.abs(gamepad2.right_stick_y) > 0.05);
+                    {
+                        liftDriveLeft.setPower(0);
+                        liftDriveRight.setPower(0);
+                    }
+                }
+            }
+             */
             //-1 power for having it as far in as possible.
             //1 for having it as far out as possible.
-            double intakeLiftJoystick = -gamepad2.left_stick_y;
 
-            if (Math.abs(intakeLiftJoystick) > 0.05)
+            if (gamepad2.left_bumper == true)
             {
-                spinny.setPower(intakeLiftJoystick);
+                spinny.setPower(-0.21);
             }
             else
             {
-                spinny.setPower(spinny.getPower());
-            }
-
-            //When A is pressed toggles the position of upperDrop
-            if (gamepad2.a) {
-                {
-                    upperDrop.setPower(0.5);
-                    lowerDrop.setPower(0.85);
-
-                }
-            } else {
-                upperDrop.setPower(-0.2);
-            }
-
-            //When B is pressed toggles the position of lowerDrop
-            if (gamepad2.b) {
-                {
-                    lowerDrop.setPower(0.85);
-                }
-            } else if (!gamepad2.b && !gamepad2.a){
-                lowerDrop.setPower(0.2);
+                spinny.setPower(0.18); // for auto -0.35
             }
 
             //* TODO delete this comment for DroneLauncher
