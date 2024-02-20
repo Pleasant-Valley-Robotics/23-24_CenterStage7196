@@ -235,6 +235,8 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
         sleep(700);
         sleep(500);
 
+        double driftMod = 0.88;
+
         //colorSensor1.red() > 200 //Know this works.
         //If the game element is on the mark farthest from the truss.
         if (cubeSide == CubeSide.Right)  // If Red value is greater than 200.
@@ -244,32 +246,27 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
             camera.addTelemetry(telemetry);
             telemetry.update();
 
-            //Drive to the farthest spikemark.
-            double driftMod = 0.88;
+            //Score pixel on the spikemark.
             driveStraight(DRIVE_SPEED, 3 * driftMod, 0);    // Drive straight 3 inches
-            turnToHeading(TURN_SPEED, -18);  // Turn left 15 degrees
-            holdHeading(TURN_SPEED,  -18.0, 0.4);    // Hold  15 Deg heading for a 1/2 second
-            driveStraight(DRIVE_SPEED, 20 * driftMod, -18);  // Drive straight 21 inches at 15 degree heading
-            turnToHeading(TURN_SPEED, 0);   // Turn right 15 degrees
-            holdHeading(TURN_SPEED,  0, 0.4);    // Hold  0 Deg heading for a 1/2 second
-            driveStraight(DRIVE_SPEED, 6 * driftMod, 0);    // Drive straight 4 inches
+            turnToHeading(TURN_SPEED, -20);  // Turn left 15 degrees
+            holdHeading(TURN_SPEED,  -20.0, 0.5);    // Hold  15 Deg heading for a 1/2 second
+            driveStraight(DRIVE_SPEED, 24 * driftMod, -20);  // Drive straight 21 inches at 15 degree heading
             sleep(500); // Wait .5 seconds
 
-            turnToHeading(TURN_SPEED, -25);
-            holdHeading(TURN_SPEED,  -25.0, 0.5);    // Hold  30 Deg heading for a 1/2 second
-            driveStraight(DRIVE_SPEED, -6, -25);
+            //Back up robot to start the process of scoring on the backboard.
+            driveStraight(DRIVE_SPEED, -6, 20);
             turnToHeading(TURN_SPEED, 90);
             holdHeading(TURN_SPEED, 90, 0.5);
-            driveStraight(DRIVE_SPEED, -33, 90);
-            driveSideways(0.5, 4, 90);
-            driveStraight(DRIVE_SPEED, -3, 90);
+            //Allign to right spot on backboard.
+            //Was -32
+            driveStraight(DRIVE_SPEED, -35, 90);
+            driveSideways(DRIVE_SPEED, 7, 90);
             dropPixel();
             sleep(500);
-            driveStraight(DRIVE_SPEED, 4, 90);
-            driveSideways(0.5, 30, 90);
-            flimsyFlicker.setPower(1);
-            sleep(500);
-            driveStraight(1, -3, 90);
+
+            //park.
+            driveStraight(DRIVE_SPEED, -8, 90);
+            driveSideways(DRIVE_SPEED, -8, 90);
         }
         else
         {
@@ -282,36 +279,20 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
                 camera.addTelemetry(telemetry);
                 telemetry.update();
 
-                //Drive to the middle spikemark.
-                //turnToHeading(TURN_SPEED, 30);
-                //holdHeading(TURN_SPEED, 30, 0.5);
-                //driveStraight(DRIVE_SPEED, 8, 30);
-                turnToHeading(TURN_SPEED, 0);
-                holdHeading(TURN_SPEED, 0, 0.4);
-                driveSideways(0.04, -7, 0);
-                sleep(250);
-                turnToHeading(0.3, 0);
-                holdHeading(TURN_SPEED, 0, 0.4);
-                driveStraight(0.1, 6, 0);
-                sleep(500);
+                driveStraight(DRIVE_SPEED, 33 * driftMod, 0);  // Drive straight 21 inches at 15 degree heading
+                sleep(500); // Wait .5 seconds
 
-                driveStraight(DRIVE_SPEED, 0.15, 0);
-                driveStraight(DRIVE_SPEED, -10, 0);
+                //Back up robot to start the process of scoring on the backboard.
+                driveStraight(DRIVE_SPEED, -6, 0);
                 turnToHeading(TURN_SPEED, 90);
                 holdHeading(TURN_SPEED, 90, 0.5);
-                driveStraight(0.5, -35, 90);
-                sleep(500);
-                driveSideways(0.5, 11, 90);
-                turnToHeading(TURN_SPEED, 90);
-                holdHeading(TURN_SPEED, 90, 0.5);
-                driveStraight(0.2, -6, 90);
+                //Allign to middle spot on backboard.
+                driveStraight(DRIVE_SPEED, -41, 90);
+                //Was 6.
+                driveSideways(DRIVE_SPEED, 8, 90);
+                driveStraight(DRIVE_SPEED, -5, 90);
                 dropPixel();
-                sleep(1000);
-                driveStraight(DRIVE_SPEED, 4, 90);
-                driveSideways(0.5, 22, 90);
-                flimsyFlicker.setPower(1);
                 sleep(500);
-                driveStraight(1, -4, 90);
 
             }
             else //Assume the game object is on the mark closest to the truss and drive to it.
@@ -321,30 +302,31 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
                 camera.addTelemetry(telemetry);
                 telemetry.update();
 
-                driveStraight(DRIVE_SPEED, 4, 0);
-                while( getHeading() < 70 || getHeading() > 80)
-                {
-                    BLDrive.setPower(0.6);
-                    FLDrive.setPower(0.6);
-                }
-                driveStraight(0.3, 17, 70);
-                driveStraight(0.3, -10, 70);
+                driveStraight(DRIVE_SPEED, 20 * driftMod, 0);    // Drive straight 3 inches
+                //Was -25
+                turnToHeading(TURN_SPEED, 30);  // Turn left 15 degrees
+                holdHeading(TURN_SPEED,  30.0, 0.5);    // Hold  15 Deg heading for a 1/2 second
+                //Was 22.
+                driveStraight(DRIVE_SPEED, 20 * driftMod, 30);  // Drive straight 21 inches at 15 degree heading
+                sleep(500); // Wait .5 seconds
+
+                //Back up robot to start the process of scoring on the backboard.
+                //Was -8.
+                driveStraight(DRIVE_SPEED, -6, 30);
+                holdHeading(TURN_SPEED, 30, 0.5);
+                //Was -90.
                 turnToHeading(TURN_SPEED, 90);
-                holdHeading(TURN_SPEED, 90, 0.4);
-                driveStraight(0.5, -33, 90);
-                driveSideways(0.5, 15, 90);
-                driveStraight(DRIVE_SPEED, -5, 90);
+                holdHeading(TURN_SPEED, 90, 0.5);
+
+                //Allign to right spot on backboard.
+                driveStraight(DRIVE_SPEED, -55, -90);
+                //Was -8.
+                driveSideways(DRIVE_SPEED, 8, -90);
+                driveStraight(DRIVE_SPEED, -5, -90);
                 dropPixel();
-                sleep(250);
-                driveStraight(DRIVE_SPEED, 4, 90);
-                driveSideways(0.5, 12, 90);
-                flimsyFlicker.setPower(1);
                 sleep(500);
-                driveStraight(1, -4, 90);
             }
         }
-
-
     }
 
     /*
