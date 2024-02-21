@@ -105,9 +105,9 @@ public class RobotAlpha2 extends LinearOpMode {
                 straightMovement = -gamepad1.left_stick_y;
             }
 
-             //COLE codes spintake
-             // Good job looks good - Oliver
-            if (gamepad1.a)
+            //COLE codes spintake
+            // Good job looks good - Oliver
+  /*        if (gamepad1.a)
             {
                 spintake.setPower(-1);
             }
@@ -119,30 +119,26 @@ public class RobotAlpha2 extends LinearOpMode {
             {
                 spintake.setPower(0);
             }
+*/
 
 
-
- /*   OLD SPINTAKE CODE        if (!gamepad1.a && gamepad1.b) // if a is NOT pressed AND b are pressed then set power to 1 and open drops
+            // Cole your code is respectfully denied for spintake but slide is muy bien
+            if (gamepad1.left_trigger > 0.05) // if a is NOT pressed AND b are pressed then set power to 1 and open drops
             {
                 spintake.setPower(1);
                 upperDrop.setPower(0.5);
                 lowerDrop.setPower(0.85);
             }
-
-  */
-
-  /*          else if (!gamepad1.a && !gamepad1.b); // if a AND b NOT presses set power 0
+            else if (gamepad1.right_trigger > 0.05 && gamepad1.left_trigger < 0.05) // if a AND b NOT presses set power 0
             {
-                spintake.setPower(0);
+                spintake.setPower(-1);
                 if (gamepad2.a) // if a pressed set drops to be open
                 {
                     {
                         upperDrop.setPower(0.5);
                         lowerDrop.setPower(0.85);
                     }
-                }
-
-                else if (!gamepad1.b) // if a is not pressed set upper drop to closed
+                } else if (!gamepad2.b) // if a is not pressed set upper drop to closed
                 {
                     upperDrop.setPower(-0.2);
                 }
@@ -153,41 +149,36 @@ public class RobotAlpha2 extends LinearOpMode {
                     {
                         lowerDrop.setPower(0.85);
                     }
-                }
-
-                else if (!gamepad2.b && !gamepad2.a && !gamepad1.b) // if 2b AND 2a AND 1b NOT pressed set lower drop to closed
+                } else if (!gamepad2.b && !gamepad2.a) // if 2b AND 2a AND 1b NOT pressed set lower drop to closed
                 {
                     lowerDrop.setPower(0.2);
                 }
             }
-
-   */
-            if (gamepad2.a) // if a pressed set drops to be open
+            else
             {
+                spintake.setPower(0);
+                if (gamepad2.a) // if a pressed set drops to be open
                 {
-                    upperDrop.setPower(0.5);
-                    lowerDrop.setPower(0.85);
+                    {
+                        upperDrop.setPower(0.5);
+                        lowerDrop.setPower(0.85);
+                    }
+                } else if (!gamepad2.b) // if a is not pressed set upper drop to closed
+                {
+                    upperDrop.setPower(-0.2);
+                }
+
+                //When B is pressed toggles the position of lowerDrop
+                if (gamepad2.b) // if b pressed open lower drop
+                {
+                    {
+                        lowerDrop.setPower(0.85);
+                    }
+                } else if (!gamepad2.b && !gamepad2.a && gamepad1.left_trigger < 0.05) // if 2b AND 2a AND spintake NOT pressed set lower drop to closed
+                {
+                    lowerDrop.setPower(0.2);
                 }
             }
-
-            else if (!gamepad1.b) // if a is not pressed set upper drop to closed
-            {
-                upperDrop.setPower(-0.2);
-            }
-
-            //When B is pressed toggles the position of lowerDrop
-            if (gamepad2.b) // if b pressed open lower drop
-            {
-                {
-                    lowerDrop.setPower(0.85);
-                }
-            }
-
-            else if (!gamepad2.b && !gamepad2.a && !gamepad1.b) // if 2b AND 2a AND 1b NOT pressed set lower drop to closed
-            {
-                lowerDrop.setPower(0.2);
-            }
-
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
             double FLPower = straightMovement + strafeMovement + turnMovement;
@@ -250,7 +241,7 @@ public class RobotAlpha2 extends LinearOpMode {
             if (liftJoystick > 1) {
                 liftJoystick = 1.0;
             }
-            if (liftJoystick > 0.05 || liftJoystick < -0.05) {
+           /* if (liftJoystick > 0.05 || liftJoystick < -0.05) {
                 liftDriveLeft.setPower(liftJoystick);
                 liftDriveRight.setPower(liftJoystick);
             } else {
@@ -258,21 +249,31 @@ public class RobotAlpha2 extends LinearOpMode {
                 liftDriveRight.setPower(0);
             }
 
+*/
             // furthest it can go is 5000 with current wires
             // furthest with extention wires is 5970
-            /*
-            if (liftDriveRight.getCurrentPosition() >= 3000 || liftDriveLeft.getCurrentPosition() >= 3000);
-            {
-                for (int x=0; x<=5; x++);
+
+          if (liftDriveRight.getCurrentPosition() <= 10085 && liftDriveLeft.getCurrentPosition() <= -6186)
+          //encoders on the slide are cursed so keep these values unless they break
+           {
+                if (liftJoystick > 0.05)
                 {
-                    if (Math.abs(gamepad2.right_stick_y) > 0.05);
-                    {
-                        liftDriveLeft.setPower(0);
-                        liftDriveRight.setPower(0);
-                    }
+                        liftDriveLeft.setPower(liftJoystick);
+                        liftDriveRight.setPower(liftJoystick);
                 }
             }
-             */
+            else if (liftDriveRight.getCurrentPosition() >= 137 && liftDriveLeft.getCurrentPosition() >= -63){
+                if (liftJoystick < -0.05)
+                {
+                    liftDriveLeft.setPower(liftJoystick);
+                    liftDriveRight.setPower(liftJoystick);
+                }
+            }
+            else{
+                liftDriveLeft.setPower(0);
+                liftDriveRight.setPower(0);
+            }
+
             //-1 power for having it as far in as possible.
             //1 for having it as far out as possible.
 
@@ -282,7 +283,7 @@ public class RobotAlpha2 extends LinearOpMode {
             }
             else
             {
-                spinny.setPower(0.18); // for auto -0.35
+                spinny.setPower(0.15); // for auto -0.35
             }
 
             //* TODO delete this comment for DroneLauncher
