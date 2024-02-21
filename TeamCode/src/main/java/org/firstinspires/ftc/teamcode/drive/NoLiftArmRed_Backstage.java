@@ -117,6 +117,7 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
     DcMotor BRDrive = null; // Back Right Drive Motor
     DcMotor liftDriveLeft = null;
     DcMotor liftDriveRight = null;
+    DcMotor spinTake = null;
 
     CRServo spinny = null;
     CRServo upperDrop = null;
@@ -180,6 +181,7 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
         BRDrive = hardwareMap.get(DcMotor.class, "BRDrive");
         liftDriveLeft = hardwareMap.get(DcMotor.class, "liftDriveLeft");
         liftDriveRight = hardwareMap.get(DcMotor.class, "liftDriveRight");
+        spinTake = hardwareMap.get(DcMotor.class, "spintake");
 
         //Initialize the intake system variables.
         spinny = hardwareMap.get(CRServo.class, "spinny");
@@ -202,6 +204,8 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
         BRDrive.setDirection(DcMotor.Direction.REVERSE);
         liftDriveLeft.setDirection(DcMotor.Direction.REVERSE);
         liftDriveRight.setDirection(DcMotor.Direction.REVERSE);
+        spinTake.setDirection(DcMotor.Direction.FORWARD);
+
         spinny.setDirection(CRServo.Direction.FORWARD);
         upperDrop.setDirection(CRServo.Direction.FORWARD);
         lowerDrop.setDirection(CRServo.Direction.FORWARD);
@@ -212,6 +216,7 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
         BRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftDriveLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftDriveRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        spinTake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         /* The next two lines define Hub orientation.
          * The Default Orientation (shown) is when a hub is mounted horizontally with the printed logo pointing UP and the USB port pointing FORWARD.
@@ -232,10 +237,13 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
         BLDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FRDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         BRDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        spinTake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        
         FLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         FRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        spinTake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Wait for the game to start (Display Gyro value while waiting)
         while (opModeInInit()) {
