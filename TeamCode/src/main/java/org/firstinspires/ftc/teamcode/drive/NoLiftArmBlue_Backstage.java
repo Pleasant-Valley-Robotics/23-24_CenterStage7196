@@ -116,8 +116,13 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
     DcMotor FRDrive = null; // Front Right Drive Motor
     DcMotor BLDrive = null; // Back Left Drive Motor
     DcMotor BRDrive = null; // Back Right Drive Motor
-    CRServo flimsyFlicker = null;
     IMU imu = null; // Inertial Measurement Unit      // Control/Expansion Hub IMU
+
+    CRServo spinny = null;
+    CRServo upperDrop = null;
+    CRServo lowerDrop = null;
+    DcMotor liftDriveLeft = null;
+    DcMotor liftDriveRight = null;
 
     private double headingError  = 0;
 
@@ -173,10 +178,14 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
         FRDrive = hardwareMap.get(DcMotor.class, "FRDrive");
         BLDrive = hardwareMap.get(DcMotor.class, "BLDrive");
         BRDrive = hardwareMap.get(DcMotor.class, "BRDrive");
-        // get a reference to our ColorSensor object.
-        colorSensor1 = hardwareMap.get(ColorSensor.class, "sensor_color2");
-        colorSensor2 = hardwareMap.get(ColorSensor.class, "sensor_color1");
-        flimsyFlicker = hardwareMap.get(CRServo.class, "flimsyFlicker");
+        liftDriveLeft = hardwareMap.get(DcMotor.class, "liftDriveLeft");
+        liftDriveRight = hardwareMap.get(DcMotor.class, "liftDriveRight");
+
+        //Initialize the intake system variables.
+        spinny = hardwareMap.get(CRServo.class, "spinny");
+        upperDrop = hardwareMap.get(CRServo.class, "upperDrop");
+        lowerDrop = hardwareMap.get(CRServo.class, "lowerDrop");
+
 
         //Grab and store the reference for the camera.
         VisionCamera camera = new VisionCamera(hardwareMap, FieldSide.BlueClose);
@@ -188,11 +197,18 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
         BLDrive.setDirection(DcMotor.Direction.REVERSE);
         FRDrive.setDirection(DcMotor.Direction.FORWARD);
         BRDrive.setDirection(DcMotor.Direction.REVERSE);
-        flimsyFlicker.setDirection(DcMotorSimple.Direction.FORWARD);
+        liftDriveLeft.setDirection(DcMotor.Direction.REVERSE);
+        liftDriveRight.setDirection(DcMotor.Direction.REVERSE);
+        spinny.setDirection(DcMotorSimple.Direction.FORWARD);
+        upperDrop.setDirection(CRServo.Direction.FORWARD);
+        lowerDrop.setDirection(CRServo.Direction.FORWARD);
+
         FLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftDriveLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftDriveRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         /* The next two lines define Hub orientation.
          * The Default Orientation (shown) is when a hub is mounted horizontally with the printed logo pointing UP and the USB port pointing FORWARD.
@@ -266,7 +282,10 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
             driveStraight(DRIVE_SPEED, -42, -90);
             driveSideways(DRIVE_SPEED, 6, -90);
             driveStraight(DRIVE_SPEED, -5, -90);
-            dropPixel();
+
+            //score pixel using new intake system.
+
+
             sleep(500);
         }
         else //The robot drives to the middle
@@ -290,7 +309,10 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
                 driveStraight(DRIVE_SPEED, -47, -90);
                 driveSideways(DRIVE_SPEED, 6, -90);
                 driveStraight(DRIVE_SPEED, -5, -90);
-                dropPixel();
+
+                //score pixel with new intake system.
+
+
                 sleep(500);
             }
             else //drive to closest spikemark to truss. Assumes the pixel is on the mark closest to the spikemark.
@@ -316,7 +338,10 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
                 driveStraight(DRIVE_SPEED, -55, -90);
                 driveSideways(DRIVE_SPEED, -8, -90);
                 driveStraight(DRIVE_SPEED, -5, -90);
-                dropPixel();
+
+                //score pixel with new intake system.
+
+
                 sleep(500);
             }
         }
@@ -685,7 +710,7 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
         return orientation.getYaw(AngleUnit.DEGREES);
     }
     public void dropPixel(){
-        flimsyFlicker.setPower(-1);
+        //flimsyFlicker.setPower(-1);
         sleep(1000);
     }
 }

@@ -115,7 +115,13 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
     DcMotor FRDrive = null; // Front Right Drive Motor
     DcMotor BLDrive = null; // Back Left Drive Motor
     DcMotor BRDrive = null; // Back Right Drive Motor
-    CRServo flimsyFlicker = null;
+    DcMotor liftDriveLeft = null;
+    DcMotor liftDriveRight = null;
+
+    CRServo spinny = null;
+    CRServo upperDrop = null;
+    CRServo lowerDrop = null;
+
     IMU imu = null; // Inertial Measurement Unit      // Control/Expansion Hub IMU
 
     private double headingError  = 0;
@@ -172,7 +178,14 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
         FRDrive = hardwareMap.get(DcMotor.class, "FRDrive");
         BLDrive = hardwareMap.get(DcMotor.class, "BLDrive");
         BRDrive = hardwareMap.get(DcMotor.class, "BRDrive");
-        flimsyFlicker = hardwareMap.get(CRServo.class, "flimsyFlicker");
+        liftDriveLeft = hardwareMap.get(DcMotor.class, "liftDriveLeft");
+        liftDriveRight = hardwareMap.get(DcMotor.class, "liftDriveRight");
+
+        //Initialize the intake system variables.
+        spinny = hardwareMap.get(CRServo.class, "spinny");
+        upperDrop = hardwareMap.get(CRServo.class, "upperDrop");
+        lowerDrop = hardwareMap.get(CRServo.class, "lowerDrop");
+
         // get a reference to our ColorSensor object.
         colorSensor1 = hardwareMap.get(ColorSensor.class, "sensor_color2");
         colorSensor2 = hardwareMap.get(ColorSensor.class, "sensor_color1");
@@ -187,11 +200,18 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
         BLDrive.setDirection(DcMotor.Direction.REVERSE);
         FRDrive.setDirection(DcMotor.Direction.FORWARD);
         BRDrive.setDirection(DcMotor.Direction.REVERSE);
-        flimsyFlicker.setDirection(DcMotorSimple.Direction.FORWARD);
+        liftDriveLeft.setDirection(DcMotor.Direction.REVERSE);
+        liftDriveRight.setDirection(DcMotor.Direction.REVERSE);
+        spinny.setDirection(CRServo.Direction.FORWARD);
+        upperDrop.setDirection(CRServo.Direction.FORWARD);
+        lowerDrop.setDirection(CRServo.Direction.FORWARD);
+
         FLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftDriveLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftDriveRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         /* The next two lines define Hub orientation.
          * The Default Orientation (shown) is when a hub is mounted horizontally with the printed logo pointing UP and the USB port pointing FORWARD.
@@ -706,7 +726,7 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
         return orientation.getYaw(AngleUnit.DEGREES);
     }
     public void dropPixel(){
-        flimsyFlicker.setPower(-1);
+        //flimsyFlicker.setPower(-1);
         sleep(1000);
     }
 }
