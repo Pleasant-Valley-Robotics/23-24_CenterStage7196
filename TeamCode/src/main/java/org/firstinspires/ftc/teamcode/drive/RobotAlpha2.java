@@ -30,7 +30,7 @@ public class RobotAlpha2 extends LinearOpMode {
         DcMotor liftDriveLeft = null; // liftDriveLeft is in port 0 of EH
         DcMotor liftDriveRight = null; // liftDriveRight is in port 1 of EH
         DcMotor spintake = null; // spintake is in port 2 of EH
-        //CRServo droneLaunch = null;
+        CRServo droneLaunch = null;
         double turnMovement = 0;
         double strafeMovement = 0;
         double straightMovement = 0;
@@ -47,7 +47,7 @@ public class RobotAlpha2 extends LinearOpMode {
         //* TODO uncomment this code for hardware mapping DroneLauncher.
          liftDriveLeft = hardwareMap.get(DcMotor.class, "liftDriveLeft");
          liftDriveRight = hardwareMap.get(DcMotor.class, "liftDriveRight");
-        //droneLaunch = hardwareMap.get(CRServo.class, "droneLaunch");
+        droneLaunch = hardwareMap.get(CRServo.class, "droneLaunch");
 
         FLDrive.setDirection(DcMotor.Direction.REVERSE);
         BLDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -61,7 +61,7 @@ public class RobotAlpha2 extends LinearOpMode {
         //* TODO uncomment this code for setting direction DroneLauncher.
         liftDriveLeft.setDirection(DcMotor.Direction.REVERSE);
         liftDriveRight.setDirection(DcMotor.Direction.REVERSE);
-        //droneLaunch.setDirection(CRServo.Direction.FORWARD);
+        droneLaunch.setDirection(CRServo.Direction.FORWARD);
 
         //Set the zero
         FLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -288,14 +288,14 @@ public class RobotAlpha2 extends LinearOpMode {
             }
 
             //* TODO delete this comment for DroneLauncher
-            /*if (gamepad2.right_trigger > 0.1) {
+            if (gamepad2.right_trigger > 0.1) {
                 droneLaunch.setPower(0);
             }
             else
             {
                 droneLaunch.setPower(-1.3);
             }
-             */
+
         }
     }
 }
