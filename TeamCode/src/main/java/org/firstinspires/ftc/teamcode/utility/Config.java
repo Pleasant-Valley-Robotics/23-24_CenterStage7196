@@ -15,4 +15,18 @@ public class Config {
     );
 
     public static final double TURNING_P_GAIN = 0.03;
+
+//    public static class APRILTAGS
+//    {
+//        //Change these at competition to the correct tags. Home field tags are wrong.
+//        public static final int leftBlue = 1;
+//        public static final int middleBlue = 2;
+//        public static final int rightBlue = 3;
+//
+//        public static final int X_P_Gain =
+//
+//        public static final int Y_P_Gain =
+//
+//        public static final int YAW_P_Gain =
+//    }
 }

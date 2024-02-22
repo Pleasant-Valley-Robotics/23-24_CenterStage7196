@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.hardware;
 import static org.firstinspires.ftc.teamcode.utility.Config.ENCODER_PER_INCH;
 import static org.firstinspires.ftc.teamcode.utility.Config.HUB_FACING;
 import static org.firstinspires.ftc.teamcode.utility.Config.TURNING_P_GAIN;
+//import static org.firstinspires.ftc.teamcode.utility.Config.APRILTAGS;
 
 import androidx.annotation.Nullable;
 
@@ -16,6 +17,8 @@ import org.firstinspires.ftc.robotcore.external.Supplier;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.utility.Api;
+//import org.openftc.apriltag.AprilTagDetection;
+
 
 /**
  * Class that contains the entire drivebase for the robot. Contains methods to move the robot both in auto and in teleop.
@@ -280,4 +283,44 @@ public class Drivebase {
     private double getHeading() {
         return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
     }
+
+    /**
+     * For use in auto. Centers the robot to an AprilTag, at a specified distance.
+     *
+     * @param distance     How far away from the tag you want to be, in inches.
+     * @param getDetection Source of detections to center to.
+     * @see VisionCamera#getTagById
+     */
+//    public @Api void centerToAprilTag(double distance, Supplier<AprilTagDetection> getDetection) {
+//        double yPropErrorInches = 0;
+//        double xPropErrorInches = 0;
+//        double yawPropErrorDegrees;
+//
+//        double yDerErrorInchPerSec;
+//        double xDerErrorInchPerSec;
+//
+//        AprilTagDetection latestDetection;
+//
+//        setMotorModes(DcMotor.RunMode.RUN_USING_ENCODER);
+//
+//        do {
+//            do {
+//                yawPropErrorDegrees = wrapAngle(getHeading() - imuSetpoint);
+//                yDerErrorInchPerSec = (fldrive.getVelocity() + frdrive.getVelocity()) / (2 * ENCODER_PER_INCH);
+//                xDerErrorInchPerSec = (fldrive.getVelocity() - bldrive.getVelocity()) / (2 * ENCODER_PER_INCH);
+//
+//                double yPower = yPropErrorInches * APRILTAGS.Y_P_GAIN + yDerErrorInchPerSec * APRILTAGS.Y_D_GAIN;
+//                double xPower = xPropErrorInches * APRILTAGS.X_P_GAIN + xDerErrorInchPerSec * APRILTAGS.X_D_GAIN;
+//                double yawPower = yawPropErrorDegrees * APRILTAGS.YAW_P_GAIN;
+//
+//
+//                mecanumDrive(Range.clip(yPower, -0.3, 0.3), Range.clip(xPower, -0.15, 0.15), yawPower);
+//            } while ((latestDetection = getDetection.get()) == null);
+//
+//            yPropErrorInches = latestDetection.ftcPose.y - distance;
+//            xPropErrorInches = latestDetection.ftcPose.x - 0.4;
+//        } while (Math.abs(yawPropErrorDegrees) > 2 || Math.abs(xPropErrorInches) > 0.5 || Math.abs(yPropErrorInches) > 0.1);
+//
+//        setMotorPowers(0);
+//    }
 }
