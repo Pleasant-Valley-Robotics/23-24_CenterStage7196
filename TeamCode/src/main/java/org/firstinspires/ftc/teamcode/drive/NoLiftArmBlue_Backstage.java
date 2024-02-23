@@ -196,10 +196,13 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        FLDrive.setDirection(DcMotor.Direction.FORWARD);
+        //Was FORWARD.
+        FLDrive.setDirection(DcMotor.Direction.REVERSE);
         BLDrive.setDirection(DcMotor.Direction.REVERSE);
         FRDrive.setDirection(DcMotor.Direction.FORWARD);
-        BRDrive.setDirection(DcMotor.Direction.REVERSE);
+        //Was REVERSE.
+        BRDrive.setDirection(DcMotor.Direction.FORWARD);
+
         liftDriveLeft.setDirection(DcMotor.Direction.REVERSE);
         liftDriveRight.setDirection(DcMotor.Direction.REVERSE);
         spinTake.setDirection(DcMotor.Direction.FORWARD);
@@ -235,6 +238,7 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
         FRDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         BRDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         spinTake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         FLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         FRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -278,7 +282,8 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
             driveStraight(DRIVE_SPEED, 3 * driftMod, 0);    // Drive straight 3 inches
             turnToHeading(TURN_SPEED, 20);  // Turn left 15 degrees
             holdHeading(TURN_SPEED,  20.0, 0.5);    // Hold  15 Deg heading for a 1/2 second
-            driveStraight(DRIVE_SPEED, 33 * driftMod, 20);  // Drive straight 21 inches at 15 degree heading
+            //Was 33.
+            driveStraight(DRIVE_SPEED, 40 * driftMod, 20);  // Drive straight 21 inches at 15 degree heading
             sleep(500); // Wait .5 seconds
 
             //Back up robot to start the process of scoring on the backboard.
@@ -305,7 +310,11 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
                 camera.addTelemetry(telemetry);
                 telemetry.update();
 
-                driveStraight(DRIVE_SPEED, 42 * driftMod, 0);  // Drive straight 21 inches at 15 degree heading
+                telemetry.addData("Heading", telemetry);
+                telemetry.update();
+
+                //Was 42
+                driveStraight(DRIVE_SPEED, 40, 0);  // Drive straight 21 inches at 15 degree heading
                 sleep(500); // Wait .5 seconds
 
                 //Back up robot to start the process of scoring on the backboard.
@@ -313,14 +322,15 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
                 turnToHeading(TURN_SPEED, -90);
                 holdHeading(TURN_SPEED, -90, 0.5);
                 //Allign to middle spot on backboard.
-                driveStraight(DRIVE_SPEED, -47, -90);
-                driveSideways(DRIVE_SPEED, 6, -90);
-                driveStraight(DRIVE_SPEED, -5, -90);
+//                driveStraight(DRIVE_SPEED, -47, -90);
+//                driveSideways(DRIVE_SPEED, 6, -90);
+//                driveStraight(DRIVE_SPEED, -5, -90);
 
                 //score pixel with new intake system.
 
+                //spinTake.setPower(.8);
 
-                sleep(500);
+                //sleep(500);
             }
             else //drive to closest spikemark to truss. Assumes the pixel is on the mark closest to the spikemark.
             {
@@ -333,6 +343,15 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
                 turnToHeading(TURN_SPEED, -25);  // Turn left 15 degrees
                 holdHeading(TURN_SPEED,  -25.0, 0.5);    // Hold  15 Deg heading for a 1/2 second
                 driveStraight(DRIVE_SPEED, 22 * driftMod, -25);  // Drive straight 21 inches at 15 degree heading
+
+                //Bring out slides.
+                //Pull the end effector down/in.
+                //Make end effector go to a degree that alligns with the backboard.
+                //Drop the pixel.
+                //Push the pixel over by making
+                //Keep it at that angle.
+                //Extend slide out.
+
                 sleep(500); // Wait .5 seconds
 
                 //Back up robot to start the process of scoring on the backboard.
