@@ -26,11 +26,12 @@ public class RobotAlpha2 extends LinearOpMode {
         CRServo spinny = null; // spinny is in port 0 of CH
         CRServo upperDrop = null; // upperDrop is in port 1 of CH
         CRServo lowerDrop = null; // lowerDrop is in port 2 of CH
+        CRServo droneRotate = null; //droneRotate is in port 3 of CH.
         //* TODO uncomment this code for defining DroneLauncher.
         DcMotor liftDriveLeft = null; // liftDriveLeft is in port 0 of EH
         DcMotor liftDriveRight = null; // liftDriveRight is in port 1 of EH
         DcMotor spintake = null; // spintake is in port 2 of EH
-        CRServo droneLaunch = null;
+        CRServo droneLaunch = null; // droneLaunch is in port 4 of CH
         double turnMovement = 0;
         double strafeMovement = 0;
         double straightMovement = 0;
@@ -44,6 +45,7 @@ public class RobotAlpha2 extends LinearOpMode {
         upperDrop = hardwareMap.get(CRServo.class, "upperDrop");
         lowerDrop = hardwareMap.get(CRServo.class, "lowerDrop");
         spintake = hardwareMap.get(DcMotor.class, "spintake");
+        droneRotate = hardwareMap.get(CRServo.class, "droneRotate");
         //* TODO uncomment this code for hardware mapping DroneLauncher.
          liftDriveLeft = hardwareMap.get(DcMotor.class, "liftDriveLeft");
          liftDriveRight = hardwareMap.get(DcMotor.class, "liftDriveRight");
@@ -57,8 +59,7 @@ public class RobotAlpha2 extends LinearOpMode {
         upperDrop.setDirection(CRServo.Direction.FORWARD);
         lowerDrop.setDirection(CRServo.Direction.FORWARD);
         spintake.setDirection(DcMotor.Direction.FORWARD);
-
-        //* TODO uncomment this code for setting direction DroneLauncher.
+        droneRotate.setDirection(CRServo.Direction.FORWARD);
         liftDriveLeft.setDirection(DcMotor.Direction.REVERSE);
         liftDriveRight.setDirection(DcMotor.Direction.REVERSE);
         droneLaunch.setDirection(CRServo.Direction.FORWARD);
@@ -71,6 +72,9 @@ public class RobotAlpha2 extends LinearOpMode {
         liftDriveLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftDriveRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         spintake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        liftDriveLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftDriveRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         IMU imu = hardwareMap.get(IMU.class, "imu");
         // Adjust the orientation parameters to match your robot
@@ -230,7 +234,8 @@ public class RobotAlpha2 extends LinearOpMode {
             telemetry.addData("UpperPower: ", upperDrop.getPower());
             telemetry.addData("LowerPower: ", lowerDrop.getPower());
             telemetry.addData("SpinTakePower: ", spintake.getPower());
-
+            telemetry.addData("DroneLaunch: ", droneLaunch.getPower());
+            telemetry.addData("DroneRotate: ", droneRotate.getPower());
             telemetry.addData("Left lift position: ", String.valueOf(liftDriveLeft.getCurrentPosition()));
             telemetry.addData("Right lift position: ", String.valueOf(liftDriveRight.getCurrentPosition()));
             telemetry.update();
@@ -287,15 +292,15 @@ public class RobotAlpha2 extends LinearOpMode {
                 spinny.setPower(0.595); // for auto -0.35
             }
 
-            //* TODO delete this comment for DroneLauncher
             if (gamepad2.right_trigger > 0.1) {
+                droneRotate.setPower(1);
                 droneLaunch.setPower(0);
             }
             else
             {
+                droneRotate.setPower(0);
                 droneLaunch.setPower(-1.3);
             }
-
         }
     }
 }
