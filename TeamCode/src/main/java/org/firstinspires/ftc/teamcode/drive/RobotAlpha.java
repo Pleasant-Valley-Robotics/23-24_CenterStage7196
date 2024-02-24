@@ -79,7 +79,6 @@ public class RobotAlpha extends LinearOpMode {
         liftJoint.setDirection(DcMotor.Direction.REVERSE);
         leftActuator.setDirection(DcMotor.Direction.FORWARD);
         rightActuator.setDirection(DcMotor.Direction.FORWARD);
-
         droneLaunch.setDirection(CRServo.Direction.FORWARD);
         claw.setDirection(CRServo.Direction.FORWARD);
 

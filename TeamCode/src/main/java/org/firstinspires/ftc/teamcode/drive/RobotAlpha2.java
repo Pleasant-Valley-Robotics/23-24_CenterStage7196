@@ -57,8 +57,6 @@ public class RobotAlpha2 extends LinearOpMode {
         upperDrop.setDirection(CRServo.Direction.FORWARD);
         lowerDrop.setDirection(CRServo.Direction.FORWARD);
         spintake.setDirection(DcMotor.Direction.FORWARD);
-
-        //* TODO uncomment this code for setting direction DroneLauncher.
         liftDriveLeft.setDirection(DcMotor.Direction.REVERSE);
         liftDriveRight.setDirection(DcMotor.Direction.REVERSE);
         droneLaunch.setDirection(CRServo.Direction.FORWARD);
@@ -71,6 +69,9 @@ public class RobotAlpha2 extends LinearOpMode {
         liftDriveLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftDriveRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         spintake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        liftDriveLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftDriveRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         IMU imu = hardwareMap.get(IMU.class, "imu");
         // Adjust the orientation parameters to match your robot
@@ -241,7 +242,7 @@ public class RobotAlpha2 extends LinearOpMode {
             if (liftJoystick > 1) {
                 liftJoystick = 1.0;
             }
-           /* if (liftJoystick > 0.05 || liftJoystick < -0.05) {
+            if (liftJoystick > 0.05 || liftJoystick < -0.05) {
                 liftDriveLeft.setPower(liftJoystick);
                 liftDriveRight.setPower(liftJoystick);
             } else {
@@ -249,11 +250,10 @@ public class RobotAlpha2 extends LinearOpMode {
                 liftDriveRight.setPower(0);
             }
 
-*/
-            // furthest it can go is 5000 with current wires
-            // furthest with extention wires is 5970
 
-          if (liftDriveRight.getCurrentPosition() <= 10085 && liftDriveLeft.getCurrentPosition() >= -6186)
+            // furthest 5850
+
+          /*if (liftDriveRight.getCurrentPosition() <= 10085 && liftDriveLeft.getCurrentPosition() >= -6186)
           //encoders on the slide are cursed so keep these values unless they break
            {
                 if (liftJoystick > 0.05)
@@ -274,6 +274,7 @@ public class RobotAlpha2 extends LinearOpMode {
                 liftDriveLeft.setPower(0);
                 liftDriveRight.setPower(0);
             }
+           */
 
             //-1 power for having it as far in as possible.
             //1 for having it as far out as possible.
