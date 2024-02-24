@@ -153,6 +153,22 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime(); // Timer for tracking time
 
     // Constants for calculating encoder counts and speed
+
+    //38.25'' length of slide from base of motor to its position when completely out.
+    // 1.570" is diameter
+    // that times pie = encoder counts.
+    //26.9:1
+
+    static final double LIFT_COUNTS_PER_MOTOR_REV = 28; // Encoder counts per motor revolution
+
+    static final double LIFT_DRIVE_GEAR_REDUCTION = 26.9; // Gear ratio of 26.9:1 on the motor, 1:1 external gearing
+
+    static final double LIFT_PINION_DIAMETER_INCHES = 1.57; // Diameter of the pinion driving the viper slide belt
+
+    //lift encoders per inch. Multiple how far you want go by this value to move lift a certain amount.
+    static final double LIFT_COUNTS_PER_INCH = (LIFT_COUNTS_PER_MOTOR_REV * LIFT_DRIVE_GEAR_REDUCTION) / (LIFT_PINION_DIAMETER_INCHES * Math.PI);
+
+
     static final double COUNTS_PER_MOTOR_REV = 28; // Encoder counts per motor revolution
     static final double DRIVE_GEAR_REDUCTION = (((1+(46/17))) * (1+(46/11))); //Gear ratio of 19:1 gearbox.
     static final double WHEEL_DIAMETER_INCHES = 96/25.4; // Diameter of the robot's wheels in mm/(mm/in)
