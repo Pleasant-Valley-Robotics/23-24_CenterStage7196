@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode.drive;
 
+import static java.lang.Math.abs;
+
 import android.app.Activity;
 import android.graphics.Color;
 import android.view.View;
@@ -144,6 +146,10 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
 
     private int     backRightTarget   = 0;
 
+    private int     liftDriveLeftTarget = 0;
+
+    private int liftDriveRightTarget = 0;
+
     // Calculate the COUNTS_PER_INCH for your specific drive train.
     // Go to your motor vendor website to determine your motor's COUNTS_PER_MOTOR_REV
     // For external drive gearing, set DRIVE_GEAR_REDUCTION as needed.
@@ -254,17 +260,22 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
         FRDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         BRDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         spinTake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftDriveLeft.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
+        liftDriveRight.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
 
         FLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         FRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         spinTake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftDriveLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftDriveRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
 
         // Wait for the game to start (Display Gyro value while waiting)
         while (opModeInInit()) {
-            telemetry.addData(">", "Robot Heading = %4.0f", getHeading());
-            telemetry.update();
+            //telemetry.addData(">", "Robot Heading = %4.0f", getHeading());
+            //telemetry.update();
         }
 
         // Set the encoders for closed loop speed control, and reset the heading.
@@ -291,8 +302,8 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
         {
             //Testing statements.
             telemetry.setAutoClear(false);
-            camera.addTelemetry(telemetry);
-            telemetry.update();
+            //camera.addTelemetry(telemetry);
+            //telemetry.update();
 
             //Score pixel on the spikemark.
             driveStraight(DRIVE_SPEED, 3 * driftMod, 0);    // Drive straight 3 inches
@@ -323,20 +334,24 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
             {
                 //Testing statements.
                 telemetry.setAutoClear(false);
-                camera.addTelemetry(telemetry);
-                telemetry.update();
+                //camera.addTelemetry(telemetry);
+                //telemetry.update();
 
-                telemetry.addData("Heading", telemetry);
-                telemetry.update();
+                //telemetry.addData("Heading", telemetry);
+                //telemetry.update();
 
                 //Was 42
-                driveStraight(DRIVE_SPEED, 35, 0);  // Drive straight 21 inches at 15 degree heading
+                driveStraight(DRIVE_SPEED, 40, 0);  // Drive straight 21 inches at 15 degree heading
                 sleep(500); // Wait .5 seconds
 
                 //Back up robot to start the process of scoring on the backboard.
                 driveStraight(DRIVE_SPEED, -6, 0);
-                turnToHeading(TURN_SPEED, -90);
-                holdHeading(TURN_SPEED, -90, 0.5);
+
+                liftDistance(0.5, 5, -1);
+
+                //sendLiftTelemetry();
+//                turnToHeading(TURN_SPEED, -90);
+//                holdHeading(TURN_SPEED, -90, 0.5);
                 //Allign to middle spot on backboard.
 //                driveStraight(DRIVE_SPEED, -47, -90);
 //                driveSideways(DRIVE_SPEED, 6, -90);
@@ -346,14 +361,14 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
 
                 //spinTake.setPower(.8);
 
-                //sleep(500);
+                sleep(500);
             }
             else //drive to closest spikemark to truss. Assumes the pixel is on the mark closest to the spikemark.
             {
                 //Testing statements.
-                telemetry.setAutoClear(false);
-                camera.addTelemetry(telemetry);
-                telemetry.update();
+                //telemetry.setAutoClear(false);
+                //camera.addTelemetry(telemetry);
+                //telemetry.update();
 
                 driveStraight(DRIVE_SPEED, 20 * driftMod, 0);    // Drive straight 3 inches
                 turnToHeading(TURN_SPEED, -25);  // Turn left 15 degrees
@@ -471,6 +486,67 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
 
     }
 
+    public void liftDistance(double maxDriveSpeed,
+                              double distance, int direction) {
+
+        // Ensure that the OpMode is still active
+        //if (opModeIsActive()) {
+
+            double averageLiftEncoder = (liftDriveLeft.getCurrentPosition() + liftDriveRight.getCurrentPosition()) / 2;
+
+            // Determine new target position, and pass to motor controller
+            int moveCounts = (int)(distance * LIFT_COUNTS_PER_INCH);
+            int liftDriveLeftTarget = liftDriveLeft.getCurrentPosition() + direction*moveCounts;
+            //int liftDriveRightTarget = liftDriveRight.getCurrentPosition() + direction*moveCounts;
+
+            // Set Target FIRST, then turn on RUN_TO_POSITION
+            //liftDriveLeft.setTargetPosition(liftDriveLeftTarget);
+            //liftDriveRight.setTargetPosition(liftDriveRightTarget);
+
+            liftDriveLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            liftDriveRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+            // Set the required driving speed  (must be positive for RUN_TO_POSITION)
+            // Start driving straight, and then enter the control loop
+            maxDriveSpeed = abs(maxDriveSpeed);
+            //moveRobot(maxDriveSpeed, 0);
+           // liftDriveLeft.setPower(maxDriveSpeed);
+            //liftDriveRight.setPower(maxDriveSpeed);
+            if(direction > 0) {
+                // keep looping while we are still active, and BOTH motors are running.
+                while (opModeIsActive() &&
+                        (liftDriveLeft.getCurrentPosition() <= liftDriveLeftTarget)) {
+                    liftDriveLeft.setPower((direction) * maxDriveSpeed);
+                    //liftDriveRight.setPower((direction) * maxDriveSpeed/4);
+                    // Apply the turning correction to the current driving speed.
+                    // moveRobot(driveSpeed, turnSpeed);
+
+                    // Display drive status for the driver.
+                    sendLiftTelemetry();
+                }
+
+            }
+            else if(direction <0)
+            {
+                // keep looping while we are still active, and BOTH motors are running.
+                while (opModeIsActive() &&
+                        (liftDriveLeft.getCurrentPosition() >= liftDriveLeftTarget)) {
+                    liftDriveLeft.setPower((direction) * maxDriveSpeed);
+                    liftDriveRight.setPower((direction) * maxDriveSpeed);
+                    // Apply the turning correction to the current driving speed.
+                    // moveRobot(driveSpeed, turnSpeed);
+
+                    // Display drive status for the driver.
+                    sendLiftTelemetry();
+                }
+            }
+            liftDriveLeft.setPower(0);
+            liftDriveRight.setPower(0);
+            liftDriveLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            liftDriveRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+    //}
+
 
     /**
      *  Drive in a straight line, on a fixed compass heading (angle), based on encoder counts.
@@ -511,7 +587,7 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
 
             // Set the required driving speed  (must be positive for RUN_TO_POSITION)
             // Start driving straight, and then enter the control loop
-            maxDriveSpeed = Math.abs(maxDriveSpeed);
+            maxDriveSpeed = abs(maxDriveSpeed);
             moveRobot(maxDriveSpeed, 0);
 
             // keep looping while we are still active, and BOTH motors are running.
@@ -529,7 +605,7 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
                 moveRobot(driveSpeed, turnSpeed);
 
                 // Display drive status for the driver.
-                sendTelemetry(true);
+                //sendTelemetry(true);
             }
 
             // Stop all motion & Turn off RUN_TO_POSITION
@@ -567,7 +643,7 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
 
             // Set the required driving speed  (must be positive for RUN_TO_POSITION)
             // Start driving straight, and then enter the control loop
-            maxDriveSpeed = Math.abs(maxDriveSpeed);
+            maxDriveSpeed = abs(maxDriveSpeed);
             moveRobot(maxDriveSpeed, 0);
 
             // keep looping while we are still active, and BOTH motors are running.
@@ -585,7 +661,7 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
                 moveRobot(driveSpeed, turnSpeed);
 
                 // Display drive status for the driver.
-                sendTelemetry(true);
+                //sendTelemetry(false);
             }
 
             // Stop all motion & Turn off RUN_TO_POSITION
@@ -617,7 +693,7 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
         getSteeringCorrection(heading, P_DRIVE_GAIN);
 
         // keep looping while we are still active, and not on heading.
-        while (opModeIsActive() && (Math.abs(headingError) > HEADING_THRESHOLD)) {
+        while (opModeIsActive() && (abs(headingError) > HEADING_THRESHOLD)) {
 
             // Determine required steering to keep on heading
             turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
@@ -629,7 +705,7 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
             moveRobot(0, turnSpeed);
 
             // Display drive status for the driver.
-            sendTelemetry(false);
+            //sendTelemetry(false);
         }
 
         // Stop all motion;
@@ -666,7 +742,7 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
             moveRobot(0, turnSpeed);
 
             // Display drive status for the driver.
-            sendTelemetry(false);
+            //sendTelemetry(false);
         }
 
         // Stop all motion;
@@ -710,7 +786,7 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
         rightSpeed = drive + turn;
 
         // Scale speeds down if either one exceeds +/- 1.0;
-        double max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
+        double max = Math.max(abs(leftSpeed), abs(rightSpeed));
         if (max > 1.0)
         {
             leftSpeed /= max;
@@ -741,6 +817,13 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
         telemetry.addData("Heading- Target : Current", "%5.2f : %5.0f", targetHeading, getHeading());
         telemetry.addData("Error  : Steer Pwr",  "%5.1f : %5.1f", headingError, turnSpeed);
         telemetry.addData("Wheel Speeds L : R", "%5.2f : %5.2f", leftSpeed, rightSpeed);
+        telemetry.update();
+    }
+
+    private void sendLiftTelemetry()
+    {
+        telemetry.addData("Target Pos LL:LR",  "%7d:%7d",      liftDriveLeftTarget,  liftDriveLeftTarget);
+        telemetry.addData("Actual Pos LL:LR",  "%7d:%7d",      liftDriveLeft.getCurrentPosition(), liftDriveRight.getCurrentPosition());
         telemetry.update();
     }
 

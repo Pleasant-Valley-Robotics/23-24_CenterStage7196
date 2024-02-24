@@ -239,7 +239,7 @@ public class RobotAlpha2 extends LinearOpMode {
             telemetry.addData("Right lift position: ", String.valueOf(liftDriveRight.getCurrentPosition()));
             telemetry.update();
 
-            double liftJoystick = gamepad2.right_stick_y;
+            double liftJoystick = gamepad2.left_stick_y;
             //if the joystick for the servo flipping the blue 3d printed part is at a power of more than 1, reset it to the
             //maximum power allowed to keep it in bounds.
             if (liftJoystick > 1) {
