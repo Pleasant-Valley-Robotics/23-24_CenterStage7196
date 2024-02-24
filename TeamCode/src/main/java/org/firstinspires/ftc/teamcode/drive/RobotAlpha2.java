@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.drive;
 
 import static java.lang.Thread.sleep;
 
+import android.drm.DrmStore;
+
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -73,6 +75,9 @@ public class RobotAlpha2 extends LinearOpMode {
         liftDriveLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftDriveRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+
+        liftDriveLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftDriveRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         IMU imu = hardwareMap.get(IMU.class, "imu");
         // Adjust the orientation parameters to match your robot
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
@@ -121,8 +126,6 @@ public class RobotAlpha2 extends LinearOpMode {
                 spintake.setPower(0);
             }
 */
-
-
             // Cole your code is respectfully denied for spintake but slide is muy bien
             if (gamepad1.left_trigger > 0.05) // if a is NOT pressed AND b are pressed then set power to 1 and open drops
             {
@@ -231,12 +234,12 @@ public class RobotAlpha2 extends LinearOpMode {
             telemetry.addData("UpperPower: ", upperDrop.getPower());
             telemetry.addData("LowerPower: ", lowerDrop.getPower());
             telemetry.addData("SpinTakePower: ", spintake.getPower());
-
+            telemetry.addData("liftJoystick: ", liftDriveLeft.getPower());
             telemetry.addData("Left lift position: ", String.valueOf(liftDriveLeft.getCurrentPosition()));
             telemetry.addData("Right lift position: ", String.valueOf(liftDriveRight.getCurrentPosition()));
             telemetry.update();
 
-            double liftJoystick = gamepad2.left_stick_y;
+            double liftJoystick = gamepad2.right_stick_y;
             //if the joystick for the servo flipping the blue 3d printed part is at a power of more than 1, reset it to the
             //maximum power allowed to keep it in bounds.
             if (liftJoystick > 1) {
@@ -251,30 +254,39 @@ public class RobotAlpha2 extends LinearOpMode {
             }
 
 
+
             // furthest 5850
 
-          /*if (liftDriveRight.getCurrentPosition() <= 10085 && liftDriveLeft.getCurrentPosition() >= -6186)
-          //encoders on the slide are cursed so keep these values unless they break
-           {
-                if (liftJoystick > 0.05)
-                {
-                        liftDriveLeft.setPower(liftJoystick);
-                        liftDriveRight.setPower(liftJoystick);
-                }
-            }
-           else if (liftDriveRight.getCurrentPosition() >= 137 && liftDriveLeft.getCurrentPosition() >= -63)
-           {
-                if (liftJoystick < -0.05)
-                {
-                    liftDriveLeft.setPower(liftJoystick);
-                    liftDriveRight.setPower(liftJoystick);
-                }
-            }
-           else{
-                liftDriveLeft.setPower(0);
-                liftDriveRight.setPower(0);
-            }
-           */
+            //higher encoder.
+            //highest it csan go.
+//          if (liftDriveRight.getCurrentPosition() <= 5850 && liftDriveLeft.getCurrentPosition() >= -5850)
+//          //encoders on the slide are cursed so keep these values unless they break
+//           {
+//                if (liftJoystick > 0.05)
+//                {
+//                        liftDriveLeft.setPower(-liftJoystick);
+//                        liftDriveRight.setPower(-liftJoystick);
+//                }
+//                else{
+//                    liftDriveLeft.setPower(0);
+//                    liftDriveRight.setPower(0);
+//                }
+//            }
+//          //lowest encoder.
+//          //lowest it can go.
+//           else if (liftDriveRight.getCurrentPosition() >= 0 && liftDriveLeft.getCurrentPosition() <= 0)
+//           {
+//                if (liftJoystick < -0.05)
+//                {
+//                    liftDriveLeft.setPower(-liftJoystick);
+//                    liftDriveRight.setPower(-liftJoystick);
+//                }
+//                else{
+//                    liftDriveLeft.setPower(0);
+//                    liftDriveRight.setPower(0);
+//                }
+//            }
+
 
             //-1 power for having it as far in as possible.
             //1 for having it as far out as possible.
