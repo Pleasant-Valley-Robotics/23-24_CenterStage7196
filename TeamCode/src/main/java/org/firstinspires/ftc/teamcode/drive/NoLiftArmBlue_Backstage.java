@@ -314,7 +314,7 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
                 telemetry.update();
 
                 //Was 42
-                driveStraight(DRIVE_SPEED, 40, 0);  // Drive straight 21 inches at 15 degree heading
+                driveStraight(DRIVE_SPEED, 35, 0);  // Drive straight 21 inches at 15 degree heading
                 sleep(500); // Wait .5 seconds
 
                 //Back up robot to start the process of scoring on the backboard.
