@@ -295,9 +295,11 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
 
         //Robot drives to the farthest spikemark.
         double driftMod = 0.88;
-
+      //  liftDistance(0.5, 2, -1);
+      //  sleep(50000);
         //if team element is on the farthest spikemark from the truss.
         //in this case that means left.
+        /*
         if (cubeSide == CubeSide.Left)
         {
             //Testing statements.
@@ -327,10 +329,11 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
 
             sleep(500);
         }
-        else //The robot drives to the middle
+        */
+        if (cubeSide == CubeSide.Middle) //The robot drives to the middle
         {
             //colorSensor1.blue() > 200 && colorSensor1.green() < 800 //Know it works.
-            if (cubeSide == CubeSide.Middle) //if the robot is in middle.
+            //if (cubeSide == CubeSide.Middle) //if the robot is in middle.
             {
                 //Testing statements.
                 telemetry.setAutoClear(false);
@@ -340,14 +343,19 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
                 //telemetry.addData("Heading", telemetry);
                 //telemetry.update();
 
+
                 //Was 42
-                driveStraight(DRIVE_SPEED, 40, 0);  // Drive straight 21 inches at 15 degree heading
+                driveStraight(DRIVE_SPEED, 42, 0);  // Drive straight 21 inches at 15 degree heading
                 sleep(500); // Wait .5 seconds
 
                 //Back up robot to start the process of scoring on the backboard.
-                driveStraight(DRIVE_SPEED, -6, 0);
+                driveStraight(DRIVE_SPEED, -8, 0);
 
                 liftDistance(0.5, 5, -1);
+                spinny.setPower(0.075);
+                liftDistance(0.5, 4, 1);
+                lowerDrop.setPower(.75);
+                sleep(5000);
 
                 //sendLiftTelemetry();
 //                turnToHeading(TURN_SPEED, -90);
@@ -363,7 +371,7 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
 
                 sleep(500);
             }
-            else //drive to closest spikemark to truss. Assumes the pixel is on the mark closest to the spikemark.
+           /* else //drive to closest spikemark to truss. Assumes the pixel is on the mark closest to the spikemark.
             {
                 //Testing statements.
                 //telemetry.setAutoClear(false);
@@ -400,7 +408,8 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
 
 
                 sleep(500);
-            }
+            */
+            //}
         }
     }
 
@@ -517,7 +526,7 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
                 while (opModeIsActive() &&
                         (liftDriveLeft.getCurrentPosition() <= liftDriveLeftTarget)) {
                     liftDriveLeft.setPower((direction) * maxDriveSpeed);
-                    //liftDriveRight.setPower((direction) * maxDriveSpeed/4);
+                    liftDriveRight.setPower((direction) * maxDriveSpeed * 0.775);
                     // Apply the turning correction to the current driving speed.
                     // moveRobot(driveSpeed, turnSpeed);
 
@@ -532,7 +541,7 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
                 while (opModeIsActive() &&
                         (liftDriveLeft.getCurrentPosition() >= liftDriveLeftTarget)) {
                     liftDriveLeft.setPower((direction) * maxDriveSpeed);
-                    liftDriveRight.setPower((direction) * maxDriveSpeed);
+                    liftDriveRight.setPower((direction) * maxDriveSpeed * 0.775);
                     // Apply the turning correction to the current driving speed.
                     // moveRobot(driveSpeed, turnSpeed);
 
