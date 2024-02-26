@@ -301,23 +301,90 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
 
         if (cubeSide == CubeSide.Left)
         {
+            //Drive to the spike mark scoring position
+            driveStraight(DRIVE_SPEED, 2, 0);
+            sleep(500);
+            driveSideways(DRIVE_SPEED*2, 12, 0);
+            sleep(500);
+            driveStraight(DRIVE_SPEED, 32, 0);
+            sleep(500);
+            driveStraight(DRIVE_SPEED, -6, 0);
+            sleep(500);
 
-        }
-
-        else if (cubeSide == CubeSide.Middle) //If the cube is in the middle spike mark, do the following:
-        {
-            driveStraight(DRIVE_SPEED, 42, 0);  //Drive forward 42 inches, pushing the blue cube out of the way.
-            sleep(500); //Wait 0.5 seconds
-            driveStraight(DRIVE_SPEED, -8, 0);  //Drive backwards 8 inches, lining up to score spike mark.
+            //Score the purple pixel
             liftDistance(0.5, 5, -1);   //Bring the lift up 5 inches.
             spinny.setPower(0.075); //Rotate the end effector to face the ground to score purple pixel.
             liftDistance(0.5, 4, 1);    //Lower lift down 4 inches to get it as close to ground to score as possible.
             lowerDrop.setPower(.75);    //Drop purple pixel.
             sleep(5000);    //Wait 5 seconds.
+
+            //Drive to backstage scoring position
+            turnToHeading(0.25, 90);
+            driveStraight(DRIVE_SPEED, 12, 90);
+            sleep(500);
+
+            //Score the yellow pixel
+            liftDistance(0.5, 5, -1); //Bring the lift up 5 inches.
+            spinny.setPower(0.075);
+            upperDrop.setPower(0.75);
+            sleep(500);
+        }
+
+        else if (cubeSide == CubeSide.Middle) //If the cube is in the middle spike mark, do the following:
+        {
+            //Drive to the spike mark scoring position
+            driveStraight(DRIVE_SPEED, 42, 0);  //Drive forward 42 inches, pushing the blue cube out of the way.
+            sleep(500); //Wait 0.5 seconds
+            driveStraight(DRIVE_SPEED, -8, 0);  //Drive backwards 8 inches, lining up to score spike mark.
+
+            //Score the purple pixel
+            liftDistance(0.5, 5, -1);   //Bring the lift up 5 inches.
+            spinny.setPower(0.075); //Rotate the end effector to face the ground to score purple pixel.
+            liftDistance(0.5, 4, 1);    //Lower lift down 4 inches to get it as close to ground to score as possible.
+            lowerDrop.setPower(.75);    //Drop purple pixel.
+            sleep(5000);    //Wait 5 seconds.
+
+            //Drive to backstage scoring position
+            turnToHeading(0.25, 90);
+            driveStraight(DRIVE_SPEED, 24, 90);
+            sleep(500);
+
+            //Score the yellow pixel
+            liftDistance(0.5, 5, -1); //Bring the lift up 5 inches.
+            spinny.setPower(0.075);
+            upperDrop.setPower(0.75);
+            sleep(500);
+
         }
         else //drive to closest spikemark to truss. Assumes the pixel is on the mark closest to the spikemark.
         {
+            //Drive to the spike mark scoring position
+            driveStraight(DRIVE_SPEED, 2, 0);
+            sleep(500);
+            driveSideways(DRIVE_SPEED*2, -12, 0);
+            sleep(500);
+            driveStraight(DRIVE_SPEED, 32, 0);
+            sleep(500);
+            driveStraight(DRIVE_SPEED, -6, 0);
+            sleep(500);
 
+            //Score the purple pixel
+            liftDistance(0.5, 5, -1);   //Bring the lift up 5 inches.
+            spinny.setPower(0.075); //Rotate the end effector to face the ground to score purple pixel.
+            liftDistance(0.5, 4, 1);    //Lower lift down 4 inches to get it as close to ground to score as possible.
+            lowerDrop.setPower(.75);    //Drop purple pixel.
+            sleep(5000);    //Wait 5 seconds.
+
+            //Drive to backstage scoring position
+            turnToHeading(0.25, 90);
+            driveStraight(DRIVE_SPEED, 36, 90);
+            sleep(500);
+
+            //Score the yellow pixel
+            liftDistance(0.5, 5, -1); //Bring the lift up 5 inches.
+            spinny.setPower(0.075);
+            upperDrop.setPower(0.75);
+            sleep(500);
         }
     }
 
