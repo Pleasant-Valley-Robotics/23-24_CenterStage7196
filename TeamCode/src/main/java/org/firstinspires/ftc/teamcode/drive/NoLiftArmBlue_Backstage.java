@@ -295,121 +295,29 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
 
         //Robot drives to the farthest spikemark.
         double driftMod = 0.88;
-      //  liftDistance(0.5, 2, -1);
-      //  sleep(50000);
+
         //if team element is on the farthest spikemark from the truss.
         //in this case that means left.
-        /*
+
         if (cubeSide == CubeSide.Left)
         {
-            //Testing statements.
-            telemetry.setAutoClear(false);
-            //camera.addTelemetry(telemetry);
-            //telemetry.update();
 
-            //Score pixel on the spikemark.
-            driveStraight(DRIVE_SPEED, 3 * driftMod, 0);    // Drive straight 3 inches
-            turnToHeading(TURN_SPEED, 20);  // Turn left 15 degrees
-            holdHeading(TURN_SPEED,  20.0, 0.5);    // Hold  15 Deg heading for a 1/2 second
-            //Was 33.
-            driveStraight(DRIVE_SPEED, 40 * driftMod, 20);  // Drive straight 21 inches at 15 degree heading
-            sleep(500); // Wait .5 seconds
-
-            //Back up robot to start the process of scoring on the backboard.
-            driveStraight(DRIVE_SPEED, -6, 20);
-            turnToHeading(TURN_SPEED, -90);
-            holdHeading(TURN_SPEED, -90, 0.5);
-            //Allign to left spot on backboard.
-            driveStraight(DRIVE_SPEED, -42, -90);
-            driveSideways(DRIVE_SPEED, 6, -90);
-            driveStraight(DRIVE_SPEED, -5, -90);
-
-            //score pixel using new intake system.
-
-
-            sleep(500);
         }
-        */
-        if (cubeSide == CubeSide.Middle) //The robot drives to the middle
+
+        else if (cubeSide == CubeSide.Middle) //If the cube is in the middle spike mark, do the following:
         {
-            //colorSensor1.blue() > 200 && colorSensor1.green() < 800 //Know it works.
-            //if (cubeSide == CubeSide.Middle) //if the robot is in middle.
-            {
-                //Testing statements.
-                telemetry.setAutoClear(false);
-                //camera.addTelemetry(telemetry);
-                //telemetry.update();
+            driveStraight(DRIVE_SPEED, 42, 0);  //Drive forward 42 inches, pushing the blue cube out of the way.
+            sleep(500); //Wait 0.5 seconds
+            driveStraight(DRIVE_SPEED, -8, 0);  //Drive backwards 8 inches, lining up to score spike mark.
+            liftDistance(0.5, 5, -1);   //Bring the lift up 5 inches.
+            spinny.setPower(0.075); //Rotate the end effector to face the ground to score purple pixel.
+            liftDistance(0.5, 4, 1);    //Lower lift down 4 inches to get it as close to ground to score as possible.
+            lowerDrop.setPower(.75);    //Drop purple pixel.
+            sleep(5000);    //Wait 5 seconds.
+        }
+        else //drive to closest spikemark to truss. Assumes the pixel is on the mark closest to the spikemark.
+        {
 
-                //telemetry.addData("Heading", telemetry);
-                //telemetry.update();
-
-
-                //Was 42
-                driveStraight(DRIVE_SPEED, 42, 0);  // Drive straight 21 inches at 15 degree heading
-                sleep(500); // Wait .5 seconds
-
-                //Back up robot to start the process of scoring on the backboard.
-                driveStraight(DRIVE_SPEED, -8, 0);
-
-                liftDistance(0.5, 5, -1);
-                spinny.setPower(0.075);
-                liftDistance(0.5, 4, 1);
-                lowerDrop.setPower(.75);
-                sleep(5000);
-
-                //sendLiftTelemetry();
-//                turnToHeading(TURN_SPEED, -90);
-//                holdHeading(TURN_SPEED, -90, 0.5);
-                //Allign to middle spot on backboard.
-//                driveStraight(DRIVE_SPEED, -47, -90);
-//                driveSideways(DRIVE_SPEED, 6, -90);
-//                driveStraight(DRIVE_SPEED, -5, -90);
-
-                //score pixel with new intake system.
-
-                //spinTake.setPower(.8);
-
-                sleep(500);
-            }
-           /* else //drive to closest spikemark to truss. Assumes the pixel is on the mark closest to the spikemark.
-            {
-                //Testing statements.
-                //telemetry.setAutoClear(false);
-                //camera.addTelemetry(telemetry);
-                //telemetry.update();
-
-                driveStraight(DRIVE_SPEED, 20 * driftMod, 0);    // Drive straight 3 inches
-                turnToHeading(TURN_SPEED, -25);  // Turn left 15 degrees
-                holdHeading(TURN_SPEED,  -25.0, 0.5);    // Hold  15 Deg heading for a 1/2 second
-                driveStraight(DRIVE_SPEED, 22 * driftMod, -25);  // Drive straight 21 inches at 15 degree heading
-
-                //Bring out slides.
-                //Pull the end effector down/in.
-                //Make end effector go to a degree that alligns with the backboard.
-                //Drop the pixel.
-                //Push the pixel over by making
-                //Keep it at that angle.
-                //Extend slide out.
-
-                sleep(500); // Wait .5 seconds
-
-                //Back up robot to start the process of scoring on the backboard.
-                driveStraight(DRIVE_SPEED, -8, -25);
-                holdHeading(TURN_SPEED, -25, 0.5);
-                turnToHeading(TURN_SPEED, -90);
-                holdHeading(TURN_SPEED, -90, 0.5);
-
-                //Allign to right spot on backboard.
-                driveStraight(DRIVE_SPEED, -55, -90);
-                driveSideways(DRIVE_SPEED, -8, -90);
-                driveStraight(DRIVE_SPEED, -5, -90);
-
-                //score pixel with new intake system.
-
-
-                sleep(500);
-            */
-            //}
         }
     }
 

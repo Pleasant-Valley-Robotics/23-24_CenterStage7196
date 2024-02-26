@@ -293,11 +293,11 @@ public class RobotAlpha2 extends LinearOpMode {
 
             if (gamepad2.left_bumper == true)
             {
-                spinny.setPower(0.15);
+                spinny.setPower(0.2);
             }
             else
             {
-                spinny.setPower(0.595); // for auto -0.35
+                spinny.setPower(0.53); // for auto -0.35
             }
 
             //* TODO delete this comment for DroneLauncher
