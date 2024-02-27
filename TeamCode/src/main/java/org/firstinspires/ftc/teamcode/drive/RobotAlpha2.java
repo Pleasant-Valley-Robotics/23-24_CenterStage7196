@@ -297,7 +297,7 @@ public class RobotAlpha2 extends LinearOpMode {
             }
             else
             {
-                spinny.setPower(0.53); // for auto -0.35
+                spinny.setPower(0.55); // for auto -0.35
             }
 
             //* TODO delete this comment for DroneLauncher
