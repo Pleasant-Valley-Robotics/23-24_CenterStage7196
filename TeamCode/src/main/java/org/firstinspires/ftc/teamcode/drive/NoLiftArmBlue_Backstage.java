@@ -245,8 +245,8 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
          *
          * To Do:  EDIT these two lines to match YOUR mounting configuration.
          */
-        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
-        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.UP;
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
         // Now initialize the IMU with this mounting orientation
@@ -324,15 +324,16 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
             sleep(500);    //Wait 0.5 seconds.
 
             //Drive to backstage scoring position
-        //    turnToHeading(0.25, 90);
-        //    driveStraight(DRIVE_SPEED, 12, 90);
-        //    sleep(500);
+            turnToHeading(0.25, 90);
+            driveStraight(DRIVE_SPEED, 12, 90);
+            driveSideways(DRIVE_SPEED, -6, 90);
+            sleep(500);
 
             //Score the yellow pixel
-        //    liftDistance(0.5, 5, -1); //Bring the lift up 5 inches.
-        //    spinny.setPower(0.075);
-        //    upperDrop.setPower(0.75);
-        //    sleep(500);
+            liftDistance(0.5, 5, -1); //Bring the lift up 5 inches.
+            spinny.setPower(0.075);
+            upperDrop.setPower(0.75);
+            sleep(500);
         }
 
         else if (cubeSide == CubeSide.Middle) //If the cube is in the middle spike mark, do the following:
@@ -356,15 +357,27 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
             sleep(500);    //Wait 0.5 seconds.
 
             //Drive to backstage scoring position
-        //    turnToHeading(0.25, 90);
-        //    driveStraight(DRIVE_SPEED, 24, 90);
-        //    sleep(500);
+            driveStraight(DRIVE_SPEED, -3, 0);
+            turnToHeading(0.25, 90);
+            sleep(500);
+            driveStraight(DRIVE_SPEED, 40, 90);
+            sleep(500);
 
             //Score the yellow pixel
-        //    liftDistance(0.5, 5, -1); //Bring the lift up 5 inches.
-        //    spinny.setPower(0.075);
-        //    upperDrop.setPower(0.75);
-        //    sleep(500);
+            liftDistance(0.5, 10, -1); //Bring the lift up 8 inches.
+            sleep(500);
+            spinny.setPower(0.175);
+            sleep(250);
+            driveStraight(DRIVE_SPEED, 6, 90);
+            sleep(500);
+            driveSideways(0.6, 6, 90);
+            turnToHeading(TURN_SPEED, 90);
+            driveStraight(DRIVE_SPEED, 2, 90);
+            upperDrop.setPower(0.75);
+            sleep(500);
+            liftDistance(0.5, 2, -1);
+            driveStraight(DRIVE_SPEED, -4, 90);
+            driveSideways(0.5, -30, 90);
 
         }
         else //drive to closest spikemark to truss. Assumes the pixel is on the mark closest to the spikemark.
@@ -372,39 +385,37 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
             telemetry.addData("Cube position: ", cubeSide);
             telemetry.update();
             //Drive to the spike mark scoring position
-            driveStraight(DRIVE_SPEED, 2, 0);   //Drive 2 in off backboard
-            sleep(500);
-            driveSideways(DRIVE_SPEED*2, -12, 0);   //Drive right 12 inches
-            sleep(500);
-            driveStraight(DRIVE_SPEED, 35, 0);  //Drive 32 inches forwards
-            turnToHeading(TURN_SPEED, -90);
-            holdHeading(TURN_SPEED, -90, 0.25);
-            driveStraight(TURN_SPEED, 10, -90);
-            sleep(500);
-            driveStraight(DRIVE_SPEED, -3, 0);  //Drive 6 inches backwards
-            sleep(500);
+            driveStraight(DRIVE_SPEED, 35, 0);   //Drive 38 in off backboard
+            sleep(500); //Sleep half a second
+            turnToHeading(TURN_SPEED, -90); // turn to 90 and hold for 0.25 seconds
+            holdHeading(TURN_SPEED, 90, 0.25);
+            driveStraight(DRIVE_SPEED, 8, -90);  //Drive 8 inches
+            driveStraight(DRIVE_SPEED, -7, -90); // back up 5 inches
+            sleep(500); //Sleep half a second
 
             //Score the purple pixel
-            liftDistance(0.5, 5, -1);   //Bring the lift up 5 inches.
+            liftDistance(0.5, 7, -1);   //Bring the lift up 5 inches.
             sleep(250);
             spinny.setPower(0.075); //Rotate the end effector to face the ground to score purple pixel.
             sleep(250);
-            liftDistance(0.5, 4, 1);    //Lower lift down 4 inches to get it as close to ground to score as possible.
+            liftDistance(0.5, 6.75, 1);    //Lower lift down 4 inches to get it as close to ground to score as possible.
             lowerDrop.setPower(.75);    //Drop purple pixel.
-            sleep(500);    //Wait 5 seconds.
-            spinny.setPower(.125);
             sleep(500);
+            spinny.setPower(-.125);
+            sleep(500);    //Wait 0.5 seconds.
 
             //Drive to backstage scoring position
-        //    turnToHeading(0.25, 90);
-        //    driveStraight(DRIVE_SPEED, 36, 90);
-        //    sleep(500);
+            driveStraight(DRIVE_SPEED, -4, -90);
+            turnToHeading(0.25, 90);
+            driveStraight(DRIVE_SPEED, 12, 90);
+            driveSideways(DRIVE_SPEED, -6, 90);
+            sleep(500);
 
             //Score the yellow pixel
-        //    liftDistance(0.5, 5, -1); //Bring the lift up 5 inches.
-        //    spinny.setPower(0.075);
-        //    upperDrop.setPower(0.75);
-        //    sleep(500);
+            liftDistance(0.5, 5, -1); //Bring the lift up 5 inches.
+            spinny.setPower(0.075);
+            upperDrop.setPower(0.75);
+            sleep(500);
         }
     }
 
