@@ -183,7 +183,7 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
     // These constants define the desired driving/control characteristics
     // They can/should be tweaked to suit the specific robot drive train.
     static final double     DRIVE_SPEED             = 0.3;     // Max driving speed for better distance accuracy.
-    static final double     TURN_SPEED              = 0.3;     // Max Turn speed to limit turn rate
+    static final double     TURN_SPEED              = 0.5;     // Max Turn speed to limit turn rate
     static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
     // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
     // Define the Proportional control coefficient (or GAIN) for "heading control".
@@ -309,7 +309,7 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
             turnToHeading(TURN_SPEED, 90); // turn to 90 and hold for 0.25 seconds
             holdHeading(TURN_SPEED, 90, 0.25);
             driveStraight(DRIVE_SPEED, 8, 90);  //Drive 8 inches
-            driveStraight(DRIVE_SPEED, -7, 90); // back up 5 inches
+            driveStraight(DRIVE_SPEED, -9, 90); // back up 5 inches
             sleep(500); //Sleep half a second
 
             //Score the purple pixel
@@ -325,15 +325,20 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
 
             //Drive to backstage scoring position
             turnToHeading(0.25, 90);
-            driveStraight(DRIVE_SPEED, 12, 90);
-            driveSideways(DRIVE_SPEED, -6, 90);
+            driveSideways(0.5, -20, 90);
+            driveStraight(DRIVE_SPEED, 44, 90);
+            driveSideways(0.5, 5, 90);
             sleep(500);
 
             //Score the yellow pixel
-            liftDistance(0.5, 5, -1); //Bring the lift up 5 inches.
-            spinny.setPower(0.075);
+            spinny.setPower(0.175);
+            driveStraight(DRIVE_SPEED, 5, 90);
+            liftDistance(0.5, 8, -1); //Bring the lift up 5 inches.
             upperDrop.setPower(0.75);
             sleep(500);
+            liftDistance(0.5, 3, -1);
+            driveStraight(DRIVE_SPEED, -8, 90);
+            driveSideways(0.5, -26, 90);
         }
 
         else if (cubeSide == CubeSide.Middle) //If the cube is in the middle spike mark, do the following:
@@ -407,15 +412,20 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
             //Drive to backstage scoring position
             driveStraight(DRIVE_SPEED, -4, -90);
             turnToHeading(0.25, 90);
-            driveStraight(DRIVE_SPEED, 12, 90);
-            driveSideways(DRIVE_SPEED, -6, 90);
+            driveStraight(DRIVE_SPEED, 34, 90);
+            driveSideways(DRIVE_SPEED, 6, 90);
             sleep(500);
 
             //Score the yellow pixel
-            liftDistance(0.5, 5, -1); //Bring the lift up 5 inches.
-            spinny.setPower(0.075);
+            spinny.setPower(0.175);
+            liftDistance(0.5, 9, -1); //Bring the lift up 12 inches.
+            driveStraight(DRIVE_SPEED, 11, 90);
+            sleep(250);
             upperDrop.setPower(0.75);
             sleep(500);
+            liftDistance(0.5, 2, -1);
+            driveStraight(DRIVE_SPEED, -7, 90);
+            driveSideways(0.5, -40, 90);
         }
     }
 
