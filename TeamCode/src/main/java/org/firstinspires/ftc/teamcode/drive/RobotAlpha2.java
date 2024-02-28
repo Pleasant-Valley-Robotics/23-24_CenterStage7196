@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.checkerframework.checker.units.qual.C;
@@ -33,6 +34,7 @@ public class RobotAlpha2 extends LinearOpMode {
         DcMotor liftDriveRight = null; // liftDriveRight is in port 1 of EH
         DcMotor spintake = null; // spintake is in port 2 of EH
         CRServo droneLaunch = null;
+        CRServo droneRotate = null;
         double turnMovement = 0;
         double strafeMovement = 0;
         double straightMovement = 0;
@@ -50,6 +52,7 @@ public class RobotAlpha2 extends LinearOpMode {
          liftDriveLeft = hardwareMap.get(DcMotor.class, "liftDriveLeft");
          liftDriveRight = hardwareMap.get(DcMotor.class, "liftDriveRight");
         droneLaunch = hardwareMap.get(CRServo.class, "droneLaunch");
+        droneRotate = hardwareMap.get(CRServo.class, "droneRotate");
 
         FLDrive.setDirection(DcMotor.Direction.REVERSE);
         BLDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -62,6 +65,7 @@ public class RobotAlpha2 extends LinearOpMode {
         liftDriveLeft.setDirection(DcMotor.Direction.REVERSE);
         liftDriveRight.setDirection(DcMotor.Direction.REVERSE);
         droneLaunch.setDirection(CRServo.Direction.FORWARD);
+        droneRotate.setDirection(CRServo.Direction.FORWARD);
 
         //Set the zero
         FLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -301,14 +305,20 @@ public class RobotAlpha2 extends LinearOpMode {
             }
 
             //* TODO delete this comment for DroneLauncher
-            if (gamepad2.right_trigger > 0.1) {
-                droneLaunch.setPower(0);
+            if (gamepad2.right_bumper) {
+                droneLaunch.setPower(-.1);
             }
             else
             {
                 droneLaunch.setPower(-1.3);
             }
-
+            if (gamepad2.y) {
+                droneRotate.setPower(-.07);
+            }
+            else
+            {
+                droneRotate.setPower(-.45);
+            }
         }
     }
 }
