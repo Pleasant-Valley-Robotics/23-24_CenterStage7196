@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode.drive;
 
+import static java.lang.Math.abs;
+
 import android.app.Activity;
 import android.graphics.Color;
 import android.view.View;
@@ -47,9 +49,8 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.hardware.VisionCamera;
-
-import org.firstinspires.ftc.teamcode.utility.FieldSide;
 import org.firstinspires.ftc.teamcode.utility.CubeSide;
+import org.firstinspires.ftc.teamcode.utility.FieldSide;
 
 /*
  *  This OpMode illustrates the concept of driving an autonomous path based on Gyro (IMU) heading and encoder counts.
@@ -99,15 +100,9 @@ import org.firstinspires.ftc.teamcode.utility.CubeSide;
  *  Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Robot: Gyro Auto Blue Depot no lift", group="Robot")
+@Autonomous(name="Robot: Gyro Auto Red Backstage No Lift", group="Robot")
 //@Disabled
 public class NoLiftArmBlue_Depot extends LinearOpMode {
-
-    int colorSensor1Red = 0;
-    int colorSensor1Green = 0;
-    int colorSensor1Blue = 0;
-    float colorSensor1Hue = 0;
-    int colorSensor1Clear = 0;
     /* Declare OpMode members. */
     ColorSensor colorSensor1 = null;    // Hardware Device Object
     ColorSensor colorSensor2 = null;
@@ -116,8 +111,15 @@ public class NoLiftArmBlue_Depot extends LinearOpMode {
     DcMotor FRDrive = null; // Front Right Drive Motor
     DcMotor BLDrive = null; // Back Left Drive Motor
     DcMotor BRDrive = null; // Back Right Drive Motor
-    CRServo flimsyFlicker = null;
     IMU imu = null; // Inertial Measurement Unit      // Control/Expansion Hub IMU
+
+    CRServo spinny = null;
+    CRServo upperDrop = null;
+    CRServo lowerDrop = null;
+    DcMotor liftDriveLeft = null;
+    DcMotor liftDriveRight = null;
+
+    DcMotor spinTake = null;
 
     private double headingError  = 0;
 
@@ -137,6 +139,10 @@ public class NoLiftArmBlue_Depot extends LinearOpMode {
 
     private int     backRightTarget   = 0;
 
+    private int     liftDriveLeftTarget = 0;
+
+    private int liftDriveRightTarget = 0;
+
     // Calculate the COUNTS_PER_INCH for your specific drive train.
     // Go to your motor vendor website to determine your motor's COUNTS_PER_MOTOR_REV
     // For external drive gearing, set DRIVE_GEAR_REDUCTION as needed.
@@ -146,14 +152,31 @@ public class NoLiftArmBlue_Depot extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime(); // Timer for tracking time
 
     // Constants for calculating encoder counts and speed
+
+    //38.25'' length of slide from base of motor to its position when completely out.
+    // 1.570" is diameter
+    // that times pie = encoder counts.
+    //26.9:1
+
+    static final double LIFT_COUNTS_PER_MOTOR_REV = 28; // Encoder counts per motor revolution
+
+    static final double LIFT_DRIVE_GEAR_REDUCTION = 26.9; // Gear ratio of 26.9:1 on the motor, 1:1 external gearing
+
+    static final double LIFT_PINION_DIAMETER_INCHES = 1.57; // Diameter of the pinion driving the viper slide belt
+
+    //lift encoders per inch. Multiple how far you want go by this value to move lift a certain amount.
+    static final double LIFT_COUNTS_PER_INCH = (LIFT_COUNTS_PER_MOTOR_REV * LIFT_DRIVE_GEAR_REDUCTION) / (LIFT_PINION_DIAMETER_INCHES * Math.PI);
+
+
     static final double COUNTS_PER_MOTOR_REV = 28; // Encoder counts per motor revolution
-    static final double DRIVE_GEAR_REDUCTION = 5.23 * 3.61; //Gear ratio of 5:1 gearbox * 4:1 gearbox
+    static final double DRIVE_GEAR_REDUCTION = (((1+(46/17))) * (1+(46/11))); //Gear ratio of 19:1 gearbox.
     static final double WHEEL_DIAMETER_INCHES = 96/25.4; // Diameter of the robot's wheels in mm/(mm/in)
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);
 
     // These constants define the desired driving/control characteristics
     // They can/should be tweaked to suit the specific robot drive train.
     static final double     DRIVE_SPEED             = 0.3;     // Max driving speed for better distance accuracy.
+    static final double     DRIVE_SPEED_RIGHT             = 0.4;     // Max driving speed for better distance accuracy.
     static final double     TURN_SPEED              = 0.3;     // Max Turn speed to limit turn rate
     static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
     // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
@@ -173,34 +196,51 @@ public class NoLiftArmBlue_Depot extends LinearOpMode {
         FRDrive = hardwareMap.get(DcMotor.class, "FRDrive");
         BLDrive = hardwareMap.get(DcMotor.class, "BLDrive");
         BRDrive = hardwareMap.get(DcMotor.class, "BRDrive");
-        // get a reference to our ColorSensor object.
-        colorSensor1 = hardwareMap.get(ColorSensor.class, "sensor_color2");
-        colorSensor2 = hardwareMap.get(ColorSensor.class, "sensor_color1");
-        flimsyFlicker = hardwareMap.get(CRServo.class, "flimsyFlicker");
+        liftDriveLeft = hardwareMap.get(DcMotor.class, "liftDriveLeft");
+        liftDriveRight = hardwareMap.get(DcMotor.class, "liftDriveRight");
+        spinTake = hardwareMap.get(DcMotor.class, "spintake");
 
-        //Grab and store the instance of the needed Camera.
+        //Initialize the intake system variables.
+        spinny = hardwareMap.get(CRServo.class, "spinny");
+        upperDrop = hardwareMap.get(CRServo.class, "upperDrop");
+        lowerDrop = hardwareMap.get(CRServo.class, "lowerDrop");
+
+
+        //Grab and store the reference for the camera.
         VisionCamera camera = new VisionCamera(hardwareMap, FieldSide.BlueFar);
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        FLDrive.setDirection(DcMotor.Direction.FORWARD);
+        //Was FORWARD.
+        FLDrive.setDirection(DcMotor.Direction.REVERSE);
         BLDrive.setDirection(DcMotor.Direction.REVERSE);
         FRDrive.setDirection(DcMotor.Direction.FORWARD);
-        BRDrive.setDirection(DcMotor.Direction.REVERSE);
-        flimsyFlicker.setDirection(DcMotorSimple.Direction.FORWARD);
+        //Was REVERSE.
+        BRDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        liftDriveLeft.setDirection(DcMotor.Direction.REVERSE);
+        liftDriveRight.setDirection(DcMotor.Direction.REVERSE);
+        spinTake.setDirection(DcMotor.Direction.FORWARD);
+        spinny.setDirection(DcMotorSimple.Direction.FORWARD);
+        upperDrop.setDirection(CRServo.Direction.FORWARD);
+        lowerDrop.setDirection(CRServo.Direction.FORWARD);
+
         FLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftDriveLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftDriveRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        spinTake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         /* The next two lines define Hub orientation.
          * The Default Orientation (shown) is when a hub is mounted horizontally with the printed logo pointing UP and the USB port pointing FORWARD.
          *
          * To Do:  EDIT these two lines to match YOUR mounting configuration.
          */
-        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
-        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.UP;
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
         // Now initialize the IMU with this mounting orientation
@@ -213,89 +253,122 @@ public class NoLiftArmBlue_Depot extends LinearOpMode {
         BLDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FRDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         BRDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        spinTake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftDriveLeft.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
+        liftDriveRight.setMode((DcMotor.RunMode.STOP_AND_RESET_ENCODER));
+
         FLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         FRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        spinTake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftDriveLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftDriveRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
 
         // Wait for the game to start (Display Gyro value while waiting)
         while (opModeInInit()) {
-            telemetry.addData(">", "Robot Heading = %4.0f", getHeading());
-            telemetry.update();
+            //telemetry.addData(">", "Robot Heading = %4.0f", getHeading());
+            //telemetry.update();
         }
 
         // Set the encoders for closed loop speed control, and reset the heading.
         imu.resetYaw();
 
+        //Start the pipeline for detection.
         camera.enableCubePipeline();
 
         waitForStart();
 
+        //Set up a variable to store the cubeside detected.
+        //window size is the amount of times you want it to find a value in a row.
         CubeSide cubeSide = camera.getStableCubeSidePrediction(15);
 
-        //Robot drives to farthest spikemark.
-        sleep(700);
+        //sleep(1000);
         sleep(500);
 
+        //Robot drives to the farthest spikemark.
         double driftMod = 0.88;
-        driveStraight(DRIVE_SPEED, 3 * driftMod, 0);    // Drive straight 3 inches
-        turnToHeading(TURN_SPEED, -17);  // Turn left 15 degrees
-        holdHeading(TURN_SPEED,  -17.0, 0.5);    // Hold  15 Deg heading for a 1/2 second
-        driveStraight(DRIVE_SPEED, 17, -17);  // Drive straight 21 inches at 15 degree heading
-        turnToHeading(TURN_SPEED, 0);   // Turn right 15 degrees
-        holdHeading(TURN_SPEED,  0, 0.5);    // Hold  0 Deg heading for a 1/2 second
-        driveStraight(DRIVE_SPEED, 4 * driftMod, 0);    // Drive straight 4 inches
-        sleep(500); // Wait .5 seconds
-        //colorCheck();   // Check color values
 
-        camera.addTelemetry(telemetry);
-        telemetry.update();
+        //if team element is on the farthest spikemark from the truss.
+        //in this case that means left.
 
-        //Determines if the game element is on the farthest spikemark.
-        //In this auto that means right side.
-        //colorSensor1.blue() > 200 // know this works as a condition.
-        if (cubeSide == CubeSide.Right)  // If blue value is greater than 150 //
+        if (cubeSide == CubeSide.Left)
         {
-            turnToHeading(TURN_SPEED, -25);
-            holdHeading(TURN_SPEED,  -25.0, 0.5);    // Hold  30 Deg heading for a 1/2 second
-            driveStraight(DRIVE_SPEED, -6, -25);
-            turnToHeading(TURN_SPEED, 90);
-            holdHeading(TURN_SPEED, 90, 0.5);
-        }
-        else //The robot drives to the middle.
-        {
-            turnToHeading(TURN_SPEED, 0);
-            holdHeading(TURN_SPEED, 0, 0.4);
-            driveSideways(0.04, -8, 0);
+            telemetry.addData("Cube position: ", cubeSide);
+            telemetry.update();
+            //Drive to the spike mark scoring position
+            driveStraight(DRIVE_SPEED, 35, 0);   //Drive 38 in off backboard
+            sleep(500); //Sleep half a second
+            turnToHeading(TURN_SPEED, 90); // turn to 90 and hold for 0.25 seconds
+            holdHeading(TURN_SPEED, 90, 0.25);
+            driveStraight(0.2, 8, -90);  //Drive 8 inches
+            driveStraight(0.2, -10, -90); // back up 5 inches
+            sleep(500); //Sleep half a second
+
+            //Score the purple pixel
+            liftDistance(0.5, 7, -1);   //Bring the lift up 5 inches.
             sleep(250);
-            turnToHeading(0.3, 0);
-            holdHeading(TURN_SPEED, 0, 0.4);
-            driveStraight(0.1, 6, 0);
+            spinny.setPower(0.075); //Rotate the end effector to face the ground to score purple pixel.
+            sleep(250);
+            liftDistance(0.5, 6.75, 1);    //Lower lift down 4 inches to get it as close to ground to score as possible.
+            lowerDrop.setPower(.75);    //Drop purple pixel.
             sleep(500);
+            spinny.setPower(-.125);
+            sleep(500);    //Wait 0.5 seconds.
+        }
 
-            //Robot checks if the game element is on the middle mark.
-            //colorSensor2.blue() > 200 //Know this works a condition.
-            if (cubeSide == CubeSide.Middle) //&& colorSensor1.green() < 800)
-            {
-//                driveStraight(DRIVE_SPEED, 3, 0);
-                driveStraight(DRIVE_SPEED, -10, 0);
-                turnToHeading(TURN_SPEED, -90);
-                holdHeading(TURN_SPEED, -90, 0.5);
-            }
-            else //Drive to closest spikemark to the truss. Assumes the pixel is on the closest spikemark.
-            {
-                driveStraight(DRIVE_SPEED, 4, 0);
-                driveSideways(0.04, -6, 0);
-                while( getHeading() < 70 || getHeading() > 80)
-                {
-                    FLDrive.setPower(0.6);
-                    BLDrive.setPower(0.6);
-                }
-                driveStraight(0.2, 14, 70);
-                driveStraight(DRIVE_SPEED, -10, 70);
-                turnToHeading(TURN_SPEED, 90);
-                holdHeading(TURN_SPEED, 90, 0.4);
-            }
+        else if (cubeSide == CubeSide.Middle) //If the cube is in the middle spike mark, do the following:
+        {
+            telemetry.addData("Cube position: ", cubeSide);
+            telemetry.update();
+            //Drive to the spike mark scoring position
+            driveStraight(DRIVE_SPEED, 42, 0);  //Drive forward 42 inches, pushing the blue cube out of the way.
+            sleep(250); //Wait 0.5 seconds
+            driveStraight(DRIVE_SPEED, -8, 0);  //Drive backwards 8 inches, lining up to score spike mark.
+
+            //Score the purple pixel
+            liftDistance(0.5, 7, -1);   //Bring the lift up 5 inches.
+            sleep(250);
+            spinny.setPower(0.075); //Rotate the end effector to face the ground to score purple pixel.
+            sleep(250);
+            liftDistance(0.5, 6.75, 1);    //Lower lift down 4 inches to get it as close to ground to score as possible.
+            lowerDrop.setPower(.75);    //Drop purple pixel.
+            sleep(500);
+            spinny.setPower(-.125);
+            sleep(500);    //Wait 0.5 seconds.
+        }
+        else //drive to closest spikemark to truss. Assumes the pixel is on the mark closest to the spikemark.
+        {
+            telemetry.addData("Cube position: ", cubeSide);
+            telemetry.update();
+            //Drive to the spike mark scoring position
+            //Was 38.
+            driveStraight(DRIVE_SPEED_RIGHT, 34, 0);   //Drive 38 in off backboard
+            sleep(500); //Sleep half a second
+            turnToHeading(TURN_SPEED, -90); // turn to 90 and hold for 0.25 seconds
+            holdHeading(TURN_SPEED, -90, 0.25);
+            sleep(250);
+            driveStraight(DRIVE_SPEED_RIGHT, 8, 90);
+            sleep(250);
+            driveStraight(DRIVE_SPEED_RIGHT, -10, 90);
+            turnToHeading(TURN_SPEED, -90); // turn to 90 and hold for 0.25 seconds
+            holdHeading(TURN_SPEED, -90, 0.25);
+            driveSideways(DRIVE_SPEED_RIGHT, -8, 90);
+            turnToHeading(TURN_SPEED, -90); // turn to 90 and hold for 0.25 seconds
+            holdHeading(TURN_SPEED, -90, 0.25);
+            sleep(500); //Sleep half a second
+
+            //Score the purple pixel
+            liftDistance(0.5, 7, -1);   //Bring the lift up 5 inches.
+            sleep(250);
+            spinny.setPower(0.075); //Rotate the end effector to face the ground to score purple pixel.
+            sleep(250);
+            liftDistance(0.5, 6.85, 1);    //Lower lift down 6.75 inches to get it as close to ground to score as possible.
+            lowerDrop.setPower(.75);    //Drop purple pixel.
+            sleep(500);
+            spinny.setPower(-.125);
+            sleep(500);    //Wait 0.5 seconds.
         }
     }
 
@@ -326,6 +399,8 @@ public class NoLiftArmBlue_Depot extends LinearOpMode {
         // bLedOn represents the state of the LED.
         boolean bLedOn = true;
 
+
+
         // Set the LED in the beginning
         colorSensor1.enableLed(bLedOn);
         // check the status of the x button on either gamepad.
@@ -344,20 +419,6 @@ public class NoLiftArmBlue_Depot extends LinearOpMode {
 
         // convert the RGB values to HSV values.
         Color.RGBToHSV(colorSensor1.red() * 8, colorSensor1.green() * 8, colorSensor1.blue() * 8, hsvValues);
-
-        // send the info back to driver station using telemetry function.
-        telemetry.addData("LED", bLedOn ? "On" : "Off");
-        telemetry.addData("Clear", colorSensor1.alpha());
-        telemetry.addData("Red  ", colorSensor1.red());
-        telemetry.addData("Green", colorSensor1.green());
-        telemetry.addData("Blue ", colorSensor1.blue());
-        telemetry.addData("Hue", hsvValues[0]);
-
-        colorSensor1Clear = colorSensor1.alpha();
-        colorSensor1Red = colorSensor1.red();
-        colorSensor1Green = colorSensor1.green();
-        colorSensor1Blue = colorSensor1.blue();
-        colorSensor1Hue = hsvValues[0];
 
         // change the background color to match the color detected by the RGB sensor.
         // pass a reference to the hue, saturation, and value array as an argument
@@ -378,6 +439,67 @@ public class NoLiftArmBlue_Depot extends LinearOpMode {
         });
 
     }
+
+    public void liftDistance(double maxDriveSpeed,
+                             double distance, int direction) {
+
+        // Ensure that the OpMode is still active
+        //if (opModeIsActive()) {
+
+        double averageLiftEncoder = (liftDriveLeft.getCurrentPosition() + liftDriveRight.getCurrentPosition()) / 2;
+
+        // Determine new target position, and pass to motor controller
+        int moveCounts = (int)(distance * LIFT_COUNTS_PER_INCH);
+        int liftDriveLeftTarget = liftDriveLeft.getCurrentPosition() + direction*moveCounts;
+        //int liftDriveRightTarget = liftDriveRight.getCurrentPosition() + direction*moveCounts;
+
+        // Set Target FIRST, then turn on RUN_TO_POSITION
+        //liftDriveLeft.setTargetPosition(liftDriveLeftTarget);
+        //liftDriveRight.setTargetPosition(liftDriveRightTarget);
+
+        liftDriveLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftDriveRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        // Set the required driving speed  (must be positive for RUN_TO_POSITION)
+        // Start driving straight, and then enter the control loop
+        maxDriveSpeed = abs(maxDriveSpeed);
+        //moveRobot(maxDriveSpeed, 0);
+        // liftDriveLeft.setPower(maxDriveSpeed);
+        //liftDriveRight.setPower(maxDriveSpeed);
+        if(direction > 0) {
+            // keep looping while we are still active, and BOTH motors are running.
+            while (opModeIsActive() &&
+                    (liftDriveLeft.getCurrentPosition() <= liftDriveLeftTarget)) {
+                liftDriveLeft.setPower((direction) * maxDriveSpeed);
+                liftDriveRight.setPower((direction) * maxDriveSpeed * 0.775);
+                // Apply the turning correction to the current driving speed.
+                // moveRobot(driveSpeed, turnSpeed);
+
+                // Display drive status for the driver.
+                sendLiftTelemetry();
+            }
+
+        }
+        else if(direction <0)
+        {
+            // keep looping while we are still active, and BOTH motors are running.
+            while (opModeIsActive() &&
+                    (liftDriveLeft.getCurrentPosition() >= liftDriveLeftTarget)) {
+                liftDriveLeft.setPower((direction) * maxDriveSpeed);
+                liftDriveRight.setPower((direction) * maxDriveSpeed * 0.775);
+                // Apply the turning correction to the current driving speed.
+                // moveRobot(driveSpeed, turnSpeed);
+
+                // Display drive status for the driver.
+                sendLiftTelemetry();
+            }
+        }
+        liftDriveLeft.setPower(0);
+        liftDriveRight.setPower(0);
+        liftDriveLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftDriveRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+    //}
 
 
     /**
@@ -419,7 +541,7 @@ public class NoLiftArmBlue_Depot extends LinearOpMode {
 
             // Set the required driving speed  (must be positive for RUN_TO_POSITION)
             // Start driving straight, and then enter the control loop
-            maxDriveSpeed = Math.abs(maxDriveSpeed);
+            maxDriveSpeed = abs(maxDriveSpeed);
             moveRobot(maxDriveSpeed, 0);
 
             // keep looping while we are still active, and BOTH motors are running.
@@ -437,7 +559,7 @@ public class NoLiftArmBlue_Depot extends LinearOpMode {
                 moveRobot(driveSpeed, turnSpeed);
 
                 // Display drive status for the driver.
-                sendTelemetry(true);
+                //sendTelemetry(true);
             }
 
             // Stop all motion & Turn off RUN_TO_POSITION
@@ -475,7 +597,7 @@ public class NoLiftArmBlue_Depot extends LinearOpMode {
 
             // Set the required driving speed  (must be positive for RUN_TO_POSITION)
             // Start driving straight, and then enter the control loop
-            maxDriveSpeed = Math.abs(maxDriveSpeed);
+            maxDriveSpeed = abs(maxDriveSpeed);
             moveRobot(maxDriveSpeed, 0);
 
             // keep looping while we are still active, and BOTH motors are running.
@@ -493,7 +615,7 @@ public class NoLiftArmBlue_Depot extends LinearOpMode {
                 moveRobot(driveSpeed, turnSpeed);
 
                 // Display drive status for the driver.
-                sendTelemetry(true);
+                //sendTelemetry(false);
             }
 
             // Stop all motion & Turn off RUN_TO_POSITION
@@ -525,7 +647,7 @@ public class NoLiftArmBlue_Depot extends LinearOpMode {
         getSteeringCorrection(heading, P_DRIVE_GAIN);
 
         // keep looping while we are still active, and not on heading.
-        while (opModeIsActive() && (Math.abs(headingError) > HEADING_THRESHOLD)) {
+        while (opModeIsActive() && (abs(headingError) > HEADING_THRESHOLD)) {
 
             // Determine required steering to keep on heading
             turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
@@ -537,7 +659,7 @@ public class NoLiftArmBlue_Depot extends LinearOpMode {
             moveRobot(0, turnSpeed);
 
             // Display drive status for the driver.
-            sendTelemetry(false);
+            //sendTelemetry(false);
         }
 
         // Stop all motion;
@@ -574,7 +696,7 @@ public class NoLiftArmBlue_Depot extends LinearOpMode {
             moveRobot(0, turnSpeed);
 
             // Display drive status for the driver.
-            sendTelemetry(false);
+            //sendTelemetry(false);
         }
 
         // Stop all motion;
@@ -618,7 +740,7 @@ public class NoLiftArmBlue_Depot extends LinearOpMode {
         rightSpeed = drive + turn;
 
         // Scale speeds down if either one exceeds +/- 1.0;
-        double max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
+        double max = Math.max(abs(leftSpeed), abs(rightSpeed));
         if (max > 1.0)
         {
             leftSpeed /= max;
@@ -652,6 +774,13 @@ public class NoLiftArmBlue_Depot extends LinearOpMode {
         telemetry.update();
     }
 
+    private void sendLiftTelemetry()
+    {
+        telemetry.addData("Target Pos LL:LR",  "%7d:%7d",      liftDriveLeftTarget,  liftDriveLeftTarget);
+        telemetry.addData("Actual Pos LL:LR",  "%7d:%7d",      liftDriveLeft.getCurrentPosition(), liftDriveRight.getCurrentPosition());
+        telemetry.update();
+    }
+
     /**
      * read the Robot heading directly from the IMU (in degrees)
      */
@@ -660,7 +789,7 @@ public class NoLiftArmBlue_Depot extends LinearOpMode {
         return orientation.getYaw(AngleUnit.DEGREES);
     }
     public void dropPixel(){
-        flimsyFlicker.setPower(-1);
+        //flimsyFlicker.setPower(-1);
         sleep(1000);
     }
 }
