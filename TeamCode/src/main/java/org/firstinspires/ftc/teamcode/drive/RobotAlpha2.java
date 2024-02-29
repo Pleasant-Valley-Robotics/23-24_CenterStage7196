@@ -305,7 +305,8 @@ public class RobotAlpha2 extends LinearOpMode {
             }
 
             //* TODO delete this comment for DroneLauncher
-            if (gamepad2.right_bumper) {
+            //Changed where drone launch was. It's now the right trigger on gamepad2.
+            if (gamepad2.right_trigger > 0.05) {
                 droneLaunch.setPower(-.1);
             }
             else
@@ -319,6 +320,11 @@ public class RobotAlpha2 extends LinearOpMode {
             {
                 droneRotate.setPower(-.45);
             }
+
+            //Ask Oliver if we can do this feasibly.
+            //if we have no buttons left to bind then we can use gamepad2 right trigger and left trigger for Dereks request.
+            //set spinny to 3 different positions based on a button press so lower pixels can be scored and moved.
+
         }
     }
 }
