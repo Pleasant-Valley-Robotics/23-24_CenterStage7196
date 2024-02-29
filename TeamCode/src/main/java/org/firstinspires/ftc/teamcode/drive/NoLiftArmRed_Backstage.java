@@ -386,12 +386,11 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
             sleep(500); //Sleep half a second
             turnToHeading(TURN_SPEED, -90); // turn to 90 and hold for 0.25 seconds
             holdHeading(TURN_SPEED, -90, 0.25);
-            driveStraight(DRIVE_SPEED, 8, 90);  //Drive 8 inches
-            driveStraight(DRIVE_SPEED, -8, 90); // back up 5 inches
-            driveSideways(DRIVE_SPEED, -3, 90);
+            driveStraight(0.3, 8, 90);
+            driveStraight(0.3, -10, 90);
             turnToHeading(TURN_SPEED, -90); // turn to 90 and hold for 0.25 seconds
             holdHeading(TURN_SPEED, -90, 0.25);
-            driveSideways(0.5, -10, 90);
+            driveSideways(0.5, -8, 90);
             turnToHeading(TURN_SPEED, -90); // turn to 90 and hold for 0.25 seconds
             holdHeading(TURN_SPEED, -90, 0.25);
             sleep(500); //Sleep half a second
@@ -410,27 +409,28 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
             //Drive to backstage scoring position
 
             driveStraight(0.3, 1, 90);
-            turnToHeading(TURN_SPEED, -90);
-            holdHeading(TURN_SPEED,-90, 0.25);
-
-            //Was 90.
-            //driveSideways(0.5, -20, 90);
+            //turnToHeading(TURN_SPEED, -90);
+            //holdHeading(TURN_SPEED,-90, 0.25);
             driveSideways(0.3, -30, 90);
-            //driveSideways(0.5, 5, 90);
-            //sleep(500);
+            sleep(500);
+
+            //holdHeading(TURN_SPEED, 90,0.25);
+            //sleep(250);
+            driveStraight(DRIVE_SPEED, 50.0, 90);
+            sleep(250);
+            holdHeading(TURN_SPEED, 90, 0.25);
+            sleep(250);
+            driveSideways(DRIVE_SPEED, 18, 90);
+            sleep(250);
 
             //Score the yellow pixel
-            /*
             spinny.setPower(0.175);
-
-            driveStraight(DRIVE_SPEED, 5, 90);
             liftDistance(0.5, 8, -1); //Bring the lift up 5 inches.
             upperDrop.setPower(0.75);
             sleep(500);
             liftDistance(0.5, 3, -1);
             driveStraight(DRIVE_SPEED, -8, 90);
-            driveSideways(0.5, -26, 90);
-            */
+            driveSideways(DRIVE_SPEED, -26, 90);
         }
     }
 
