@@ -176,6 +176,7 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
     // These constants define the desired driving/control characteristics
     // They can/should be tweaked to suit the specific robot drive train.
     static final double     DRIVE_SPEED             = 0.3;     // Max driving speed for better distance accuracy.
+    static final double     DRIVE_SPEED_RIGHT             = 0.4;     // Max driving speed for better distance accuracy.
     static final double     TURN_SPEED              = 0.3;     // Max Turn speed to limit turn rate
     static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
     // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
@@ -382,15 +383,17 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
             telemetry.update();
             //Drive to the spike mark scoring position
             //Was 38.
-            driveStraight(0.3, 34, 0);   //Drive 38 in off backboard
+            driveStraight(DRIVE_SPEED_RIGHT, 34, 0);   //Drive 38 in off backboard
             sleep(500); //Sleep half a second
             turnToHeading(TURN_SPEED, -90); // turn to 90 and hold for 0.25 seconds
             holdHeading(TURN_SPEED, -90, 0.25);
-            driveStraight(0.3, 8, 90);
-            driveStraight(0.3, -10, 90);
+            sleep(250);
+            driveStraight(DRIVE_SPEED_RIGHT, 8, 90);
+            sleep(250);
+            driveStraight(DRIVE_SPEED_RIGHT, -10, 90);
             turnToHeading(TURN_SPEED, -90); // turn to 90 and hold for 0.25 seconds
             holdHeading(TURN_SPEED, -90, 0.25);
-            driveSideways(0.5, -8, 90);
+            driveSideways(DRIVE_SPEED_RIGHT, -8, 90);
             turnToHeading(TURN_SPEED, -90); // turn to 90 and hold for 0.25 seconds
             holdHeading(TURN_SPEED, -90, 0.25);
             sleep(500); //Sleep half a second
@@ -400,7 +403,7 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
             sleep(250);
             spinny.setPower(0.075); //Rotate the end effector to face the ground to score purple pixel.
             sleep(250);
-            liftDistance(0.5, 6.75, 1);    //Lower lift down 4 inches to get it as close to ground to score as possible.
+            liftDistance(0.5, 6.85, 1);    //Lower lift down 6.75 inches to get it as close to ground to score as possible.
             lowerDrop.setPower(.75);    //Drop purple pixel.
             sleep(500);
             spinny.setPower(-.125);
@@ -408,29 +411,31 @@ public class NoLiftArmRed_Backstage extends LinearOpMode {
 
             //Drive to backstage scoring position
 
-            driveStraight(0.3, 1, 90);
+            driveStraight(DRIVE_SPEED_RIGHT, 1, 90);
             //turnToHeading(TURN_SPEED, -90);
             //holdHeading(TURN_SPEED,-90, 0.25);
-            driveSideways(0.3, -30, 90);
+            driveSideways(DRIVE_SPEED_RIGHT, -30, 90);
             sleep(500);
 
             //holdHeading(TURN_SPEED, 90,0.25);
             //sleep(250);
-            driveStraight(DRIVE_SPEED, 50.0, 90);
+            turnToHeading(TURN_SPEED, -90);
+            holdHeading(TURN_SPEED, -90, 0.25);
             sleep(250);
-            holdHeading(TURN_SPEED, 90, 0.25);
+            driveStraight(DRIVE_SPEED_RIGHT, 40.0, -90);
             sleep(250);
-            driveSideways(DRIVE_SPEED, 18, 90);
-            sleep(250);
+            driveSideways(0.5, 48, -90);
+            holdHeading(TURN_SPEED, -90, 0.25);
+            liftDistance(0.5, 8, -1); //Bring the lift up 5 inches.
+            spinny.setPower(0.175);
+            driveStraight(DRIVE_SPEED_RIGHT, 10, -90);
 
             //Score the yellow pixel
-            spinny.setPower(0.175);
-            liftDistance(0.5, 8, -1); //Bring the lift up 5 inches.
             upperDrop.setPower(0.75);
             sleep(500);
             liftDistance(0.5, 3, -1);
-            driveStraight(DRIVE_SPEED, -8, 90);
-            driveSideways(DRIVE_SPEED, -26, 90);
+            driveStraight(DRIVE_SPEED_RIGHT, -8, 90);
+            driveSideways(DRIVE_SPEED_RIGHT, 26, 90);
         }
     }
 
