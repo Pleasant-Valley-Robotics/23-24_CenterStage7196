@@ -183,6 +183,7 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
     // These constants define the desired driving/control characteristics
     // They can/should be tweaked to suit the specific robot drive train.
     static final double     DRIVE_SPEED             = 0.3;     // Max driving speed for better distance accuracy.
+    static final double     DRIVE_SPEED_RIGHT             = 0.6;     // Max driving speed for better distance accuracy.
     static final double     TURN_SPEED              = 0.5;     // Max Turn speed to limit turn rate
     static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
     // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
@@ -303,6 +304,38 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
         {
             telemetry.addData("Cube position: ", cubeSide);
             telemetry.update();
+            // yellow pixel
+            driveStraight(DRIVE_SPEED_RIGHT, 2, 0);
+            driveSideways(0.5, -5, 0);
+            holdHeading(TURN_SPEED, 0, 0.25);
+            driveStraight(DRIVE_SPEED_RIGHT, 22, 0);
+            turnToHeading(TURN_SPEED, 90);
+            holdHeading(TURN_SPEED, 90, 0.25);
+            driveStraight(DRIVE_SPEED_RIGHT, 40, 90);
+            liftDistance(0.5, 12, -1);
+            driveStraight(DRIVE_SPEED, 5, 90);
+            spinny.setPower(0.175);
+            sleep(150);
+            lowerDrop.setPower(0.75);
+            sleep(150);
+            //TODO copy ^^^^^ code to start new autos
+
+            //purple pixel
+            driveStraight(1, -45, 90);
+            driveSideways(0.5, 18, 90);
+            driveStraight(0.3, 8, 90);
+            driveStraight(DRIVE_SPEED_RIGHT, -10, 90);
+            liftDistance(0.2, 11.25, 1);
+            sleep(250);
+            upperDrop.setPower(0.75);
+            sleep(250);
+            spinny.setPower(-0.125);
+            sleep(250);
+            driveStraight(DRIVE_SPEED, 3, 90);
+            driveSideways(0.5, -40, 90);
+            driveStraight(DRIVE_SPEED_RIGHT, 38, 90);
+            //TODO old code
+            /*
             //Drive to the spike mark scoring position
             driveStraight(DRIVE_SPEED, 38, 0);   //Drive 38 in off backboard
             sleep(500); //Sleep half a second
@@ -339,12 +372,49 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
             liftDistance(0.5, 3, -1);
             driveStraight(DRIVE_SPEED, -8, 90);
             driveSideways(0.5, -26, 90);
+             */
         }
 
         else if (cubeSide == CubeSide.Middle) //If the cube is in the middle spike mark, do the following:
         {
             telemetry.addData("Cube position: ", cubeSide);
             telemetry.update();
+
+            // yellow pixel
+            driveStraight(DRIVE_SPEED_RIGHT, 2, 0);
+            driveSideways(0.5, -5, 0);
+            holdHeading(TURN_SPEED, 90, 0.25);
+            driveStraight(DRIVE_SPEED_RIGHT, 34, 90);
+            turnToHeading(TURN_SPEED, 90);
+            holdHeading(TURN_SPEED, 90, 0.25);
+            driveStraight(DRIVE_SPEED_RIGHT, 40, 90);
+            liftDistance(0.5, 12, -1);
+            driveStraight(DRIVE_SPEED, 5, 90);
+            spinny.setPower(0.175);
+            sleep(150);
+            lowerDrop.setPower(0.75);
+            sleep(150);
+
+            // purple pixel
+            driveStraight(1, -44, 90);
+            turnToHeading(TURN_SPEED, 0);
+            holdHeading(TURN_SPEED, 0, 0.25);
+            driveStraight(0.2, 10, 0);
+            driveStraight(DRIVE_SPEED_RIGHT, -8, 0);
+            sleep(250);
+            liftDistance(0.2, 11.25, 1);
+            sleep(250);
+            upperDrop.setPower(0.75);
+            sleep(250);
+            spinny.setPower(-0.125);
+            sleep(250);
+            driveStraight(DRIVE_SPEED_RIGHT, -28, 0);
+            turnToHeading(TURN_SPEED, 90);
+            holdHeading(TURN_SPEED, 90, 0.25);
+            driveStraight(DRIVE_SPEED_RIGHT, 45, 90);
+
+            //TODO old code
+            /*
             //Drive to the spike mark scoring position
             driveStraight(DRIVE_SPEED, 42, 0);  //Drive forward 42 inches, pushing the blue cube out of the way.
             sleep(250); //Wait 0.5 seconds
@@ -383,12 +453,49 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
             liftDistance(0.5, 2, -1);
             driveStraight(DRIVE_SPEED, -4, 90);
             driveSideways(0.5, -30, 90);
+             */
 
         }
         else //drive to closest spikemark to truss. Assumes the pixel is on the mark closest to the spikemark.
         {
             telemetry.addData("Cube position: ", cubeSide);
             telemetry.update();
+            // yellow pixel
+            driveStraight(DRIVE_SPEED_RIGHT, 2, 0);
+            driveSideways(0.5, -5, 0);
+            holdHeading(TURN_SPEED, 0, 0.25);
+            driveStraight(DRIVE_SPEED_RIGHT, 42, 0);
+            turnToHeading(TURN_SPEED, 90);
+            holdHeading(TURN_SPEED, 90, 0.25);
+            driveStraight(DRIVE_SPEED_RIGHT, 40, 90);
+            liftDistance(0.5, 12, -1);
+            driveStraight(DRIVE_SPEED, 5, 90);
+            spinny.setPower(0.175);
+            sleep(150);
+            lowerDrop.setPower(0.75);
+            sleep(150);
+
+            // purple pixel
+            driveStraight(1, -44, 90);
+            driveSideways(0.5, 13, -90);
+            turnToHeading(TURN_SPEED, -90);
+            holdHeading(TURN_SPEED, -90, 0.25);
+            driveStraight(DRIVE_SPEED, 10, -90);
+            driveStraight(DRIVE_SPEED_RIGHT, -5, -90);
+            sleep(250);
+            liftDistance(0.2, 11.25, 1);
+            sleep(250);
+            upperDrop.setPower(0.75);
+            sleep(250);
+            spinny.setPower(-0.125);
+            sleep(250);
+            driveStraight(DRIVE_SPEED_RIGHT, -8, -90);
+            driveSideways(DRIVE_SPEED_RIGHT, 36, -90);
+            turnToHeading(TURN_SPEED, -90);
+            holdHeading(TURN_SPEED, -90, 0.25);
+            driveStraight(DRIVE_SPEED_RIGHT, -45, -90);
+            //TODO old code
+            /*
             //Drive to the spike mark scoring position
             driveStraight(DRIVE_SPEED, 35, 0);   //Drive 38 in off backboard
             sleep(500); //Sleep half a second
@@ -426,6 +533,7 @@ public class NoLiftArmBlue_Backstage extends LinearOpMode {
             liftDistance(0.5, 2, -1);
             driveStraight(DRIVE_SPEED, -7, 90);
             driveSideways(0.5, -40, 90);
+             */
         }
     }
 
