@@ -351,7 +351,8 @@ public class NoLiftArmBlue_Depot extends LinearOpMode {
             sleep(250);
             driveStraight(DRIVE_SPEED_RIGHT, 8, 90);
             sleep(250);
-            driveStraight(DRIVE_SPEED_RIGHT, -10, 90);
+            //Was -10.
+            driveStraight(DRIVE_SPEED_RIGHT, -12, 90);
             turnToHeading(TURN_SPEED, -90); // turn to 90 and hold for 0.25 seconds
             holdHeading(TURN_SPEED, -90, 0.25);
             driveSideways(DRIVE_SPEED_RIGHT, -8, 90);
