@@ -101,7 +101,7 @@ import org.firstinspires.ftc.teamcode.utility.CubeSide;
  *  Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Robot: Gyro Auto Blue Backstage No Lift", group="Robot")
+@Autonomous(name="Robot: Gyro No Lift Arm Red Depot", group="Robot")
 //@Disabled
 public class NoLiftArmRed_Depot extends LinearOpMode {
 

@@ -100,7 +100,7 @@ import org.firstinspires.ftc.teamcode.utility.FieldSide;
  *  Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Robot: Gyro Auto Red Backstage No Lift", group="Robot")
+@Autonomous(name="Robot: Gyro No Lift Auto Blue Depot", group="Robot")
 //@Disabled
 public class NoLiftArmBlue_Depot extends LinearOpMode {
     /* Declare OpMode members. */
@@ -364,7 +364,7 @@ public class NoLiftArmBlue_Depot extends LinearOpMode {
             sleep(250);
             spinny.setPower(0.075); //Rotate the end effector to face the ground to score purple pixel.
             sleep(250);
-            liftDistance(0.5, 6.85, 1);    //Lower lift down 6.75 inches to get it as close to ground to score as possible.
+            liftDistance(0.5, 6.9, 1);    //Lower lift down 6.75 inches to get it as close to ground to score as possible.
             lowerDrop.setPower(.75);    //Drop purple pixel.
             sleep(500);
             spinny.setPower(-.125);
